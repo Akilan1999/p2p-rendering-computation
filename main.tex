@@ -1,0 +1,26 @@
+\documentclass[a4paper, english, 11pt, titlepage]{report}
+
+\input{_setup/doc_setup}
+
+\begin{document}
+% FRONT MATTER
+\input{1_front_matter/titlepage}
+\newpage
+\pagenumbering{roman}
+\input{1_front_matter/preamble}
+\input{1_front_matter/contents}
+	
+% MAIN BODY
+\newpage
+\pagenumbering{arabic}
+\input{2_main_body/introduction}
+\input{2_main_body/background}
+\input{2_main_body/development}
+\input{2_main_body/evaluation}
+\input{2_main_body/conclusion}
+
+% BACK MATTER
+\input{3_back_matter/references}
+\input{3_back_matter/appendices}
+
+\end{document}

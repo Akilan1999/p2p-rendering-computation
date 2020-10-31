@@ -1,0 +1,94 @@
+
+% load packages
+\input{_setup/packages}
+
+% set up macros
+\input{_setup/macros}
+
+% set line spacing
+\doublespacing
+
+% set headings format
+\titleformat{\chapter}{\singlespacing\normalfont\huge\bfseries\titleColor}{\chaptertitlename\ \thechapter}{1em}{}
+\titleformat{\section}{\singlespacing\normalfont\Large\bfseries\titleColor}{\thesection.}{1em}{}
+\titleformat{\subsection}{\singlespacing\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\singlespacing\normalfont\normalsize\bfseries}{\thesubsubsection.}{1em}{}
+\titlespacing*{\chapter}{0pt}{10pt}{10pt}
+
+% set paragraph indent
+\setlength{\parindent}{18pt} 
+
+% set text color
+\textColor 
+
+% set hyperlinks + pdf metadata
+\hypersetup{
+	pdftitle={\docTitle},
+	pdfauthor={\docAuthor},
+	pdfkeywords={dissertation template},
+	colorlinks=true,%
+	citecolor=[HTML]{152845},%
+	linkcolor=[HTML]{152845},%
+	urlcolor=[HTML]{1976D2}
+}
+
+% styling the code listings
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\singlespacing,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% reset names for code listing
+\renewcommand{\lstlistingname}{Code}
+\renewcommand{\lstlistlistingname}{List of \lstlistingname s}
+
+% set cref for listing
+\crefname{lstlisting}{\lstlistingname}{\lstlistingname s}
+\Crefname{lstlisting}{\lstlistingname}{\lstlistingname s}
+
+% set custom list of equations
+\newcommand{\listequationsname}{List of Equations}
+\newlistof{myequations}{equ}{\listequationsname}
+\newcommand{\myequations}[1]{%
+	\addcontentsline{equ}{myequations}{\protect\numberline{\theequation}#1}
+}
+\setlength{\cftmyequationsnumwidth}{2.5em}% Width of equation number in List of Equations
+
+% set custom list of algorithms
+\newcommand{\listalgorithmssname}{List of Algorithms}
+\newlistof{myalgorithms}{alg}{\listalgorithmssname}
+\newcommand{\myalgorithms}[1]{%
+	\addcontentsline{alg}{myalgorithms}{\protect\numberline{\thealgorithm}#1}
+}
+\setlength{\cftmyequationsnumwidth}{2.5em}% Width of algorithm number in List of Algorithms
+
+% set appendices refs with cleveref
+\crefname{appendixchapter}{Appendix}{Appendices}
+\Crefname{appendixchapter}{Appendix}{Appendices}
+
+% set custom headers/footers
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\secTextColor \docAuthor}
+\lhead{\secTextColor \docTitle}
+\cfoot{\thepage}
