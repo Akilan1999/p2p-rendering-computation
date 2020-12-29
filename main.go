@@ -30,6 +30,7 @@ func main() {
 			/* 
 			Flags if the client mode is selected:
 			------------------------------------------------------------------
+			  (run task)
 			  OS: Operating system name to create the VM 
 			  Pull Location: Location to pull the OS image
 			  run script: Script to run the task (i.e binary file preferred)
@@ -56,19 +57,7 @@ func main() {
                 
 		  },
 		Action: func(c *cli.Context) error {
-			/*
-			Example usage:
-			name := "someone"
-			if c.NArg() > 0 {
-			  name = c.Args().Get(0)
-			}
-			if language == "spanish" {
-			  fmt.Println("Hola", name)
-			} else {
-			  fmt.Println("Hello", name)
-			}
-			return nil 
-			*/
+			/* action when certain flags are selected */
 			if Run_script == "None" {
 				fmt.Println("script not excuted as run script not selected")
 			}
