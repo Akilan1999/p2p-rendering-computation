@@ -4,7 +4,6 @@ List-servers.go
 
 TODO:
 This file lists all server nodes avaliable and with the appropriate information 
-
 */
 
 import (
