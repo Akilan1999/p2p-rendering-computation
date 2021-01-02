@@ -23,7 +23,7 @@ func create_container() (error, string){
 		return err, ""
 	}
 
-	imageName := "bfirsh/reticulate-splines"
+	imageName := "ubuntu:20.10"
 
 	out, err := cli.ImagePull(ctx, imageName, types.ImagePullOptions{})
 	if err != nil {
@@ -79,6 +79,7 @@ func main(){
 	_, containers :=  containers_running()
 	fmt.Println(containers)
 	_, container_id := create_container()
-	_, status := delete_container(container_id)
-	fmt.Println(status)
+	fmt.Println(container_id)
+	//_, status := delete_container(container_id)
+	//fmt.Println(status)
 }
