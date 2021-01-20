@@ -4,6 +4,6 @@ import (
 	"fmt"
 )
 
-func server() {
+func Servers() {
 	fmt.Print("here")
 }
