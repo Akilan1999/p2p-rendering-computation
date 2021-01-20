@@ -11,6 +11,7 @@ import (
 	"github.com/christophwitzko/go-curl"
 	"net/http"
 	"encoding/json"
+	"reflect"
 )
 
 func list_servers() (error, []byte){
@@ -43,8 +44,21 @@ func list_servers() (error, []byte){
 	return nil ,data
 }
 
+
 func main() {
 	// Where your local node is running on localhost:5001
 	_ , data := list_servers()
 	
+	m := map[string]interface{}{}
+	// print type of output
+	fmt.Println(reflect.TypeOf(data)) 
+
+	// print
+	
+	// Debug output
+	/*for _, element := range data {
+		fmt.Println(string(element))
+	}*/
+	
+	//fmt.Println(string(data))
 }

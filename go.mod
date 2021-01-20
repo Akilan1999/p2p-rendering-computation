@@ -10,13 +10,17 @@ require (
 	github.com/docker/docker v20.10.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/grandcat/zeroconf v1.0.0 // indirect
+	github.com/hashicorp/mdns v1.0.3 // indirect
 	github.com/ipfs/go-ipfs-api v0.2.0 // indirect
+	github.com/jackpal/gateway v1.0.7 // indirect
 	github.com/libp2p/go-libp2p v0.13.0
 	github.com/libp2p/go-libp2p-core v0.8.0
 	github.com/libp2p/go-libp2p-kad-dht v0.11.1 // indirect
 	github.com/multiformats/go-multiaddr v0.3.1
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
+	github.com/pion/mdns v0.0.4 // indirect
 	github.com/rfyiamcool/go-shell v0.0.0-20200826083509-1c9811ccc8ca // indirect
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/wanyvic/go-libp2p-ssh v0.0.0-20190916080332-8cebbd7564ef
