@@ -1,4 +1,4 @@
-package main
+/*package server
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 
 /* creates continer 
 TODO: Function inputs , outputs to be modified
-*/
+
 func create_container() (error, string){
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -46,7 +46,7 @@ func create_container() (error, string){
 	return nil, string(resp.ID)
 }
 
-/* returns all containers running */
+/* returns all containers running 
 func containers_running()(error, []types.Container){
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -62,7 +62,7 @@ func containers_running()(error, []types.Container){
 	return nil ,containers
 }
 
-/* function to remove container from running */
+/* function to remove container from running 
 func delete_container(container_id string) (error, string){
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -82,4 +82,4 @@ func main(){
 	fmt.Println(container_id)
 	//_, status := delete_container(container_id)
 	//fmt.Println(status)
-}
+} */

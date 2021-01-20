@@ -1,5 +1,4 @@
-package main
-
+/*package server
 import (
     "fmt"
 
@@ -20,4 +19,4 @@ func main() {
 		return
     }
     fmt.Printf("External IP address: %v\n", response.ExternalIPAddress)
-}
+}*/

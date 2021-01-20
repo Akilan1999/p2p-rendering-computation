@@ -1,4 +1,4 @@
-package main
+/*package server
 
 import (
 	"net"
@@ -25,4 +25,4 @@ func main() {
     }
 
     log.Println("Shutting down.")
-}
+}*/
