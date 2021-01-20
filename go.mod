@@ -1,28 +1,22 @@
-module github.com/Akilan1999/p2p-redering-computation
+module git.sr.ht/~akilan1999/p2p-rendering-computation
 
 go 1.15
 
 require (
-	github.com/GehirnInc/crypt v0.0.0-20200316065508-bb7000b8a962 // indirect
-	github.com/christophwitzko/go-curl v0.0.0-20171216141518-4203158d6acb // indirect
 	github.com/containerd/containerd v1.4.3 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
-	github.com/docker/docker v20.10.1+incompatible // indirect
+	github.com/docker/docker v20.10.2+incompatible
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/grandcat/zeroconf v1.0.0 // indirect
-	github.com/hashicorp/mdns v1.0.3 // indirect
-	github.com/ipfs/go-ipfs-api v0.2.0 // indirect
-	github.com/jackpal/gateway v1.0.7 // indirect
-	github.com/libp2p/go-libp2p v0.13.0
-	github.com/libp2p/go-libp2p-core v0.8.0
-	github.com/libp2p/go-libp2p-kad-dht v0.11.1 // indirect
-	github.com/multiformats/go-multiaddr v0.3.1
+	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/jackpal/gateway v1.0.7
+	github.com/jackpal/go-nat-pmp v1.0.2
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
-	github.com/pion/mdns v0.0.4 // indirect
-	github.com/rfyiamcool/go-shell v0.0.0-20200826083509-1c9811ccc8ca // indirect
-	github.com/urfave/cli/v2 v2.3.0
-	github.com/wanyvic/go-libp2p-ssh v0.0.0-20190916080332-8cebbd7564ef
-	github.com/wanyvic/ssh v0.0.0-20190906050511-a7ecfcc9aea8
+	github.com/pion/mdns v0.0.4
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sirupsen/logrus v1.7.0 // indirect
+	github.com/urfave/cli/v2 v2.3.0 // indirect
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
+	google.golang.org/grpc v1.35.0 // indirect
 )

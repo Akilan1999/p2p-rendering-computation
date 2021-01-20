@@ -5,6 +5,7 @@ import (
 	"os"
 	"github.com/urfave/cli/v2"
 	"fmt"
+	server "git.sr.ht/~akilan1999/p2p-rendering-computation/server/server"
 )
 
 // VERSION specifies the version of the platform
@@ -12,7 +13,7 @@ var VERSION = "0.0.1"
 var mode string
 
 // Varaibles if mode is client
-var OS, Pull_location ,Run_script string
+var OS, Pull_location ,Run_script ,List_servers string
 
 func main() {
 
@@ -54,7 +55,17 @@ func main() {
 				Usage:       "Script to run the task (i.e binary file preferred)",
 				Destination: &Run_script,
 			},
-                
+			/* list servers */
+            &cli.StringFlag{
+				Name:        "List_servers",
+				Value:       "None",
+				Usage:       "List servers which can render tasks",
+				Action: func(c *cli.Context) error {
+					server.server()
+					return nil
+				},
+			},
+
 		  },
 		Action: func(c *cli.Context) error {
 			/* action when certain flags are selected */
