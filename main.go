@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"github.com/urfave/cli/v2"
-	"fmt"
+	//"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 )
 
@@ -64,14 +64,20 @@ func main() {
 			},
 
 		  },
-		Action: func(c *cli.Context) error {
+		  /*action for all flags*/
+		  Action: func(c *cli.Context) error {
 			/* action when certain flags are selected */
-			if Run_script == "None" {
+			/*if Run_script == "None" {
 				fmt.Println("script not excuted as run script not selected")
-			}
+			}*/
 			
-			if List_servers == true{ 
+			/*if List_servers == true{ 
 				server.Servers() 
+			}*/
+			
+			// If mode server is selected
+			if mode == "server"{
+				server.Server()
 			}
 
 			return nil
