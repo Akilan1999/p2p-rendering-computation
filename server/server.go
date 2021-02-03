@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	docker "git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 )
 
 func Server() {
@@ -14,7 +15,7 @@ func Server() {
 	})
 
 	r.GET("/create_vm", func(c *gin.Context) {
-		c.JSON(http.StatusOK, ServerInfo())
+		c.JSON(http.StatusOK, docker.BuildContainer())
 	})
 
 	// Port running on

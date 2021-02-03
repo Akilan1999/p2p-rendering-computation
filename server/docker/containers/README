@@ -1,0 +1,7 @@
+Containers
+===========
+
+Structure
+   |_ Containers 
+          |_ <name> (To ensure the name is the same as the tag name)
+                |_ DockerFile 
