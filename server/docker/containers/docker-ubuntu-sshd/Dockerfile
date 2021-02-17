@@ -8,7 +8,10 @@
 
 
 # Base system is the latest LTS version of Ubuntu.
-from   ubuntu
+from   consol/ubuntu-xfce-vnc
+
+# Switch to root user to install additional software
+USER 0
 
 
 # Make sure we don't get notifications we can't answer during building.

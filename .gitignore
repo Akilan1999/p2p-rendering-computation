@@ -1,3 +1,5 @@
 vendor/
 bin/
 p2p-rendering/
+./main
+server/docker/__pycache__
