@@ -8,8 +8,8 @@ require (
 	github.com/christophwitzko/go-curl v0.0.0-20171216141518-4203158d6acb
 	github.com/containerd/containerd v1.4.3 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
-	github.com/docker/docker v20.10.2+incompatible
-	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/docker v20.10.0-beta1.0.20201113105859-b6bfff2a628f+incompatible
+	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fsouza/go-dockerclient v1.7.0 // indirect
 	github.com/gin-gonic/gin v1.6.3
