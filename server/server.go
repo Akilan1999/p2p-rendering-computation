@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"fmt"
-	docker "git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 )
 
 func Server() {
