@@ -9,4 +9,5 @@ P2P module
   - Connect to reliable connection (that has some knowledge)
   - Check if the connection is still open (If not instruct the server to remove from table)
   - According speed tests
-  - Send list of servers connection open 
+  - Send list of servers connection open
+  - default 100 MB (to store tables of ip records)

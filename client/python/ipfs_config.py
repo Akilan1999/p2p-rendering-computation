@@ -1,5 +1,5 @@
 '''
-This scrypt creates basic config for IPFS server 
+This scrypt creates basic config for IPFS server
 '''
 import ipfsApi
 
