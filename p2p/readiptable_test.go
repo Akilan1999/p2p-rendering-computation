@@ -5,7 +5,12 @@ import (
 )
 
 func TestReadIpTable(t *testing.T) {
-	_, err := ReadIpTable()
+	json, err := ReadIpTable()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.WriteIpTable()
 	if err != nil {
 		t.Fatal(err)
 	}

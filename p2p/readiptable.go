@@ -43,3 +43,17 @@ func ReadIpTable()(*IpAddresses ,error){
 
     return &ipAddresses, nil
 }
+
+func (i *IpAddresses) WriteIpTable() error {
+	file, err := json.MarshalIndent(i, "", " ")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("ip_table.json", file, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

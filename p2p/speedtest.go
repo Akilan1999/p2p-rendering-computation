@@ -1,8 +1,6 @@
 package p2p
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func SpeedTest() error{
 
@@ -12,29 +10,30 @@ func SpeedTest() error{
 		return err
 	}
 
-	for _, s := range targets.IpAddress {
-		
+	for i, _ := range targets.IpAddress {
+
 		// Ping Test
-		err = s.PingTest()
+		err = targets.IpAddress[i].PingTest()
 		if err != nil {
 			return err
 		}
 
 		//Upload Speed Test
-		err = s.UploadSpeed()
+		err = targets.IpAddress[i].UploadSpeed()
 		if err != nil {
 			return err
 		}
 
-		err = s.DownloadSpeed()
+		err = targets.IpAddress[i].DownloadSpeed()
 		if err != nil {
 			return err
 		}
+		fmt.Println(targets.IpAddress[i].Latency)
+	}
 
-		//s.DownloadTest(false)
-		//s.UploadTest(false)
-		fmt.Println(s.Upload)
-		//fmt.Printf("Latency: %s, Download: %f, Upload: %f\n", s.Latency, s.DLSpeed, s.ULSpeed)
+	err = targets.WriteIpTable()
+	if err != nil {
+		return err
 	}
 
 	return nil
