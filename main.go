@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/urfave/cli/v2"
 	"log"
 	"os"
-	"github.com/urfave/cli/v2"
+	_ "git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	//"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 )

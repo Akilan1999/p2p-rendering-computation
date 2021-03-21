@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 // Get IP table Data
@@ -14,9 +15,9 @@ type IpAddresses struct {
 
 type IpAddress struct {
 	Ipv4   string `json:"ipv4"`
-	Latency  float32 `json:"latency"`
-	Download float32    `json:"download"`
-	Upload float32 `json:"upload"`
+	Latency  time.Duration `json:"latency"`
+	Download float64    `json:"download"`
+	Upload float64 `json:"upload"`
 }
 
 func ReadIpTable()(*IpAddresses ,error){
