@@ -16,6 +16,11 @@ func Server() {
 		c.JSON(http.StatusOK, ServerInfo())
 	})
 
+	// Speed test with 50 mbps
+	r.GET("/50", func(c *gin.Context){
+		c.File("server/50.bin")
+	})
+
 	// Route build to do a speed test
 	r.GET("/upload", func(c *gin.Context) {
 		file, _ := c.FormFile("file")

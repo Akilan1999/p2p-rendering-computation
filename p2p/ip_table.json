@@ -1,10 +1,7 @@
 {
   "ip_address":[
     {
-      "ipv4":"23.23.232.2",
-      "latency":3,
-      "download": 34,
-      "upload": 50
+      "ipv4":"localhost"
     }
   ]
 }
