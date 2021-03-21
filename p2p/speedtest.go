@@ -2,25 +2,7 @@ package p2p
 
 import (
 	"fmt"
-	"time"
 )
-
-type Server struct {
-	URL      string `xml:"url,attr"`
-	Lat      string `xml:"lat,attr"`
-	Lon      string `xml:"lon,attr"`
-	Name     string `xml:"name,attr"`
-	Country  string `xml:"country,attr"`
-	Sponsor  string `xml:"sponsor,attr"`
-	ID       string `xml:"id,attr"`
-	URL2     string `xml:"url2,attr"`
-	Host     string `xml:"host,attr"`
-	Distance float64
-	Latency  time.Duration
-	DLSpeed  float64
-	ULSpeed  float64
-}
-
 
 func SpeedTest() error{
 
@@ -29,11 +11,9 @@ func SpeedTest() error{
 	if err != nil {
 		return err
 	}
-	//serverList, _ := speedtest.FetchServerList(user)
-	//targets, _ := serverList.FindServer([]int{})
 
 	for _, s := range targets.IpAddress {
-		//fmt.Print(strings.Split(i., "/upload")[0] + "/latency.txt")
+		
 		// Ping Test
 		err = s.PingTest()
 		if err != nil {
@@ -41,7 +21,7 @@ func SpeedTest() error{
 		}
 
 		//Upload Speed Test
-		err = s.UploadTest(false)
+		err = s.UploadSpeed()
 		if err != nil {
 			return err
 		}
@@ -53,7 +33,7 @@ func SpeedTest() error{
 
 		//s.DownloadTest(false)
 		//s.UploadTest(false)
-		fmt.Println(s.Download)
+		fmt.Println(s.Upload)
 		//fmt.Printf("Latency: %s, Download: %f, Upload: %f\n", s.Latency, s.DLSpeed, s.ULSpeed)
 	}
 
