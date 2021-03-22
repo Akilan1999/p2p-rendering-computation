@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -22,7 +23,7 @@ type IpAddress struct {
 
 func ReadIpTable()(*IpAddresses ,error){
 
-	jsonFile, err := os.Open("ip_table.json")
+	jsonFile, err := os.Open("/etc/p2p-rendering/ip_table.json")
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		return nil,err
@@ -50,10 +51,25 @@ func (i *IpAddresses) WriteIpTable() error {
 		return err
 	}
 
-	err = ioutil.WriteFile("ip_table.json", file, 0644)
+	err = ioutil.WriteFile("/etc/p2p-rendering/ip_table.json", file, 0644)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func PrintIpTable() error {
+	table, err := ReadIpTable()
+
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < len(table.IpAddress); i++ {
+		fmt.Printf("----------------------\nIP Address: %s\nLatency: %s\nDownload: %f\nUplaod: %f\n-----------" +
+			"-----------\n",table.IpAddress[i].Ipv4,
+			table.IpAddress[i].Latency,table.IpAddress[i].Download,table.IpAddress[i].Upload)
+	}
 	return nil
 }

@@ -1,12 +1,11 @@
 package main
 
 import (
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
-	_ "git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
-	//"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 )
 
 // VERSION specifies the version of the platform
@@ -15,12 +14,12 @@ var mode string
 
 // Varaibles if mode is client
 var OS, Pull_location ,Run_script string
-var List_servers bool 
+var List_servers, Ip_table bool
 
 func main() {
 
 	app := &cli.App{
-		Name:    "p2p-redering-computation",
+		Name:    "p2p-rendering-computation",
 		Usage:   "allows you to batch tasks in a peer to peer network",
 		Version: VERSION,
 		Flags: []cli.Flag {
@@ -30,38 +29,17 @@ func main() {
 			  Usage:       "Specifies mode of running",
 			  Destination: &mode,
 			},
-			/* 
-			Flags if the client mode is selected:
-			------------------------------------------------------------------
-			  (run task)
-			  OS: Operating system name to create the VM 
-			  Pull Location: Location to pull the OS image
-			  run script: Script to run the task (i.e binary file preferred)
-            ------------------------------------------------------------------ 
-			*/
-			&cli.StringFlag{
-				Name:        "OS",
-				Value:       "ubuntu",
-				Usage:       "Operating system name to create the VM",
-				Destination: &OS,
-			},
-			&cli.StringFlag{
-				Name:        "Pull_location",
-				Value:       "http://releases.ubuntu.com/14.04.3/ubuntu-14.04.3-server-amd64.iso",
-				Usage:       "Location to pull the OS image",
-				Destination: &Pull_location,
-			},
-			&cli.StringFlag{
-				Name:        "Run_script",
-				Value:       "None",
-				Usage:       "Script to run the task (i.e binary file preferred)",
-				Destination: &Run_script,
-			},
 			/* list servers */
             &cli.BoolFlag{
-				Name:        "List_servers",
+				Name:        "List-servers",
 				Usage:       "List servers which can render tasks",
 				Destination: &List_servers,
+			},
+			/* List iptable */
+			&cli.BoolFlag{
+				Name:        "Ip-table",
+				Usage:       "Listing servers that can be connected to",
+				Destination: &Ip_table,
 			},
 
 		  },
@@ -71,10 +49,13 @@ func main() {
 			/*if Run_script == "None" {
 				fmt.Println("script not excuted as run script not selected")
 			}*/
-			
-			/*if List_servers == true{ 
-				server.Servers() 
-			}*/
+
+			if Ip_table == true || List_servers == true{
+				err := p2p.PrintIpTable()
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
 			
 			// If mode server is selected
 			if mode == "server"{
