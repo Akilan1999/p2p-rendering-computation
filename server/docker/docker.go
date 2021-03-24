@@ -1,136 +1,151 @@
 package docker
 
 import (
-	//log"
-	"io/ioutil"
-	"io"
+	"bufio"
 	"context"
-	"bytes"
-	"os"
-	"archive/tar"
-	"log"
+	"encoding/json"
+	"errors"
 	"fmt"
-
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
-
-	natting "github.com/docker/go-connections/nat"
 	"github.com/docker/docker/api/types/container"
-	network "github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/archive"
+	"github.com/docker/go-connections/nat"
+	"github.com/phayes/freeport"
+	"io"
+	"time"
 )
 
-
-type SSHreturn struct {
-	Port     string `bson:port`
-	Username string `bson:username`
-    Password string `bson:password`
+type DockerVM struct {
+	 SSHPort int `json:"SSHPort"`
+	 VNCPort int `json:"VNCPort"`
+	 ID string `json:"ID"`
+	 TagName string `json:"TagName"`
+	 ImagePath string `json:"ImagePath"`
 }
 
-// Runs a docker contianer with default settings 
-// TODO implement with public keys 
-func RunVM()(interface{},error) {
-	client, err := client.NewEnvClient()
-	if err != nil {
-		//log.Fatalf("Unable to create docker client: %s", err)
-		return nil,err
-	}
+type ErrorLine struct {
+	Error       string      `json:"error"`
+	ErrorDetail ErrorDetail `json:"errorDetail"`
+}
 
-	// Client, imagename and Dockerfile location
-	tags := []string{"p2p-ubuntu"}
-	dockerfile := "./server/docker/containers/docker-ubuntu-sshd/Dockerfile"
-	err = BuildImage(client, tags, dockerfile)
-	if err != nil {
-		//log.Println(err)
-		return nil,err
-	}
+type ErrorDetail struct {
+	Message string `json:"message"`
+}
 
-	// TODO Run contianer 
+var dockerRegistryUserID = ""
 
-	imagename := "ubuntu"
-	containername := "test1"
-	portopening := "1003"
-	inputEnv := []string{fmt.Sprintf("LISTENINGPORT=%s", portopening)}
-	err = RunContainer(client, imagename, containername, portopening, inputEnv)
+func BuildRunContainer() (*DockerVM,error) {
+	//Docker Struct Variable
+	var RespDocker *DockerVM = new(DockerVM)
+
+	// Gets 2 TCP ports empty
+	Ports, err := freeport.GetFreePorts(2)
 	if err != nil {
 		return nil,err
 	}
 
-	sshreturn := new(SSHreturn)
-	
-	sshreturn.Port = "1003"
-	sshreturn.Password = "password"
-	sshreturn.Username = "master"
-	
-	return sshreturn, nil
+	//fmt.Println(Ports[0])
+
+	// Sets Free port to Struct
+	RespDocker.SSHPort = Ports[0]
+	RespDocker.VNCPort = Ports[1]
+
+	//Default parameters
+	RespDocker.TagName = "p2p-ubuntu"
+	RespDocker.ImagePath = "./containers/docker-ubuntu-sshd/"
+
+	// Gets docker information from env variables
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return nil,err
+	}
+
+	// Builds docker image
+	err = RespDocker.imageBuild(cli)
+	if err != nil {
+		return nil,err
+	}
+
+	// Runs docker contianer
+	err = RespDocker.runContainer(cli)
+
+	if err != nil {
+		return nil,err
+	}
+
+
+	return RespDocker,nil
 
 }
 
-// Taken from (https://medium.com/@Frikkylikeme/controlling-docker-with-golang-code-b213d9699998)
-// Builds local docker image 
-func BuildImage(client *client.Client, tags []string, dockerfile string) error{
-	ctx := context.Background()
+//Builds docker image (TODO: relative path for Dockerfile folder)
+func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
+	//defer cancel()
 
-	// Create a buffer 
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-	defer tw.Close()
-
-	// Create a filereader
-	dockerFileReader, err := os.Open(dockerfile)
+	tar, err := archive.TarWithOptions(d.ImagePath, &archive.TarOptions{})
 	if err != nil {
 		return err
 	}
 
-	// Read the actual Dockerfile 
-	readDockerFile, err := ioutil.ReadAll(dockerFileReader)
+	opts := types.ImageBuildOptions{
+		Dockerfile: "Dockerfile",
+		Tags:       []string{d.TagName},
+		Remove:     true,
+	}
+	res, err := dockerClient.ImageBuild(ctx, tar, opts)
 	if err != nil {
 		return err
 	}
 
-	// Make a TAR header for the file
-	tarHeader := &tar.Header{
-		Name: dockerfile,
-		Size: int64(len(readDockerFile)),
+	defer res.Body.Close()
+
+	err = print(res.Body)
+	if err != nil {
+		return err
 	}
 
-	// Writes the header described for the TAR file
-	err = tw.WriteHeader(tarHeader)
-    if err != nil {
-		return err
-    }
+	return nil
+}
 
-	// Writes the dockerfile data to the TAR file
-    _, err = tw.Write(readDockerFile)
-    if err != nil {
-		return err
-    }
+// Starts container and assigns IP addresses
+func (d *DockerVM)runContainer(dockerClient *client.Client) error{
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 
-    dockerFileTarReader := bytes.NewReader(buf.Bytes())
 
-	// Define the build options to use for the file
-	// https://godoc.org/github.com/docker/docker/api/types#ImageBuildOptions
-	buildOptions := types.ImageBuildOptions{
-        Context:    dockerFileTarReader,
-        Dockerfile: dockerfile,
-        Remove:     true,
-		Tags: 		tags,
+	config := &container.Config{
+		Image : d.TagName,
+		Entrypoint: [] string {"/dockerstartup/vnc_startup.sh","/start"},
+		Volumes: map[string]struct{}{"/opt/data:/data":{}},
 	}
 
-	// Build the actual image
-	imageBuildResponse, err := client.ImageBuild(
-        ctx,
-        dockerFileTarReader,
-		buildOptions, 
-	)	
+	hostConfig := &container.HostConfig{
+		PortBindings: nat.PortMap{
+			"22/tcp": []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+					HostPort: fmt.Sprint(d.SSHPort),
+				},
+			},
+			"6901/tcp": []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+					HostPort: fmt.Sprint(d.VNCPort),
+				},
+			},
+		},
+	}
+
+	res, err := dockerClient.ContainerCreate(ctx,config,hostConfig,
+		nil,nil,"")
 
 	if err != nil {
 		return err
 	}
 
-	// Read the STDOUT from the build process
-	defer imageBuildResponse.Body.Close()
-	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
+	err = dockerClient.ContainerStart(ctx, res.ID, types.ContainerStartOptions{})
+
 	if err != nil {
 		return err
 	}
@@ -139,78 +154,24 @@ func BuildImage(client *client.Client, tags []string, dockerfile string) error{
 }
 
 
-// Taken from (https://medium.com/@Frikkylikeme/controlling-docker-with-golang-code-b213d9699998)
-// Runs Docker image 
-func RunContainer(client *client.Client, imagename string, containername string, port string, inputEnv []string) error {
-	// Define a PORT opening
-	newport, err := natting.NewPort("tcp", port)
-	if err != nil {
-		fmt.Println("Unable to create docker port")
+func print(rd io.Reader) error {
+	var lastLine string
+
+	scanner := bufio.NewScanner(rd)
+	for scanner.Scan() {
+		lastLine = scanner.Text()
+		fmt.Println(scanner.Text())
+	}
+
+	errLine := &ErrorLine{}
+	json.Unmarshal([]byte(lastLine), errLine)
+	if errLine.Error != "" {
+		return errors.New(errLine.Error)
+	}
+
+	if err := scanner.Err(); err != nil {
 		return err
 	}
-
-	// Configured hostConfig: 
-	// https://godoc.org/github.com/docker/docker/api/types/container#HostConfig
-	hostConfig := &container.HostConfig{
-		PortBindings: natting.PortMap{
-			newport: []natting.PortBinding{
-				{
-					HostIP:   "0.0.0.0",
-					HostPort: port,
-				},
-			},
-		},
-		RestartPolicy: container.RestartPolicy{
-			Name: "always",
-		},
-		LogConfig: container.LogConfig{
-			Type:   "json-file",
-			Config: map[string]string{},
-		},
-	}
-
-	// Define Network config (why isn't PORT in here...?:
-	// https://godoc.org/github.com/docker/docker/api/types/network#NetworkingConfig
-	networkConfig := &network.NetworkingConfig{
-		EndpointsConfig: map[string]*network.EndpointSettings{},
-	}
-	gatewayConfig := &network.EndpointSettings{
-		Gateway: "gatewayname",
-	}
-	networkConfig.EndpointsConfig["bridge"] = gatewayConfig
-
-	// Define ports to be exposed (has to be same as hostconfig.portbindings.newport)
-	exposedPorts := map[natting.Port]struct{}{
-		newport: struct{}{},
-	}
-
-	// Configuration 
-	// https://godoc.org/github.com/docker/docker/api/types/container#Config
-	config := &container.Config{
-		Image:        imagename,
-		Env: 		  inputEnv,
-		ExposedPorts: exposedPorts,
-		Hostname:     fmt.Sprintf("%s-hostnameexample", imagename),
-	}
-
-	// Creating the actual container. This is "nil,nil,nil" in every example.
-	cont, err := client.ContainerCreate(
-		context.Background(),
-		config,
-		hostConfig,
-		networkConfig,
-		containername,
-	)
-
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	// Run the actual container 
-	client.ContainerStart(context.Background(), cont.ID, types.ContainerStartOptions{})
-	log.Printf("Container %s is created", cont.ID)
-
 
 	return nil
 }
