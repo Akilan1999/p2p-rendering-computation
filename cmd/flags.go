@@ -5,13 +5,13 @@ import (
 )
 
 var Mode,IpAddress string
-var List_servers, Ip_table bool
+var List_servers, Ip_table, Abspath bool
 
 var AppConfigFlags = []cli.Flag{
 	// Deprecated to be implemented using GRPC
 	&cli.StringFlag{
 		Name:        "Mode",
-		Value:       "server",
+		Value:       "client",
 		Usage:       "Specifies mode of running",
 		EnvVars: []string{"P2P_MODE"},
 		Destination: &Mode,
@@ -27,5 +27,11 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Creates Docker container on the selected server",
 		EnvVars: []string{"CREATE_VM"},
 		Destination: &IpAddress,
+	},
+	&cli.BoolFlag{
+		Name:        "FilePath",
+		Usage:       "Testing for absolute path",
+		EnvVars: []string{"CREATE_VM"},
+		Destination: &Abspath,
 	},
 }

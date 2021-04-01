@@ -18,7 +18,10 @@ import (
 
 type DockerVM struct {
 	 SSHPort int `json:"SSHPort"`
+	 SSHUsername string `json:"SSHUsername"`
+	 SSHPassword string `json:"SSHPassword"`
 	 VNCPort int `json:"VNCPort"`
+	 VNCPassword string `json:"VNCPassword"`
 	 ID string `json:"ID"`
 	 TagName string `json:"TagName"`
 	 ImagePath string `json:"ImagePath"`
@@ -50,10 +53,15 @@ func BuildRunContainer() (*DockerVM,error) {
 	// Sets Free port to Struct
 	RespDocker.SSHPort = Ports[0]
 	RespDocker.VNCPort = Ports[1]
+	// Sets appropriate username and password to the
+	// variables in the struct
+	RespDocker.SSHUsername = "master"
+	RespDocker.SSHPassword = "password"
+	RespDocker.VNCPassword = "vncpassword"
 
 	//Default parameters
 	RespDocker.TagName = "p2p-ubuntu"
-	RespDocker.ImagePath = "./containers/docker-ubuntu-sshd/"
+	RespDocker.ImagePath = "server/docker/containers/docker-ubuntu-sshd/"
 
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())

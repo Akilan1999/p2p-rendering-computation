@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	//"fmt"
@@ -31,7 +32,18 @@ func Server() {
 	})
 
 
+	r.GET("/startcontainer", func(c *gin.Context) {
 
+		resp, err := docker.BuildRunContainer()
+
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
+		c.JSON(http.StatusOK, resp)
+	})
+
+	// Future feature
 	/*r.GET("/create_vm/:virtualization", func(c *gin.Context) {
 		virtualization := c.Param("virtualization")
 		// Runs based on Preallocated VM size
