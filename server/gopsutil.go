@@ -14,6 +14,7 @@ type SysInfo struct {
     CPU      string `bson:cpu`
     RAM      uint64 `bson:ram`
     Disk     uint64 `bson:disk`
+    GPU      *Query  `xml: GpuInfo`
 }
 
 func ServerInfo() interface{}{
@@ -37,6 +38,12 @@ func ServerInfo() interface{}{
     info.CPU = cpuStat[0].ModelName
     info.RAM = vmStat.Total / 1024 / 1024
     info.Disk = diskStat.Total / 1024 / 1024
+
+	gpu, err := GPUInfo()
+
+	if err == nil {
+		info.GPU = gpu
+	}
 
     return info
 
