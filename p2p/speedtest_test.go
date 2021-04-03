@@ -6,7 +6,7 @@ import (
 
 // To run this test ip_table.json must be populated
 func TestServer_SpeedTest(t *testing.T) {
-	err := SpeedTest()
+	err := LocalSpeedTestIpTable()
 	if err != nil {
 		t.Fatal(err)
 	}

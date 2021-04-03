@@ -33,6 +33,8 @@ type GpuClock struct {
 	GpuMemClock string `xml:"mem_clock"`
 }
 
+// Gets GPU information by calling nvidia-smi
+// in XML output
 func GPUInfo()(*Query,error) {
 	out, err := exec.Command("nvidia-smi", "-q", "-x").Output()
 

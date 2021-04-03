@@ -2,36 +2,34 @@ package p2p
 
 import "fmt"
 
-func SpeedTest() error{
+// Runs a speed test and does updates IP tables accordingly
+func (ip *IpAddresses)SpeedTest() error{
 
-	targets, err := ReadIpTable()
-
-	if err != nil {
-		return err
-	}
-
-	for i, _ := range targets.IpAddress {
+	for i, _ := range ip.IpAddress {
 
 		// Ping Test
-		err = targets.IpAddress[i].PingTest()
+		err := ip.IpAddress[i].PingTest()
 		if err != nil {
-			return err
+			// Remove IP address of element not pingable 
+			ip.IpAddress = append(ip.IpAddress[:i], ip.IpAddress[i+1:]...)
+			// Proceed to next element in the array  
+			continue
 		}
 
 		//Upload Speed Test
-		err = targets.IpAddress[i].UploadSpeed()
+		err = ip.IpAddress[i].UploadSpeed()
 		if err != nil {
 			return err
 		}
 
-		err = targets.IpAddress[i].DownloadSpeed()
+		err = ip.IpAddress[i].DownloadSpeed()
 		if err != nil {
 			return err
 		}
-		fmt.Println(targets.IpAddress[i].Latency)
+		fmt.Println(ip.IpAddress[i].Latency)
 	}
 
-	err = targets.WriteIpTable()
+	err := ip.WriteIpTable()
 	if err != nil {
 		return err
 	}
@@ -39,4 +37,39 @@ func SpeedTest() error{
 	return nil
 }
 
+// Called when ip tables from client/server is also passed on
+func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
+	targets, err := ReadIpTable()
 
+	if err != nil {
+		return err
+	}
+
+    // Appends all IP addresses
+	for i, _ := range targets.IpAddress {
+		ip.IpAddress = append(ip.IpAddress, targets.IpAddress[i])
+	}
+
+	err = ip.SpeedTest()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Runs speed test in iptables locally only
+func LocalSpeedTestIpTable() error {
+	targets, err := ReadIpTable()
+	if err != nil {
+		return err
+	}
+
+	err = targets.SpeedTest()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
