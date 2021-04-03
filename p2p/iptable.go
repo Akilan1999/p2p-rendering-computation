@@ -21,6 +21,7 @@ type IpAddress struct {
 	Upload float64 `json:"upload"`
 }
 
+// Read data from Ip tables from json file
 func ReadIpTable()(*IpAddresses ,error){
 
 	jsonFile, err := os.Open("/etc/p2p-rendering/ip_table.json")
@@ -45,6 +46,7 @@ func ReadIpTable()(*IpAddresses ,error){
     return &ipAddresses, nil
 }
 
+// Write to IP table json file
 func (i *IpAddresses) WriteIpTable() error {
 	file, err := json.MarshalIndent(i, "", " ")
 	if err != nil {
@@ -59,6 +61,7 @@ func (i *IpAddresses) WriteIpTable() error {
 	return nil
 }
 
+// Print Ip table data for Cli
 func PrintIpTable() error {
 	table, err := ReadIpTable()
 

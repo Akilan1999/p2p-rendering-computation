@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -31,7 +32,24 @@ func Server() {
 		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 	})
 
+	//Gets Ip Table from server node
+	r.GET("/IpTable", func(c *gin.Context) {
+		// Runs speed test to return only servers in the IP table pingable
+		err := p2p.SpeedTest()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
+		// Reads IP addresses from ip table
+		IpAddresses,err := p2p.ReadIpTable()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
+
+		c.JSON(http.StatusOK, IpAddresses)
+	})
+
+    // Starts docker container in server
 	r.GET("/startcontainer", func(c *gin.Context) {
 
 		resp, err := docker.BuildRunContainer()
