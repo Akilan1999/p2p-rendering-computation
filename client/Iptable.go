@@ -54,7 +54,7 @@ func UpdateIpTableListClient() error {
 			// Check if IP addresses is there in the struct DoNotRead
 			Exists := false
 			for k, _ := range DoNotRead.IpAddress {
-				if DoNotRead.IpAddress[k].Ipv4 == Addresses.IpAddress[i].Ipv4 {
+				if DoNotRead.IpAddress[k].Ipv4 == Addresses.IpAddress[j].Ipv4 {
 					Exists = true
 					break
 				}
