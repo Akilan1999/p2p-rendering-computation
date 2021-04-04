@@ -34,8 +34,14 @@ func Server() {
 
 	//Gets Ip Table from server node
 	r.GET("/IpTable", func(c *gin.Context) {
+
+		//jsonData, err := ioutil.ReadAll(c.Request.Body)
+		//if err != nil {
+		//	c.String(http.StatusOK, fmt.Sprint(err))
+		//}
+
 		// Runs speed test to return only servers in the IP table pingable
-		err := p2p.SpeedTest()
+		err := p2p.LocalSpeedTestIpTable()
 		if err != nil {
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}

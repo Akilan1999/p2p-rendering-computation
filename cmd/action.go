@@ -15,8 +15,14 @@ var CliAction = func(ctx *cli.Context) error {
 		//server.Rpc()
 	}
 
-	//Listing servers avaliable
-	if List_servers {
+	//Listing servers and also updates IP tables (Default 3 hops)
+	if ListServers {
+
+		err := client.UpdateIpTableListClient()
+		if err != nil {
+			fmt.Print(err)
+		}
+
 		p2p.PrintIpTable()
 	}
 
