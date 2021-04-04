@@ -5,7 +5,7 @@ import (
 )
 
 var Mode,IpAddress string
-var List_servers, Ip_table, Abspath bool
+var ListServers, Ip_table, Abspath bool
 
 var AppConfigFlags = []cli.Flag{
 	// Deprecated to be implemented using GRPC
@@ -20,7 +20,7 @@ var AppConfigFlags = []cli.Flag{
 		Name:        "ListServers",
 		Usage:       "List servers which can render tasks",
 		EnvVars: []string{"LIST_SERVERS"},
-		Destination: &List_servers,
+		Destination: &ListServers,
 	},
 	&cli.StringFlag{
 		Name:        "CreateVM",
@@ -31,7 +31,7 @@ var AppConfigFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:        "FilePath",
 		Usage:       "Testing for absolute path",
-		EnvVars: []string{"CREATE_VM"},
 		Destination: &Abspath,
 	},
+
 }
