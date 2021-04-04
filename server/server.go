@@ -19,7 +19,7 @@ func Server() {
 
 	// Speed test with 50 mbps
 	r.GET("/50", func(c *gin.Context){
-		c.File("server/50.bin")
+		c.File("/etc/p2p-rendering/50.bin")
 	})
 
 	// Route build to do a speed test

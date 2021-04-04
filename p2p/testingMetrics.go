@@ -94,7 +94,7 @@ func (s *IpAddress)DownloadSpeed() error {
 
 func (s *IpAddress)UploadSpeed() error {
 	start := time.Now()
-	b, w := createMultipartFormData("file","50.bin")
+	b, w := createMultipartFormData("file","/etc/p2p-rendering/50.bin")
 
 	req, err := http.NewRequest("GET", "http://" + s.Ipv4 + ":8088/upload", &b)
 	if err != nil {
