@@ -4,7 +4,7 @@ Note: To [read more about the functions](https://pkg.go.dev/git.sr.ht/~akilan199
 
 ## Functions of the Client Module
 - [Interact with the Server Api](#functions-of-the-client-module)
-- [Decision maker on how the ip table is created or updated](##decision-maker-on-how-the-ip-table-is-created)
+- [Decision maker on how the ip table is created or updated](#decision-maker-on-how-the-ip-table-is-created)
 
 
 ## Interact with the Server Api
