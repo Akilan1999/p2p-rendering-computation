@@ -1,5 +1,4 @@
-P2P rendering and computation
-=============================
+# P2P rendering and computation
 
 This project focuses on running heavy tasks which a regular computer can’t run easily such as high
 spec video games, rendering 3D animations , protein folding simulations. In this project the major
