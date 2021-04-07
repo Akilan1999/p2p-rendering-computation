@@ -6,7 +6,6 @@ import "fmt"
 func (ip *IpAddresses)SpeedTest() error{
 
 	for i, _ := range ip.IpAddress {
-
 		// Ping Test
 		err := ip.IpAddress[i].PingTest()
 		if err != nil {
@@ -40,13 +39,29 @@ func (ip *IpAddresses)SpeedTest() error{
 // Called when ip tables from client/server is also passed on
 func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 	targets, err := ReadIpTable()
-
 	if err != nil {
 		return err
 	}
 
+	var DoNotRead IpAddresses
     // Appends all IP addresses
 	for i, _ := range targets.IpAddress {
+
+		Exists := false
+		for k := range DoNotRead.IpAddress {
+			if DoNotRead.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 {
+				Exists = true
+				break
+			}
+		}
+
+		// If the struct exists then continues
+		if Exists {
+			continue
+		}
+
+		fmt.Print("lol")
+
 		ip.IpAddress = append(ip.IpAddress, targets.IpAddress[i])
 	}
 
@@ -73,3 +88,4 @@ func LocalSpeedTestIpTable() error {
 
 	return nil
 }
+
