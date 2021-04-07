@@ -45,6 +45,10 @@ func PrintStartContainer(d *docker.DockerVM){
 	fmt.Println("SSH password: " + fmt.Sprint(d.SSHPassword))
 	fmt.Println("VNC port: " + fmt.Sprint(d.VNCPort))
 	fmt.Println("VNC password: " + fmt.Sprint(d.VNCPassword))
+	fmt.Println("Ports Open")
+	for i := range d.Ports {
+		fmt.Println(d.Ports[i])
+	}
 }
 
 

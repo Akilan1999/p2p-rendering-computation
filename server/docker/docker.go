@@ -56,7 +56,6 @@ func BuildRunContainer(NumPorts int) (*DockerVM,error) {
 	for i := 2; i < count; i++ {
 		RespDocker.Ports = append(RespDocker.Ports, Ports[i])
 	}
-	//fmt.Println(Ports[0])
 
 	// Sets Free port to Struct
 	RespDocker.SSHPort = Ports[0]
@@ -66,7 +65,6 @@ func BuildRunContainer(NumPorts int) (*DockerVM,error) {
 	RespDocker.SSHUsername = "master"
 	RespDocker.SSHPassword = "password"
 	RespDocker.VNCPassword = "vncpassword"
-	RespDocker.Ports = Ports
 
 	//Default parameters
 	RespDocker.TagName = "p2p-ubuntu"
@@ -127,14 +125,18 @@ func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 }
 
 // Starts container and assigns port numbers
+// Sample Docker run Command
+// docker run -d=true --name=Test123 --restart=always -p 3443:6901 -p 3453:22
+//-p 3434:3434 -p 3245:3245 -v=/opt/data:/data p2p-ubuntu /start > /dev/null
 func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 
+	//Exposed ports for docker config file
+	var ExposedPort nat.PortSet
 
-	config := &container.Config{
-		Image : d.TagName,
-		Entrypoint: [] string {"/dockerstartup/vnc_startup.sh","/start"},
-		Volumes: map[string]struct{}{"/opt/data:/data":{}},
+	ExposedPort = nat.PortSet{
+		"22/tcp": struct{}{},
+		"6901/tcp": struct{}{},
 	}
 
 	// Port forwarding for VNC and SSH ports
@@ -153,13 +155,15 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		},
 	}
 
-	// Opening other ports (At the current moment only TCP ports can be
-	// opened
 	for i := range d.Ports {
+
 		Port, err := nat.NewPort("tcp",fmt.Sprint(d.Ports[i]))
 		if err != nil {
 			return err
 		}
+
+		// Exposed Ports
+		ExposedPort[Port] = struct{}{}
 
 		PortForwarding[Port] = []nat.PortBinding{
 			{
@@ -169,6 +173,13 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		}
 	}
 
+
+	config := &container.Config{
+		Image : d.TagName,
+		Entrypoint: [] string {"/dockerstartup/vnc_startup.sh","/start"},
+		Volumes: map[string]struct{}{"/opt/data:/data":{}},
+		ExposedPorts: ExposedPort,
+	}
 	hostConfig := &container.HostConfig{
 		PortBindings: PortForwarding,
 	}
@@ -196,7 +207,6 @@ func print(rd io.Reader) error {
 	scanner := bufio.NewScanner(rd)
 	for scanner.Scan() {
 		lastLine = scanner.Text()
-		fmt.Println(scanner.Text())
 	}
 
 	errLine := &ErrorLine{}
