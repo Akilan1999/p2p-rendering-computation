@@ -77,8 +77,16 @@ func Server() error{
 
     // Starts docker container in server
 	r.GET("/startcontainer", func(c *gin.Context) {
+		// Get Number of ports to open
+		Ports := c.DefaultQuery("ports","0")
+        var PortsInt int
 
-		resp, err := docker.BuildRunContainer()
+		// Convert Get Request value to int
+		fmt.Sscanf(Ports, "%d", &PortsInt)
+
+		// Creates container and returns back result to
+		// access container
+		resp, err := docker.BuildRunContainer(PortsInt)
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))

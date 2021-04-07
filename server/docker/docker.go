@@ -25,6 +25,7 @@ type DockerVM struct {
 	 ID string `json:"ID"`
 	 TagName string `json:"TagName"`
 	 ImagePath string `json:"ImagePath"`
+	 Ports []int `json:"OpenPorts"`
 }
 
 type ErrorLine struct {
@@ -38,16 +39,23 @@ type ErrorDetail struct {
 
 var dockerRegistryUserID = ""
 
-func BuildRunContainer() (*DockerVM,error) {
+func BuildRunContainer(NumPorts int) (*DockerVM,error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
+	// Count: 2 allocated ports for VNC and SSH + other ports
+	// to open
+	count := NumPorts + 2
+
 	// Gets 2 TCP ports empty
-	Ports, err := freeport.GetFreePorts(2)
+	Ports, err := freeport.GetFreePorts(count)
 	if err != nil {
 		return nil,err
 	}
 
+	for i := 2; i < count; i++ {
+		RespDocker.Ports = append(RespDocker.Ports, Ports[i])
+	}
 	//fmt.Println(Ports[0])
 
 	// Sets Free port to Struct
@@ -58,6 +66,7 @@ func BuildRunContainer() (*DockerVM,error) {
 	RespDocker.SSHUsername = "master"
 	RespDocker.SSHPassword = "password"
 	RespDocker.VNCPassword = "vncpassword"
+	RespDocker.Ports = Ports
 
 	//Default parameters
 	RespDocker.TagName = "p2p-ubuntu"
@@ -117,7 +126,7 @@ func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 	return nil
 }
 
-// Starts container and assigns IP addresses
+// Starts container and assigns port numbers
 func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 
@@ -128,21 +137,40 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		Volumes: map[string]struct{}{"/opt/data:/data":{}},
 	}
 
-	hostConfig := &container.HostConfig{
-		PortBindings: nat.PortMap{
-			"22/tcp": []nat.PortBinding{
-				{
-					HostIP: "0.0.0.0",
-					HostPort: fmt.Sprint(d.SSHPort),
-				},
-			},
-			"6901/tcp": []nat.PortBinding{
-				{
-					HostIP: "0.0.0.0",
-					HostPort: fmt.Sprint(d.VNCPort),
-				},
+	// Port forwarding for VNC and SSH ports
+	PortForwarding := nat.PortMap{
+		"22/tcp": []nat.PortBinding{
+			{
+				HostIP: "0.0.0.0",
+				HostPort: fmt.Sprint(d.SSHPort),
 			},
 		},
+		"6901/tcp": []nat.PortBinding{
+			{
+				HostIP: "0.0.0.0",
+				HostPort: fmt.Sprint(d.VNCPort),
+			},
+		},
+	}
+
+	// Opening other ports (At the current moment only TCP ports can be
+	// opened
+	for i := range d.Ports {
+		Port, err := nat.NewPort("tcp",fmt.Sprint(d.Ports[i]))
+		if err != nil {
+			return err
+		}
+
+		PortForwarding[Port] = []nat.PortBinding{
+			{
+				HostIP: "0.0.0.0",
+				HostPort: fmt.Sprint(d.Ports[i]),
+			},
+		}
+	}
+
+	hostConfig := &container.HostConfig{
+		PortBindings: PortForwarding,
 	}
 
 	res, err := dockerClient.ContainerCreate(ctx,config,hostConfig,
