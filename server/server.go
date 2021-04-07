@@ -1,15 +1,17 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
 	//"fmt"
 )
 
-func Server() {
+func Server() error{
 	r := gin.Default()
 
 	// Gets default information of the server
@@ -33,15 +35,33 @@ func Server() {
 	})
 
 	//Gets Ip Table from server node
-	r.GET("/IpTable", func(c *gin.Context) {
+	r.POST("/IpTable", func(c *gin.Context) {
 
-		//jsonData, err := ioutil.ReadAll(c.Request.Body)
-		//if err != nil {
-		//	c.String(http.StatusOK, fmt.Sprint(err))
-		//}
+		// Variable to store IP table information
+		var IPTable p2p.IpAddresses
+
+		// Receive file from POST request
+		body, err := c.FormFile("json")
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
+
+		// Open file
+		open, err := body.Open()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
+
+		// Open received file
+		file, err := ioutil.ReadAll(open)
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
+
+		json.Unmarshal(file,&IPTable)
 
 		// Runs speed test to return only servers in the IP table pingable
-		err := p2p.LocalSpeedTestIpTable()
+		err = IPTable.SpeedTestUpdatedIPTable()
 		if err != nil {
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}
@@ -86,5 +106,10 @@ func Server() {
 	})*/
 
 	// Port running on
-	r.Run(":8088")
+	err := r.Run(":8088")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
