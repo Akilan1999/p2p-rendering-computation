@@ -60,8 +60,6 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 			continue
 		}
 
-		fmt.Print("lol")
-
 		ip.IpAddress = append(ip.IpAddress, targets.IpAddress[i])
 	}
 
