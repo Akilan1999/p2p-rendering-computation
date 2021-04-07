@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	serverPort = "8089"
+	serverPort = "8088"
 )
 
 
@@ -18,12 +18,16 @@ var client = http.Client{}
 
 // Start container using REST api Implementation
 // From the selected server IP address
-func StartContainer(Ip string) (*docker.DockerVM ,error) {
-	URL := "http://" + Ip + ":8088/startcontainer"
+// TODO: Test cases for this function
+func StartContainer(Ip string,Num_ports int) (*docker.DockerVM ,error) {
+	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(Num_ports)
 	resp, err := http.Get(URL)
 
 	// Convert response to byte value
-	byteValue, _ := ioutil.ReadAll(resp.Body)
+	byteValue, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil,err
+	}
 
 	// Create variable for result response type
 	var dockerResult docker.DockerVM
@@ -45,7 +49,7 @@ func PrintStartContainer(d *docker.DockerVM){
 	fmt.Println("SSH password: " + fmt.Sprint(d.SSHPassword))
 	fmt.Println("VNC port: " + fmt.Sprint(d.VNCPort))
 	fmt.Println("VNC password: " + fmt.Sprint(d.VNCPassword))
-	fmt.Println("Ports Open")
+	fmt.Println("Ports Open (All TCP ports):")
 	for i := range d.Ports {
 		fmt.Println(d.Ports[i])
 	}

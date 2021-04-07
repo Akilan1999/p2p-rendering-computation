@@ -4,8 +4,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var Mode,IpAddress string
-var ListServers, Ip_table, Abspath bool
+var (
+	IpAddress string
+	Ports     string
+	Mode      string
+)
+var ListServers bool
 
 var AppConfigFlags = []cli.Flag{
 	// Deprecated to be implemented using GRPC
@@ -28,10 +32,10 @@ var AppConfigFlags = []cli.Flag{
 		EnvVars: []string{"CREATE_VM"},
 		Destination: &IpAddress,
 	},
-	&cli.BoolFlag{
-		Name:        "FilePath",
-		Usage:       "Testing for absolute path",
-		Destination: &Abspath,
+	&cli.StringFlag{
+		Name:        "Ports",
+		Usage:       "Number of ports to open for the Docker Container",
+		EnvVars: []string{"NUM_PORTS"},
+		Destination: &Ports,
 	},
-
 }

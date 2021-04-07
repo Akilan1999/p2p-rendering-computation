@@ -28,7 +28,16 @@ var CliAction = func(ctx *cli.Context) error {
 
 	//Call function to create Docker container
 	if IpAddress != "" {
-		imageRes, err := client.StartContainer(IpAddress)
+
+		var PortsInt int
+		PortsInt = 0
+
+		if Ports != "" {
+			// Convert Get Request value to int
+			fmt.Sscanf(Ports, "%d", &PortsInt)
+		}
+
+		imageRes, err := client.StartContainer(IpAddress,PortsInt)
 
 		if err != nil {
 			fmt.Print(err)

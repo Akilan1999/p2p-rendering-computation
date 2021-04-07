@@ -187,6 +187,9 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	res, err := dockerClient.ContainerCreate(ctx,config,hostConfig,
 		nil,nil,"")
 
+	// Set response ID
+	d.ID = res.ID
+
 	if err != nil {
 		return err
 	}
@@ -199,6 +202,8 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 	return nil
 }
+
+// TODO: Implement and remove docker instance running
 
 
 func print(rd io.Reader) error {
