@@ -1,7 +1,5 @@
 package p2p
 
-import "fmt"
-
 // Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
 
@@ -25,7 +23,6 @@ func (ip *IpAddresses)SpeedTest() error{
 		if err != nil {
 			return err
 		}
-		fmt.Println(ip.IpAddress[i].Latency)
 	}
 
 	err := ip.WriteIpTable()
@@ -43,7 +40,9 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 		return err
 	}
 
-	var DoNotRead IpAddresses
+	// To ensure struct has no duplicates IP addresses
+	DoNotRead := targets
+
     // Appends all IP addresses
 	for i, _ := range targets.IpAddress {
 

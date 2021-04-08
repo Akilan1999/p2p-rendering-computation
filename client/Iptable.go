@@ -45,13 +45,16 @@ func UpdateIpTableListClient() error {
 		return err
 	}
 
-	// IP addresses to not read from
-	var DoNotRead p2p.IpAddresses
+	// IP addresses to not append to struct due to
+	// duplication
+
+	Addresses, err := p2p.ReadIpTable()
+	DoNotRead := Addresses
 
 	// Run loop 3 times
 	for i := 0; i < 3; i++ {
 		// Gets information from IP table
-		Addresses, err := p2p.ReadIpTable()
+		Addresses, err = p2p.ReadIpTable()
 		if err != nil {
 			return err
 		}
