@@ -42,7 +42,18 @@ var CliAction = func(ctx *cli.Context) error {
 		if err != nil {
 			fmt.Print(err)
 		}
-		client.PrintStartContainer(imageRes)
+		client.PrettyPrint(imageRes)
+	}
+
+	//Call if specs flag is called
+	if Specs != "" {
+		specs, err := client.GetSpecs(Specs)
+		if err != nil {
+			return err
+		}
+
+		// Pretty print
+		client.PrettyPrint(specs)
 	}
 
 

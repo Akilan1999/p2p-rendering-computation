@@ -9,6 +9,7 @@ var (
 	IpAddress string
 	Ports     string
 	Mode      string
+	Specs      string
 	GPU         bool
 	ListServers bool
 )
@@ -45,5 +46,11 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Create Docker Containers to access GPU",
 		EnvVars: []string{"USE_GPU"},
 		Destination: &GPU,
+	},
+	&cli.StringFlag{
+		Name:        "Specs",
+		Usage:       "Specs of the server node",
+		EnvVars: []string{"SPECS"},
+		Destination: &Specs,
 	},
 }
