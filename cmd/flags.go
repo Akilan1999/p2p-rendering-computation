@@ -4,12 +4,14 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// Variables declared for CLI
 var (
 	IpAddress string
 	Ports     string
 	Mode      string
+	GPU         bool
+	ListServers bool
 )
-var ListServers bool
 
 var AppConfigFlags = []cli.Flag{
 	// Deprecated to be implemented using GRPC
@@ -37,5 +39,11 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Number of ports to open for the Docker Container",
 		EnvVars: []string{"NUM_PORTS"},
 		Destination: &Ports,
+	},
+	&cli.BoolFlag{
+		Name:        "GPU",
+		Usage:       "Create Docker Containers to access GPU",
+		EnvVars: []string{"USE_GPU"},
+		Destination: &GPU,
 	},
 }
