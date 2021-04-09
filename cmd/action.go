@@ -37,7 +37,7 @@ var CliAction = func(ctx *cli.Context) error {
 			fmt.Sscanf(Ports, "%d", &PortsInt)
 		}
 
-		imageRes, err := client.StartContainer(IpAddress,PortsInt)
+		imageRes, err := client.StartContainer(IpAddress,PortsInt,GPU)
 
 		if err != nil {
 			fmt.Print(err)

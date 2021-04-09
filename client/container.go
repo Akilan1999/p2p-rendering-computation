@@ -6,6 +6,7 @@ import (
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -19,8 +20,9 @@ var client = http.Client{}
 // Start container using REST api Implementation
 // From the selected server IP address
 // TODO: Test cases for this function
-func StartContainer(Ip string,Num_ports int) (*docker.DockerVM ,error) {
-	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(Num_ports)
+func StartContainer(Ip string,Num_ports int, GPU bool) (*docker.DockerVM ,error) {
+	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
+	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(Num_ports) + "&GPU=" + strconv.FormatBool(GPU)
 	resp, err := http.Get(URL)
 
 	// Convert response to byte value

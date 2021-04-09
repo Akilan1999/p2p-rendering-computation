@@ -2,6 +2,7 @@ package docker
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -11,8 +12,10 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/go-connections/nat"
+	"github.com/lithammer/shortuuid"
 	"github.com/phayes/freeport"
 	"io"
+	"os/exec"
 	"time"
 )
 
@@ -26,6 +29,7 @@ type DockerVM struct {
 	 TagName string `json:"TagName"`
 	 ImagePath string `json:"ImagePath"`
 	 Ports []int `json:"OpenPorts"`
+	 GPU string `json:"GPU"`
 }
 
 type ErrorLine struct {
@@ -39,7 +43,7 @@ type ErrorDetail struct {
 
 var dockerRegistryUserID = ""
 
-func BuildRunContainer(NumPorts int) (*DockerVM,error) {
+func BuildRunContainer(NumPorts int, GPU string) (*DockerVM,error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
@@ -56,6 +60,9 @@ func BuildRunContainer(NumPorts int) (*DockerVM,error) {
 	for i := 2; i < count; i++ {
 		RespDocker.Ports = append(RespDocker.Ports, Ports[i])
 	}
+
+	// Sets if GPU is selected or not
+	RespDocker.GPU =GPU
 
 	// Sets Free port to Struct
 	RespDocker.SSHPort = Ports[0]
@@ -126,8 +133,9 @@ func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 
 // Starts container and assigns port numbers
 // Sample Docker run Command
-// docker run -d=true --name=Test123 --restart=always -p 3443:6901 -p 3453:22
-//-p 3434:3434 -p 3245:3245 -v=/opt/data:/data p2p-ubuntu /start > /dev/null
+// docker run -d=true --name=Test123 --restart=always --gpus all
+//-p 3443:6901 -p 3453:22 -p 3434:3434 -p 3245:3245 -v=/opt/data:/data
+//p2p-ubuntu /start > /dev/null
 func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 
@@ -173,33 +181,53 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		}
 	}
 
+	// The first mode runs using the Docker Api. As the API supports using
+	// CPU and uses a shell script for GPU call because till this point of
+	// implementation docker api does not support the flag "--gpu all"
+    if d.GPU != "true" {
+		config := &container.Config{
+			Image:        d.TagName,
+			Entrypoint:   []string{"/dockerstartup/vnc_startup.sh", "/start"},
+			Volumes:      map[string]struct{}{"/opt/data:/data": {}},
+			ExposedPorts: ExposedPort,
+		}
+		hostConfig := &container.HostConfig{
+			PortBindings: PortForwarding,
+		}
 
-	config := &container.Config{
-		Image : d.TagName,
-		Entrypoint: [] string {"/dockerstartup/vnc_startup.sh","/start"},
-		Volumes: map[string]struct{}{"/opt/data:/data":{}},
-		ExposedPorts: ExposedPort,
+		res, err := dockerClient.ContainerCreate(ctx, config, hostConfig,
+			nil, nil, "")
+
+		// Set response ID
+		d.ID = res.ID
+
+		if err != nil {
+			return err
+		}
+
+		err = dockerClient.ContainerStart(ctx, res.ID, types.ContainerStartOptions{})
+
+		if err != nil {
+			return err
+		}
+	} else {
+		// Generate Random ID
+		id := shortuuid.New()
+		d.ID = id
+
+		var cmd bytes.Buffer
+		cmd.WriteString("docker run -d=true --name="+ id +" --restart=always --gpus all -p " + fmt.Sprint(d.VNCPort) + ":" + "6901 " + "-p " + fmt.Sprint(d.SSHPort) + ":" + "22 ")
+		for i := range d.Ports {
+			cmd.WriteString("-p " + fmt.Sprint(d.Ports[i]) + ":" + fmt.Sprint(d.Ports[i]) + " ")
+		}
+		cmd.WriteString("-v=/opt/data:/data p2p-ubuntu /start > /dev/null")
+		//"-v=/opt/data:/data p2p-ubuntu /start > /dev/null"
+		cmdStr := cmd.String()
+		_, err := exec.Command("/bin/sh", "-c", cmdStr).Output()
+		if err != nil {
+			return err
+		}
 	}
-	hostConfig := &container.HostConfig{
-		PortBindings: PortForwarding,
-	}
-
-	res, err := dockerClient.ContainerCreate(ctx,config,hostConfig,
-		nil,nil,"")
-
-	// Set response ID
-	d.ID = res.ID
-
-	if err != nil {
-		return err
-	}
-
-	err = dockerClient.ContainerStart(ctx, res.ID, types.ContainerStartOptions{})
-
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

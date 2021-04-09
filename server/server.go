@@ -36,9 +36,13 @@ func Server() error{
 
 	//Gets Ip Table from server node
 	r.POST("/IpTable", func(c *gin.Context) {
-
+		// Getting IPV4 address of client
+		var ClientHost p2p.IpAddress
+		ClientHost.Ipv4 = c.ClientIP()
 		// Variable to store IP table information
 		var IPTable p2p.IpAddresses
+		//Add Client IP address to IPTable struct
+		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
 
 		// Receive file from POST request
 		body, err := c.FormFile("json")
@@ -77,8 +81,9 @@ func Server() error{
 
     // Starts docker container in server
 	r.GET("/startcontainer", func(c *gin.Context) {
-		// Get Number of ports to open
+		// Get Number of ports to open and whether to use GPU or not
 		Ports := c.DefaultQuery("ports","0")
+		GPU := c.DefaultQuery("GPU","false")
         var PortsInt int
 
 		// Convert Get Request value to int
@@ -86,7 +91,7 @@ func Server() error{
 
 		// Creates container and returns back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt)
+		resp, err := docker.BuildRunContainer(PortsInt,GPU)
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))

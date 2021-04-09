@@ -20,7 +20,7 @@ type Docker struct {
 // Starts container using RPC calls
 func (l *Listener) StartContainer( reply *Docker) error {
 	fmt.Print("here")
-	vm, err := docker.BuildRunContainer(3)
+	vm, err := docker.BuildRunContainer(3,"false")
 	if err != nil {
 		return err
 	}
