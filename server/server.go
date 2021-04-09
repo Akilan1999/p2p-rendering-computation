@@ -94,6 +94,7 @@ func Server() error{
 		resp, err := docker.BuildRunContainer(PortsInt,GPU)
 
 		if err != nil {
+
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 

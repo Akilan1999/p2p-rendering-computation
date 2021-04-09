@@ -16,13 +16,12 @@ const (
 
 var client = http.Client{}
 
-
-// Start container using REST api Implementation
+// StartContainer Start container using REST api Implementation
 // From the selected server IP address
 // TODO: Test cases for this function
-func StartContainer(Ip string,Num_ports int, GPU bool) (*docker.DockerVM ,error) {
+func StartContainer(Ip string, NumPorts int, GPU bool) (*docker.DockerVM ,error) {
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
-	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(Num_ports) + "&GPU=" + strconv.FormatBool(GPU)
+	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU)
 	resp, err := http.Get(URL)
 
 	// Convert response to byte value
@@ -43,7 +42,7 @@ func StartContainer(Ip string,Num_ports int, GPU bool) (*docker.DockerVM ,error)
 	return &dockerResult, nil
 }
 
-// Prints results Generated container
+// PrintStartContainer Prints results Generated container
 func PrintStartContainer(d *docker.DockerVM){
 	fmt.Println("ID : " + fmt.Sprint(d.ID))
 	fmt.Println("SSH port: " + fmt.Sprint(d.SSHPort))
