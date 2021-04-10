@@ -6,10 +6,12 @@ import (
 
 // Variables declared for CLI
 var (
-	IpAddress string
-	Ports     string
-	Mode      string
-	Specs      string
+	CreateVM    string
+	Ports       string
+	Mode        string
+	RemoveVM    string
+	ID          string
+	Specs       string
 	GPU         bool
 	ListServers bool
 )
@@ -33,13 +35,25 @@ var AppConfigFlags = []cli.Flag{
 		Name:        "CreateVM",
 		Usage:       "Creates Docker container on the selected server",
 		EnvVars: []string{"CREATE_VM"},
-		Destination: &IpAddress,
+		Destination: &CreateVM,
+	},
+	&cli.StringFlag{
+		Name:        "RemoveVM",
+		Usage:       "Stop and Remove Docker container",
+		EnvVars: []string{"REMOVE_VM"},
+		Destination: &RemoveVM,
+	},
+	&cli.StringFlag{
+		Name:        "ID",
+		Usage:       "Docker Container ID",
+		EnvVars: []string{"ID"},
+		Destination: &ID,
 	},
 	&cli.StringFlag{
 		Name:        "Ports",
 		Usage:       "Number of ports to open for the Docker Container",
 		EnvVars: []string{"NUM_PORTS"},
-		Destination: &Ports,
+		Destination: &ID,
 	},
 	&cli.BoolFlag{
 		Name:        "GPU",

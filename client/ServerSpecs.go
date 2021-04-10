@@ -8,6 +8,9 @@ import (
 	"net/http"
 )
 
+// GetSpecs Gets Specs from the server such CPU, GPU usage
+// and other basic information which helps set a
+// cluster of computer
 func GetSpecs(IP string)(*server.SysInfo,error) {
 	URL := "http://" + IP + ":" + serverPort + "/server_info"
 	resp, err := http.Get(URL)
@@ -33,7 +36,8 @@ func GetSpecs(IP string)(*server.SysInfo,error) {
 	return &serverSpecsResult, nil
 }
 
-// print the contents of the obj
+// PrettyPrint print the contents of the obj (
+// Reference: https://stackoverflow.com/questions/24512112/how-to-print-struct-variables-in-console
 func PrettyPrint(data interface{}) {
 	var p []byte
 	//    var err := error
