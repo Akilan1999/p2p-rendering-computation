@@ -1,7 +1,7 @@
 vendor/
 bin/
 p2p-rendering/
-./main
+main
 server/docker/__pycache__
-./p2p-rendering-computation
+p2p-rendering-computation
 config.json
