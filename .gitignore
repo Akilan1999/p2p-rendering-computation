@@ -1,0 +1,7 @@
+vendor/
+bin/
+p2p-rendering/
+./main
+server/docker/__pycache__
+./p2p-rendering-computation
+config.json

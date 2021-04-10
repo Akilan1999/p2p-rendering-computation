@@ -1,0 +1,13 @@
+P2P module
+===========
+ (Techniques to get over NAT)
+  - UPNP implementation
+  - DMZ to be used if UPNP does not work
+  - Port forwarding for future release
+
+ (Discovery of Nodes)
+  - Connect to reliable connection (that has some knowledge)
+  - Check if the connection is still open (If not instruct the server to remove from table)
+  - According speed tests
+  - Send list of servers connection open
+  - default 100 MB (to store tables of ip records)
