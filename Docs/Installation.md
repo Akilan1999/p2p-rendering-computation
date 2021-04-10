@@ -12,6 +12,7 @@ in the developer community. In the server module we use the Docker Go API to cre
 interact with the containers. 
 
 [Instructions to install docker](https://docs.docker.com/get-docker/)
+[Instructions to install docker GPU](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 ````
 Do ensure that the docker command does not need sudo to run
 ````
