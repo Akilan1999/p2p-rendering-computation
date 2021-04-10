@@ -19,10 +19,13 @@ var client = http.Client{}
 // StartContainer Start container using REST api Implementation
 // From the selected server IP address
 // TODO: Test cases for this function
-func StartContainer(Ip string, NumPorts int, GPU bool) (*docker.DockerVM ,error) {
+func StartContainer(IP string, NumPorts int, GPU bool) (*docker.DockerVM ,error) {
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
-	URL := "http://" + Ip + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU)
+	URL := "http://" + IP + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU)
 	resp, err := http.Get(URL)
+	if err != nil {
+		return nil,err
+	}
 
 	// Convert response to byte value
 	byteValue, err := ioutil.ReadAll(resp.Body)
@@ -40,6 +43,26 @@ func StartContainer(Ip string, NumPorts int, GPU bool) (*docker.DockerVM ,error)
 	}
 
 	return &dockerResult, nil
+}
+
+// RemoveContianer Stops and removes container from the server
+func RemoveContianer(IP string,ID string) error {
+	URL := "http://" + IP + ":" + serverPort + "/RemoveContainer?id=" + ID
+	resp, err := http.Get(URL)
+	if err != nil {
+		return err
+	}
+
+	// Convert response to byte value
+	byteValue, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if string(byteValue[:]) == "success" {
+		fmt.Println("success")
+	}
+	return nil
 }
 
 // PrintStartContainer Prints results Generated container

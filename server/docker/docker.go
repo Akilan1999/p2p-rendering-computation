@@ -231,8 +231,33 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	return nil
 }
 
-// TODO: Implement and remove docker instance running
+// StopAndRemoveContainer TODO: Implement and remove docker instance running
+// Stop and remove a container
+// Reference (https://gist.github.com/frikky/e2efcea6c733ea8d8d015b7fe8a91bf6)
+func StopAndRemoveContainer(containername string) error {
+	ctx := context.Background()
 
+	// Gets docker information from env variables
+	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	if err = client.ContainerStop(ctx, containername, nil); err != nil {
+		return err
+	}
+
+	removeOptions := types.ContainerRemoveOptions{
+		RemoveVolumes: true,
+		Force:         true,
+	}
+
+	if err = client.ContainerRemove(ctx, containername, removeOptions); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func print(rd io.Reader) error {
 	var lastLine string

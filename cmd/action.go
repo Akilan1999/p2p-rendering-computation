@@ -26,8 +26,16 @@ var CliAction = func(ctx *cli.Context) error {
 		p2p.PrintIpTable()
 	}
 
+	// Function called to stop and remove server from Docker
+	if RemoveVM != ""  && ID != "" {
+		err := client.RemoveContianer(RemoveVM,ID)
+		if err != nil {
+			fmt.Print(err)
+		}
+	}
+
 	//Call function to create Docker container
-	if IpAddress != "" {
+	if CreateVM != "" {
 
 		var PortsInt int
 		PortsInt = 0
@@ -37,7 +45,7 @@ var CliAction = func(ctx *cli.Context) error {
 			fmt.Sscanf(Ports, "%d", &PortsInt)
 		}
 
-		imageRes, err := client.StartContainer(IpAddress,PortsInt,GPU)
+		imageRes, err := client.StartContainer(CreateVM,PortsInt,GPU)
 
 		if err != nil {
 			fmt.Print(err)

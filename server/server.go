@@ -94,11 +94,19 @@ func Server() error{
 		resp, err := docker.BuildRunContainer(PortsInt,GPU)
 
 		if err != nil {
-
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 
 		c.JSON(http.StatusOK, resp)
+	})
+
+	//Remove container
+	r.GET("/RemoveContainer", func(c *gin.Context) {
+		ID := c.DefaultQuery("id","0")
+		if err := docker.StopAndRemoveContainer(ID); err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+		c.String(http.StatusOK, "success")
 	})
 
 	// Future feature
