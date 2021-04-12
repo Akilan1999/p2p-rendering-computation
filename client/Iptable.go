@@ -36,7 +36,7 @@ func UpdateIpTable(IpAddress string) error {
 	return nil
 }
 
-//updates IP tables (Default 3 hops) based on server information available
+// UpdateIpTableListClient updates IP tables (Default 3 hops) based on server information available
 //on the ip tables
 func UpdateIpTableListClient() error {
 	// Ensure that the IP Table has Node pingable
@@ -89,7 +89,7 @@ func UpdateIpTableListClient() error {
 	return nil
 }
 
-// Sends a file as a POST request.
+// SendPostRequest Sends a file as a POST request.
 // Reference (https://stackoverflow.com/questions/51234464/upload-a-file-with-post-request-golang)
 func SendPostRequest (url string, filename string, filetype string) ([]byte,error) {
 	file, err := os.Open(filename)
