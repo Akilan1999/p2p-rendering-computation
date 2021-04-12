@@ -1,6 +1,6 @@
 package p2p
 
-// Runs a speed test and does updates IP tables accordingly
+// SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
 
 	for i, _ := range ip.IpAddress {
@@ -33,7 +33,7 @@ func (ip *IpAddresses)SpeedTest() error{
 	return nil
 }
 
-// Called when ip tables from client/server is also passed on
+// SpeedTestUpdatedIPTable Called when ip tables from client/server is also passed on
 func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 	targets, err := ReadIpTable()
 	if err != nil {
@@ -71,7 +71,7 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 	return nil
 }
 
-// Runs speed test in iptables locally only
+// LocalSpeedTestIpTable Runs speed test in iptables locally only
 func LocalSpeedTestIpTable() error {
 	targets, err := ReadIpTable()
 	if err != nil {
