@@ -53,7 +53,7 @@ var AppConfigFlags = []cli.Flag{
 		Name:        "Ports",
 		Usage:       "Number of ports to open for the Docker Container",
 		EnvVars: []string{"NUM_PORTS"},
-		Destination: &ID,
+		Destination: &Ports,
 	},
 	&cli.BoolFlag{
 		Name:        "GPU",
