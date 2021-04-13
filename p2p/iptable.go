@@ -65,7 +65,7 @@ func (i *IpAddresses) WriteIpTable() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(config.SpeedTestFile, file, 0644)
+	err = ioutil.WriteFile(config.IPTable, file, 0644)
 	if err != nil {
 		return err
 	}

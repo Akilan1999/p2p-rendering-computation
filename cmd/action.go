@@ -38,7 +38,6 @@ var CliAction = func(ctx *cli.Context) error {
 	if CreateVM != "" {
 
 		var PortsInt int
-		PortsInt = 0
 
 		if Ports != "" {
 			// Convert Get Request value to int
