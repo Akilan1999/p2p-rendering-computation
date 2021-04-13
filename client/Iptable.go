@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"io"
 	"io/ioutil"
@@ -15,8 +16,13 @@ import (
 // Does the following to update it's IP table
 func UpdateIpTable(IpAddress string) error {
 
+	config, err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
 	resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
-		"/etc/p2p-rendering/ip_table.json",
+		config.IPTable,
 		"json")
 
 	if err != nil {
