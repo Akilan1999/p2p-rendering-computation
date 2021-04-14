@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"io"
@@ -13,7 +14,11 @@ import (
 	"path/filepath"
 )
 
-// Does the following to update it's IP table
+type IP struct {
+	Query string
+}
+
+// UpdateIpTable Does the following to update it's IP table
 func UpdateIpTable(IpAddress string) error {
 
 	config, err := config.ConfigInit()
@@ -21,13 +26,21 @@ func UpdateIpTable(IpAddress string) error {
 		return err
 	}
 
-	resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
-		config.IPTable,
-		"json")
+	client := http.Client{}
+
+	resp, err := UploadMultipartFile(client,"http://"+IpAddress+":8088/IpTable","json",config.IPTable)
 
 	if err != nil {
 		return err
 	}
+
+	//resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
+	//	config.IPTable,
+	//	"json")
+	//
+	//if err != nil {
+	//	return err
+	//}
 
 	var ipStruct p2p.IpAddresses
 	json.Unmarshal(resp, &ipStruct)
@@ -55,7 +68,7 @@ func UpdateIpTableListClient() error {
 	// duplication
 
 	Addresses, err := p2p.ReadIpTable()
-	DoNotRead := Addresses
+	var DoNotRead p2p.IpAddresses
 
 	// Run loop 3 times
 	for i := 0; i < 3; i++ {
@@ -65,11 +78,25 @@ func UpdateIpTableListClient() error {
 			return err
 		}
 
+		// Appending current machine public IP address as should not be there in IP Table
+		var PublicIP p2p.IpAddress
+		ip, err := CurrentPublicIP()
+		if err != nil {
+			return err
+		}
+		PublicIP.Ipv4 = ip
+		DoNotRead.IpAddress = append(DoNotRead.IpAddress, PublicIP)
+
 		// Updates IP table based on server IP table
 		for j := range Addresses.IpAddress {
 
-			// Check if IP addresses is there in the struct DoNotRead
 			Exists := false
+
+			if PublicIP.Ipv4 == Addresses.IpAddress[j].Ipv4 {
+				Exists = true
+			}
+
+			// Check if IP addresses is there in the struct DoNotRead
 			for k := range DoNotRead.IpAddress {
 				if DoNotRead.IpAddress[k].Ipv4 == Addresses.IpAddress[j].Ipv4 {
 					Exists = true
@@ -81,7 +108,6 @@ func UpdateIpTableListClient() error {
 			if Exists {
 				continue
 			}
-
 			err = UpdateIpTable(Addresses.IpAddress[j].Ipv4)
 			if err != nil {
 				return err
@@ -95,7 +121,8 @@ func UpdateIpTableListClient() error {
 	return nil
 }
 
-// SendPostRequest Sends a file as a POST request.
+// SendPostRequest Sends a file as a
+//POST request.
 // Reference (https://stackoverflow.com/questions/51234464/upload-a-file-with-post-request-golang)
 func SendPostRequest (url string, filename string, filetype string) ([]byte,error) {
 	file, err := os.Open(filename)
@@ -138,4 +165,76 @@ func SendPostRequest (url string, filename string, filetype string) ([]byte,erro
 	}
 
 	return content, nil
+}
+
+func UploadMultipartFile(client http.Client, uri, key, path string) ([]byte, error) {
+	body, writer := io.Pipe()
+
+	req, err := http.NewRequest(http.MethodPost, uri, body)
+	if err != nil {
+		return nil, err
+	}
+
+	mwriter := multipart.NewWriter(writer)
+	req.Header.Add("Content-Type", mwriter.FormDataContentType())
+
+	errchan := make(chan error)
+
+	go func() {
+		defer close(errchan)
+		defer writer.Close()
+		defer mwriter.Close()
+
+		w, err := mwriter.CreateFormFile(key, path)
+		if err != nil {
+			errchan <- err
+			return
+		}
+
+		in, err := os.Open(path)
+		if err != nil {
+			errchan <- err
+			return
+		}
+		defer in.Close()
+
+		if written, err := io.Copy(w, in); err != nil {
+			errchan <- fmt.Errorf("error copying %s (%d bytes written): %v", path, written, err)
+			return
+		}
+
+		if err := mwriter.Close(); err != nil {
+			errchan <- err
+			return
+		}
+	}()
+
+	resp, err := client.Do(req)
+	content, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+
+}
+
+// CurrentPublicIP Get Current Public IP address
+func CurrentPublicIP() (string,error) {
+	req, err := http.Get("http://ip-api.com/json/")
+	if err != nil {
+		return "",err
+	}
+	defer req.Body.Close()
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return "",err
+	}
+
+	var ip IP
+	json.Unmarshal(body, &ip)
+
+	return ip.Query, nil
 }
