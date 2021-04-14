@@ -44,6 +44,7 @@ func Server() error{
 		// Getting IPV4 address of client
 		var ClientHost p2p.IpAddress
 		ClientHost.Ipv4 = c.ClientIP()
+
 		// Variable to store IP table information
 		var IPTable p2p.IpAddresses
 
