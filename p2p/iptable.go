@@ -22,15 +22,14 @@ type IpAddress struct {
 	Upload float64 `json:"upload"`
 }
 
-// Read data from Ip tables from json file
+// ReadIpTable Read data from Ip tables from json file
 func ReadIpTable()(*IpAddresses ,error){
     // Get Path from config
 	config, err := config.ConfigInit()
 	if err != nil {
 		return nil,err
 	}
-
-	jsonFile, err := os.Open(config.SpeedTestFile)
+	jsonFile, err := os.Open(config.IPTable)
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		return nil,err
@@ -53,7 +52,7 @@ func ReadIpTable()(*IpAddresses ,error){
     return &ipAddresses, nil
 }
 
-// Write to IP table json file
+// WriteIpTable Write to IP table json file
 func (i *IpAddresses) WriteIpTable() error {
 	file, err := json.MarshalIndent(i, "", " ")
 	if err != nil {
@@ -66,7 +65,7 @@ func (i *IpAddresses) WriteIpTable() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(config.SpeedTestFile, file, 0644)
+	err = ioutil.WriteFile(config.IPTable, file, 0644)
 	if err != nil {
 		return err
 	}
@@ -74,7 +73,7 @@ func (i *IpAddresses) WriteIpTable() error {
 	return nil
 }
 
-// Print Ip table data for Cli
+// PrintIpTable Print Ip table data for Cli
 func PrintIpTable() error {
 	table, err := ReadIpTable()
 

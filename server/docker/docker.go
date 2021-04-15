@@ -145,52 +145,53 @@ func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 
-	//Exposed ports for docker config file
-	var ExposedPort nat.PortSet
-
-	ExposedPort = nat.PortSet{
-		"22/tcp": struct{}{},
-		"6901/tcp": struct{}{},
-	}
-
-	// Port forwarding for VNC and SSH ports
-	PortForwarding := nat.PortMap{
-		"22/tcp": []nat.PortBinding{
-			{
-				HostIP: "0.0.0.0",
-				HostPort: fmt.Sprint(d.SSHPort),
-			},
-		},
-		"6901/tcp": []nat.PortBinding{
-			{
-				HostIP: "0.0.0.0",
-				HostPort: fmt.Sprint(d.VNCPort),
-			},
-		},
-	}
-
-	for i := range d.Ports {
-
-		Port, err := nat.NewPort("tcp",fmt.Sprint(d.Ports[i]))
-		if err != nil {
-			return err
-		}
-
-		// Exposed Ports
-		ExposedPort[Port] = struct{}{}
-
-		PortForwarding[Port] = []nat.PortBinding{
-			{
-				HostIP: "0.0.0.0",
-				HostPort: fmt.Sprint(d.Ports[i]),
-			},
-		}
-	}
 
 	// The first mode runs using the Docker Api. As the API supports using
 	// CPU and uses a shell script for GPU call because till this point of
 	// implementation docker api does not support the flag "--gpu all"
     if d.GPU != "true" {
+		//Exposed ports for docker config file
+		var ExposedPort nat.PortSet
+
+		ExposedPort = nat.PortSet{
+			"22/tcp": struct{}{},
+			"6901/tcp": struct{}{},
+		}
+
+		// Port forwarding for VNC and SSH ports
+		PortForwarding := nat.PortMap{
+			"22/tcp": []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+					HostPort: fmt.Sprint(d.SSHPort),
+				},
+			},
+			"6901/tcp": []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+					HostPort: fmt.Sprint(d.VNCPort),
+				},
+			},
+		}
+
+		for i := range d.Ports {
+
+			Port, err := nat.NewPort("tcp",fmt.Sprint(d.Ports[i]))
+			if err != nil {
+				return err
+			}
+
+			// Exposed Ports
+			ExposedPort[Port] = struct{}{}
+
+			PortForwarding[Port] = []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+					HostPort: fmt.Sprint(d.Ports[i]),
+				},
+			}
+		}
+
 		config := &container.Config{
 			Image:        d.TagName,
 			Entrypoint:   []string{"/dockerstartup/vnc_startup.sh", "/start"},

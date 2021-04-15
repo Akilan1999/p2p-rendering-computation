@@ -6,14 +6,15 @@ import (
 
 // Variables declared for CLI
 var (
-	CreateVM    string
-	Ports       string
-	Mode        string
-	RemoveVM    string
-	ID          string
-	Specs       string
-	GPU         bool
-	ListServers bool
+	CreateVM         string
+	Ports            string
+	Mode             string
+	RemoveVM         string
+	ID               string
+	Specs            string
+	GPU              bool
+	UpdateServerList bool
+	ServerList       bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -26,10 +27,16 @@ var AppConfigFlags = []cli.Flag{
 		Destination: &Mode,
 	},
 	&cli.BoolFlag{
+		Name:        "UpdateServerList",
+		Usage:       "Update List of Server available based on servers iptables",
+		EnvVars: []string{"UPDATE_SERVER_LIST"},
+		Destination: &UpdateServerList,
+	},
+	&cli.BoolFlag{
 		Name:        "ListServers",
 		Usage:       "List servers which can render tasks",
 		EnvVars: []string{"LIST_SERVERS"},
-		Destination: &ListServers,
+		Destination: &ServerList,
 	},
 	&cli.StringFlag{
 		Name:        "CreateVM",
@@ -53,7 +60,7 @@ var AppConfigFlags = []cli.Flag{
 		Name:        "Ports",
 		Usage:       "Number of ports to open for the Docker Container",
 		EnvVars: []string{"NUM_PORTS"},
-		Destination: &ID,
+		Destination: &Ports,
 	},
 	&cli.BoolFlag{
 		Name:        "GPU",
