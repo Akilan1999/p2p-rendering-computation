@@ -47,13 +47,16 @@ func UpdateIpTable(IpAddress string) error {
 
 	// Updates IP table based on information provided
 	// by the server
-	err = ipStruct.SpeedTestUpdatedIPTable()
-	if err != nil {
-		return err
+	if len(ipStruct.IpAddress) > 0 {
+		err = ipStruct.SpeedTestUpdatedIPTable()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
+
 
 // UpdateIpTableListClient updates IP tables (Default 3 hops) based on server information available
 //on the ip tables
