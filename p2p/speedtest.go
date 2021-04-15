@@ -2,16 +2,37 @@ package p2p
 
 // SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
+    // Remove Duplicate IP addresses
+	var DoNotRead IpAddresses
 
 	for i, _ := range ip.IpAddress {
+
+		Exists := false
+		for k := range DoNotRead.IpAddress {
+			if DoNotRead.IpAddress[k].Ipv4 == ip.IpAddress[i].Ipv4 {
+				Exists = true
+				break
+			}
+		}
+
+		if Exists {
+			continue
+		}
+
+		var err error
+		if len(ip.IpAddress) == 1 {
+			i = 0
+		}
+
 		// Ping Test
-		err := ip.IpAddress[i].PingTest()
+		err = ip.IpAddress[i].PingTest()
+
 		if err != nil {
-			// Remove IP address of element not pingable 
-			ip.IpAddress = remove(ip.IpAddress,i)
+				ip.IpAddress = remove(ip.IpAddress,i)
 			// Proceed to next element in the array  
 			continue
 		}
+
 
 		//Upload Speed Test
 		err = ip.IpAddress[i].UploadSpeed()
@@ -23,6 +44,8 @@ func (ip *IpAddresses)SpeedTest() error{
 		if err != nil {
 			return err
 		}
+
+		DoNotRead.IpAddress = append(DoNotRead.IpAddress, ip.IpAddress[i])
 	}
 
 	err := ip.WriteIpTable()
