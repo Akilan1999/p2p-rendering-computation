@@ -44,10 +44,9 @@ func Server() error{
 		// Getting IPV4 address of client
 		var ClientHost p2p.IpAddress
 		ClientHost.Ipv4 = c.ClientIP()
+
 		// Variable to store IP table information
 		var IPTable p2p.IpAddresses
-		//Add Client IP address to IPTable struct
-		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
 
 		// Receive file from POST request
 		body, err := c.FormFile("json")
@@ -68,6 +67,9 @@ func Server() error{
 		}
 
 		json.Unmarshal(file,&IPTable)
+
+		//Add Client IP address to IPTable struct
+		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
 
 		// Runs speed test to return only servers in the IP table pingable
 		err = IPTable.SpeedTestUpdatedIPTable()

@@ -16,13 +16,17 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 
 	//Listing servers and also updates IP tables (Default 3 hops)
-	if ListServers {
+	if UpdateServerList {
 
 		err := client.UpdateIpTableListClient()
 		if err != nil {
 			fmt.Print(err)
 		}
 
+		p2p.PrintIpTable()
+	}
+
+	if ServerList {
 		p2p.PrintIpTable()
 	}
 
@@ -38,7 +42,6 @@ var CliAction = func(ctx *cli.Context) error {
 	if CreateVM != "" {
 
 		var PortsInt int
-		PortsInt = 0
 
 		if Ports != "" {
 			// Convert Get Request value to int
