@@ -13,6 +13,15 @@ The objective would be to have the entire IP table Updated in each node
 with interacting with only 1 node once. Each node has knowledge of 
 one node only. 
 
+![p2pscenario1](https://user-images.githubusercontent.com/31743758/115069627-e4aa8c80-9f04-11eb-8402-706a3407f0e8.png)
+Fig 1.0 Visual Representation of testnet scenario 1
+
+#### Result 
+All nodes except node 1 where able to have information of IP addresses in the test net. This was due to the reason of 3 hops 
+set as default. Node 1 had in it's IP table IP addresses of Node 2, Node 3, Node 4. Once the number of hops was set to 4 objective 
+of the test was acheived. 
+
+
 ### Test Network Scenario 2
 The second test network has a scenario of a single peer which all the
 other nodes connect too. The scenario being when the other nodes 
@@ -70,7 +79,13 @@ to get information about the GPU available.
 } 
 ```
 As the ``nvidia-smi`` interface was not detected it only broadcasts
-the CPU specs available. 
+the CPU specs available.
+
+### SpeedTests 
+The speed test has 3 parameters which are Ping , upload and download. The tests check if 
+the results returned are approximately correct. The ping at the moment returns the correct 
+result. The upload and download returned are inccorect at the moment, This is due incorrect 
+implementation in for timer and will be patched in future versions. 
 
 ### Unit tests 
 All functions implemented on the P2P module returns type error. 
@@ -89,3 +104,4 @@ code coverage.
 The P2P module has a 100% code coverage in unit tests as both the unit 
 tests call directly or call within the function all the functions used 
 in the P2P module. 
+
