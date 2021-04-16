@@ -88,3 +88,34 @@ func PrintIpTable() error {
 	}
 	return nil
 }
+
+// RemoveDuplicates This is a temporary fix current functions failing to remove
+// Duplicate IP addresses from local IP table
+func RemoveDuplicates() error {
+	table, err := ReadIpTable()
+	if err != nil {
+		return err
+	}
+
+	var NoDuplicates IpAddresses
+	for i, _:= range table.IpAddress {
+		Exists := false
+		for k := range NoDuplicates.IpAddress {
+			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 {
+				Exists = true
+				break
+			}
+		}
+
+		if Exists {
+			continue
+		}
+		NoDuplicates.IpAddress = append(NoDuplicates.IpAddress, table.IpAddress[i])
+	}
+
+	if err := NoDuplicates.WriteIpTable(); err != nil {
+		return nil
+	}
+
+	return nil
+}
