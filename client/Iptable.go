@@ -121,6 +121,11 @@ func UpdateIpTableListClient() error {
 		}
 	}
 
+	// Removing duplicates in the IP table
+	if err := p2p.RemoveDuplicates(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -2,22 +2,8 @@ package p2p
 
 // SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
-    // Remove Duplicate IP addresses
-	var DoNotRead IpAddresses
 
-	for i, _ := range ip.IpAddress {
-
-		Exists := false
-		for k := range DoNotRead.IpAddress {
-			if DoNotRead.IpAddress[k].Ipv4 == ip.IpAddress[i].Ipv4 {
-				Exists = true
-				break
-			}
-		}
-
-		if Exists {
-			continue
-		}
+	for i, value := range ip.IpAddress {
 
 		var err error
 		if len(ip.IpAddress) == 1 {
@@ -25,27 +11,25 @@ func (ip *IpAddresses)SpeedTest() error{
 		}
 
 		// Ping Test
-		err = ip.IpAddress[i].PingTest()
+		err = value.PingTest()
 
 		if err != nil {
-				ip.IpAddress = remove(ip.IpAddress,i)
+			ip.IpAddress = append(ip.IpAddress[:i], ip.IpAddress[i+1:]...)
 			// Proceed to next element in the array  
 			continue
 		}
 
-
 		//Upload Speed Test
-		err = ip.IpAddress[i].UploadSpeed()
+		err = value.UploadSpeed()
 		if err != nil {
 			return err
 		}
 
-		err = ip.IpAddress[i].DownloadSpeed()
+		err = value.DownloadSpeed()
 		if err != nil {
 			return err
 		}
 
-		DoNotRead.IpAddress = append(DoNotRead.IpAddress, ip.IpAddress[i])
 	}
 
 	err := ip.WriteIpTable()
@@ -69,7 +53,7 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
     // Appends all IP addresses
 	for i, _ := range targets.IpAddress {
 
-		// To ensure that there are no duplicate IP addresses 
+		// To ensure that there are no duplicate IP addresses
 		Exists := false
 		for k := range ip.IpAddress {
 			if ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 {
