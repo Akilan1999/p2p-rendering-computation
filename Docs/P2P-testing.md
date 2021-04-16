@@ -4,12 +4,13 @@ The objective would be to test the p2p network, and the effectiveness of updatin
 the ip tables. The objective of would be to give the impression to the client and 
 server of a Zero configuration setting. For testing there will be a 
 test network set. In the testing scenario all will be client and 
-server because the IP table does not store clients IP addresses. 
+server because the IP table does not store clients IP addresses. At current 
+number of hopes would be 3 as default. 
 
 ### Test Network Scenario 1
 The test network consists of 5 nodes acting as a client and server.
 The objective would be to have the entire IP table Updated in each node 
-with interacting with only 1 node twice. Each node has knowledge of 
+with interacting with only 1 node once. Each node has knowledge of 
 one node only. 
 
 ### Test Network Scenario 2
