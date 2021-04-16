@@ -64,14 +64,15 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 	}
 
 	// To ensure struct has no duplicates IP addresses
-	DoNotRead := targets
+	//DoNotRead := targets
 
     // Appends all IP addresses
 	for i, _ := range targets.IpAddress {
 
+		// To ensure that there are no duplicate IP addresses 
 		Exists := false
-		for k := range DoNotRead.IpAddress {
-			if DoNotRead.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 {
+		for k := range ip.IpAddress {
+			if ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 {
 				Exists = true
 				break
 			}
