@@ -20,15 +20,18 @@ func (ip *IpAddresses)SpeedTest() error{
 		}
 
 		//Upload Speed Test
-		err = value.UploadSpeed()
-		if err != nil {
-			return err
-		}
+		//err = value.UploadSpeed()
+		//if err != nil {
+		//	return err
+		//}
+		//
+		//err = value.DownloadSpeed()
+		//if err != nil {
+		//	return err
+		//}
 
-		err = value.DownloadSpeed()
-		if err != nil {
-			return err
-		}
+		//Set value to the list
+		ip.IpAddress[i] = value
 
 	}
 
@@ -95,7 +98,7 @@ func LocalSpeedTestIpTable() error {
 }
 
 // Helper function to remove element from an array of a struct
-func remove(s []IpAddress, i int) []IpAddress {
-	s[len(s)-1], s[i] = s[i], s[len(s)-1]
-	return s[:len(s)-1]
-}
+//func remove(s []IpAddress, i int) []IpAddress {
+//	s[len(s)-1], s[i] = s[i], s[len(s)-1]
+//	return s[:len(s)-1]
+//}

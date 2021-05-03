@@ -82,9 +82,9 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("----------------------\nIP Address: %s\nLatency: %s\nDownload: %f\nUplaod: %f\n-----------" +
-			"-----------\n",table.IpAddress[i].Ipv4,
-			table.IpAddress[i].Latency,table.IpAddress[i].Download,table.IpAddress[i].Upload)
+		fmt.Printf("\nIP Address: %s\nLatency: %s\n-----------" +
+			"-----------------\n",table.IpAddress[i].Ipv4,
+			table.IpAddress[i].Latency)
 	}
 	return nil
 }

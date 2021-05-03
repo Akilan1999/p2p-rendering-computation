@@ -77,6 +77,12 @@ func Server() error{
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}
 
+		// Called step to remove duplicate IP addresses
+		err = p2p.RemoveDuplicates()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
+
 		// Reads IP addresses from ip table
 		IpAddresses,err := p2p.ReadIpTable()
 		if err != nil {
