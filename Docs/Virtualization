@@ -1,0 +1,12 @@
+
+Virtualization Design
+======================
+
+The virtualization tool will be treated as a separate module. In our implementation
+we will use docker as it's easier to configure and set. 
+
+Methods to be created
+- Build OS Image from DockerFile
+- Run Image Built
+- Possibility to kill image by server admin or client side user.
+- Track stats of the docker container by server admin or client side user.
