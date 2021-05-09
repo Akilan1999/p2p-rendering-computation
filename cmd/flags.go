@@ -15,6 +15,7 @@ var (
 	GPU              bool
 	UpdateServerList bool
 	ServerList       bool
+	SetDefaultConfig bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -73,5 +74,11 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Specs of the server node",
 		EnvVars: []string{"SPECS"},
 		Destination: &Specs,
+	},
+	&cli.BoolFlag{
+		Name:        "SetDefaultConfig",
+		Usage:       "Sets a default configuration file",
+		EnvVars: []string{"SET_DEFAULT_CONFIG"},
+		Destination: &SetDefaultConfig,
 	},
 }
