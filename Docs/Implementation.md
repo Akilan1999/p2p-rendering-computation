@@ -11,7 +11,7 @@ code. It is easy to write independant modules and be monolithic at the sametime 
 Go.mod makes it very easy to handle external libraries and modularise code. The go.mod name for
 the project is git.sr.ht/~akilan1999/p2p-rendering-computation.
 
-## [Cli Module](ClientImplementation.md)
+## [Cli Module](CliImplementation.md)
 ## [Config Module](ConfigImplementation.md)
 ## [Server Module](ServerImplementation.md)
 ## [Client Module](ClientImplementation.md)
