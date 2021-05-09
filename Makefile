@@ -7,6 +7,9 @@ install:
 build:
 	go build .
 
+config:
+	./p2p-rendering-computation --SetDefaultConfig
+
 run:
 	go run main.go
 
