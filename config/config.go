@@ -1,28 +1,72 @@
 package config
 
-import(
+import (
 	"github.com/spf13/viper"
+	"os"
 )
 
 var (
+	defaultPath string
 	defaults = map[string]interface{}{
-		"IPTable": "/etc/p2p-rendering/ip_table.json",
-		"DockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
-		"SpeedTestFile":"/etc/p2p-rendering/50.bin",
-	}
+            "IPTable": "/etc/p2p-rendering/ip_table.json",
+            "DockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
+            "SpeedTestFile":"/etc/p2p-rendering/50.bin",
+    }
 	configName = "config.json"
 	configType = "json"
 	configFile = "config.json"
-	configPaths = []string {
-		"/etc/p2p-rendering",
-		".",
-	}
+	configPaths []string
 )
 
 type Config struct {
 	IPTable string
 	DockerFile string
 	SpeedTestFile string
+}
+
+// Exists reports whether the named file or directory exists.
+func fileExists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+// SetDefaults This function to be called only during a
+// make install
+func SetDefaults() error {
+	//Getting Current Directory
+	curDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	//Setting current directory to default path
+	defaultPath = curDir + "/"
+
+	//Setting default paths for the config file
+	defaults["IPTable"] = defaultPath + "p2p/ip_table.json"
+	defaults["DockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
+	defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
+
+	//Paths to search for config file
+	configPaths = append(configPaths, defaultPath)
+
+	if fileExists(defaultPath + "config.json") {
+		err := os.Remove(defaultPath + "config.json")
+		if err != nil {
+			return err
+		}
+	}
+
+	//Calling configuration file
+	_, err = ConfigInit()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func ConfigInit()(*Config,error) {

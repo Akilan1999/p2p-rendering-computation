@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 	"github.com/urfave/cli/v2"
@@ -17,7 +18,6 @@ var CliAction = func(ctx *cli.Context) error {
 
 	//Listing servers and also updates IP tables (Default 3 hops)
 	if UpdateServerList {
-
 		err := client.UpdateIpTableListClient()
 		if err != nil {
 			fmt.Print(err)
@@ -65,6 +65,14 @@ var CliAction = func(ctx *cli.Context) error {
 
 		// Pretty print
 		client.PrettyPrint(specs)
+	}
+
+	//Sets default paths to the config file
+	if SetDefaultConfig {
+		err := config.SetDefaults()
+		if err != nil {
+			fmt.Print(err)
+		}
 	}
 
 
