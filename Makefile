@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 
 install:
-	$(shell mkdir /etc/p2p-rendering && chmod +r /etc/p2p-rendering && touch /etc/p2p-rendering/ip_table.json)
+	go build .
+	./p2p-rendering-computation --SetDefaultConfig
 
 build:
 	go build .
