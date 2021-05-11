@@ -2,7 +2,9 @@ package p2p
 
 // SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
-
+    
+	// Index to remove from struct 
+	var RemoveIndex []int
 	for i, value := range ip.IpAddress {
 
 		var err error
@@ -14,7 +16,9 @@ func (ip *IpAddresses)SpeedTest() error{
 		err = value.PingTest()
 
 		if err != nil {
-			ip.IpAddress = append(ip.IpAddress[:i], ip.IpAddress[i+1:]...)
+			RemoveIndex = append(RemoveIndex, i)
+			// Record index to remove 
+			//ip.IpAddress = append(ip.IpAddress[:i], ip.IpAddress[i+1:]...)
 			// Proceed to next element in the array  
 			continue
 		}
@@ -33,6 +37,10 @@ func (ip *IpAddresses)SpeedTest() error{
 		//Set value to the list
 		ip.IpAddress[i] = value
 
+	}
+	// Remove element from struct 
+	for _, index := range RemoveIndex {
+		ip.IpAddress = append(ip.IpAddress[:index], ip.IpAddress[index+1:]...)
 	}
 
 	err := ip.WriteIpTable()
