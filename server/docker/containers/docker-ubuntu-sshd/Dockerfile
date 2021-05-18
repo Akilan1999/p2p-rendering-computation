@@ -8,7 +8,10 @@
 
 
 # Base system is the latest LTS version of Ubuntu.
-from   consol/ubuntu-xfce-vnc
+# from   consol/ubuntu-xfce-vnc
+
+# due to dependency issues vnc is still work in progress
+from ubuntu:latest
 
 # Switch to root user to install additional software
 USER 0

@@ -63,16 +63,16 @@ func BuildRunContainer(NumPorts int, GPU string) (*DockerVM,error) {
 	}
 
 	// Sets if GPU is selected or not
-	RespDocker.GPU =GPU
+	RespDocker.GPU = GPU
 
 	// Sets Free port to Struct
 	RespDocker.SSHPort = Ports[0]
-	RespDocker.VNCPort = Ports[1]
+	//RespDocker.VNCPort = Ports[1]
 	// Sets appropriate username and password to the
 	// variables in the struct
 	RespDocker.SSHUsername = "master"
 	RespDocker.SSHPassword = "password"
-	RespDocker.VNCPassword = "vncpassword"
+	//RespDocker.VNCPassword = "vncpassword"
 
 	//Default parameters
 	RespDocker.TagName = "p2p-ubuntu"
@@ -155,7 +155,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 		ExposedPort = nat.PortSet{
 			"22/tcp": struct{}{},
-			"6901/tcp": struct{}{},
+			//"6901/tcp": struct{}{},
 		}
 
 		// Port forwarding for VNC and SSH ports
@@ -166,12 +166,12 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 					HostPort: fmt.Sprint(d.SSHPort),
 				},
 			},
-			"6901/tcp": []nat.PortBinding{
-				{
-					HostIP: "0.0.0.0",
-					HostPort: fmt.Sprint(d.VNCPort),
-				},
-			},
+			//"6901/tcp": []nat.PortBinding{
+			//	{
+			//		HostIP: "0.0.0.0",
+			//		HostPort: fmt.Sprint(d.VNCPort),
+			//	},
+			//},
 		}
 
 		for i := range d.Ports {
