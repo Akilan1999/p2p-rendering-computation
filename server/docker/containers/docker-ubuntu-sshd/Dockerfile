@@ -11,7 +11,7 @@
 # from   consol/ubuntu-xfce-vnc
 
 # due to dependency issues vnc is still work in progress
-from ubuntu:latest
+from ubuntu:20.04
 
 # Switch to root user to install additional software
 USER 0
