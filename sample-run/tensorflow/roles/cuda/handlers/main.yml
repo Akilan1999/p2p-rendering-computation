@@ -1,0 +1,5 @@
+---
+# CUDA Driver Setup
+- name: reboot the machine
+  reboot:
+  listen: "reboot the machine"

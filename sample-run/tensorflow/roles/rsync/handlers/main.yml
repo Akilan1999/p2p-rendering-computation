@@ -1,0 +1,5 @@
+---
+- name: restart the rsync service
+  systemd:
+    name: "{{ rsync.service_name }}"
+    state: restarted
