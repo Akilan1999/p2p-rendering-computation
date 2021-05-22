@@ -1,0 +1,10 @@
+---
+rsync:
+  config_file:
+    src: rsyncd.conf
+    dest: /etc/rsyncd.conf
+  master: ml1
+  options:
+    - "-e ssh"
+    - "--no-motd"
+  service_name: rsync
