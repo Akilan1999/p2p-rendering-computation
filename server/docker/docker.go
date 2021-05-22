@@ -194,7 +194,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 		config := &container.Config{
 			Image:        d.TagName,
-			Entrypoint:   []string{"/dockerstartup/vnc_startup.sh", "/start"},
+			Entrypoint:   []string{"/start"},
 			Volumes:      map[string]struct{}{"/opt/data:/data": {}},
 			ExposedPorts: ExposedPort,
 		}
