@@ -5,3 +5,4 @@ main
 server/docker/__pycache__
 p2p-rendering-computation
 config.json
+.vscode/
