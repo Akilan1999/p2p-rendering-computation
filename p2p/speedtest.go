@@ -8,9 +8,9 @@ func (ip *IpAddresses)SpeedTest() error{
 	for i, value := range ip.IpAddress {
 
 		var err error
-		if len(ip.IpAddress) == 1 {
-			i = 0
-		}
+		//if len(ip.IpAddress) == 1 {
+		//	i = 0
+		//}
 
 		// Ping Test
 		err = value.PingTest()
@@ -40,6 +40,12 @@ func (ip *IpAddresses)SpeedTest() error{
 	}
 	// Remove element from struct 
 	for _, index := range RemoveIndex {
+		// If there is only 1 element and that has to be
+		// removed
+		if len(ip.IpAddress) == 1 {
+		   ip.IpAddress = nil
+		   break
+		}
 		ip.IpAddress = append(ip.IpAddress[:index], ip.IpAddress[index+1:]...)
 	}
 
