@@ -13,6 +13,7 @@ in the developer community. In the server module we use the Docker Go API to cre
 interact with the containers. 
 
 [Instructions to install docker](https://docs.docker.com/get-docker/)
+
 [Instructions to install docker GPU](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 ````
 Do ensure that the docker command does not need sudo to run
@@ -27,7 +28,7 @@ make install
 
 ### Test if binary works
 ```
-./p2p-rendering-computation --help
+p2prc --help
 ```
 #### Output:
 ```
@@ -60,10 +61,6 @@ GLOBAL OPTIONS:
 
 ```
 
-### Add command to .bashrc or .zshrc
-```
-export PATH=~/<Project Path>/p2p-redering-computation:${PATH}
-```
 
 
 #### Note: The steps on how to use the commands will be added later.
