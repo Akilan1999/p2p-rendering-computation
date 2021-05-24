@@ -5,4 +5,5 @@ p2p-rendering/
 main
 server/docker/__pycache__
 p2p-rendering-computation
+p2prc
 config.json
