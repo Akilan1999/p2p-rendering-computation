@@ -4,7 +4,7 @@ install:
 	go build -o p2prc
 	echo '# Paths for p2p rendering and computation' >> ~/.bashrc
 	echo 'export P2PRC=${PWD}' >> ~/.bashrc
-	echo 'export ${PWD}:$${PATH}' >> ~/.bashrc
+	echo 'export path=${PWD}:$${PATH}' >> ~/.bashrc
 	source ~/.bashrc
 	./p2prc --SetDefaultConfig
 
