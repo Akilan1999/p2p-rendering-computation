@@ -1,0 +1,26 @@
+galaxy_info:
+  author: Daniel D
+  description: An engineer
+  company: 
+
+  license: BSD
+
+  min_ansible_version: 1.2
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+        - trusty
+        - xenial
+    - name: CentOS
+      versions:
+        - all
+    
+
+  galaxy_tags:
+    - cudnn
+    - nvidia
+    - cuda
+
+dependencies: []

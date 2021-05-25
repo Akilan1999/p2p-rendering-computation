@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/sample-run/tensorflow/roles/ansible-role-cudnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/sample-run/tensorflow/roles/cudnn" vcs="Git" />
   </component>
 </project>

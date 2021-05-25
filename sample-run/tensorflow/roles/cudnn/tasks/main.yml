@@ -1,0 +1,15 @@
+---
+# tasks file for cudnn
+- name: Create installer dir
+  file: "path={{ cudnn_installer_dir }} state=directory mode=0755"
+
+- name: Uncompressing cudnn lib
+  unarchive: "src={{ cudnn_installer.local_file }} dest={{ cudnn_installer_dir }}"
+  register: __cudnn_result
+
+- name: Install cudnn
+  shell:  cp -rf {{ item.src }} {{ item.dest }}
+  with_items:
+    - { src: "{{ cudnn_installer_dir }}/cuda/lib64/*", dest: "/usr/local/cuda/lib64/" }
+    - { src: "{{ cudnn_installer_dir }}/cuda/include/cudnn.h", dest: "/usr/local/cuda/include/" }
+  when: __cudnn_result|changed
