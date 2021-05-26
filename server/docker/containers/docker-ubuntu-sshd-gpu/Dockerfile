@@ -10,7 +10,7 @@
 # from   consol/ubuntu-xfce-vnc
 
 # due to dependency issues vnc is still work in progress
-from nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
+from nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
 
 # Switch to root user to install additional software
 USER 0

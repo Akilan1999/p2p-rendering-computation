@@ -1,0 +1,27 @@
+Create 3 vm using ./p2prc --CreateVM 0.0.0.0 --Ports=1 --GPU
+
+then on each run 
+
+sudo apt clean && sudo apt update && sudo apt -y install cmake ccache nano
+sudo ln -s /usr/local/cuda-11.2 /usr/local/cuda
+export PATH=${HOME}/.local/bin:$PATH && export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}} && export LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+wget -c https://raw.githubusercontent.com/horovod/horovod/master/examples/tensorflow2/tensorflow2_synthetic_benchmark.py
+
+pip install --no-cache-dir horovod[tensorflow]
+
+# this will test if its locally install properly
+horovodrun -np 1 python3 tensorflow2_synthetic_benchmark.py
+
+then configure machine1 ssh/config file like
+Host host1
+  HostName 0.0.0.0
+  Port 39751
+
+Host host2
+  HostName 0.0.0.0
+  Port 34779
+
+and ensure that the ssh can be connected and ssh keys are copied using ssh-copy-id command
+
+then run 
+horovodrun -np 2 -H host1:1,host2:1 python3 tensorflow2_synthetic_benchmark.py
