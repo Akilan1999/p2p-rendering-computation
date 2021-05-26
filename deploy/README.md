@@ -1,4 +1,5 @@
 # Ansible p2p-rendering-computation
+### Modified from: 
 
 This repository contains an Ansible playbook and instructions to create and manage a single (or many) bare metal deep learning machines. For a description of why Ansible was chosen and what other alternatives were considered, please see [ToolSelection.md](ToolSelection.md)
 

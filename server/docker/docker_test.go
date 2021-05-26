@@ -7,7 +7,7 @@ import (
 
 func TestDocker(t *testing.T) {
 	//TODO overwrite with custom docker paths
-	resp,err := BuildRunContainer(2,"false")
+	resp,err := BuildRunContainer(2,"true")
 
 	if err != nil {
 		t.Error(err)

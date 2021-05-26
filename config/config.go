@@ -12,7 +12,7 @@ var (
             "DockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
             "SpeedTestFile":"/etc/p2p-rendering/50.bin",
     }
-	configName = "config.json"
+	configName = "config"
 	configType = "json"
 	configFile = "config.json"
 	configPaths []string
@@ -37,11 +37,8 @@ func fileExists(name string) bool {
 // SetDefaults This function to be called only during a
 // make install
 func SetDefaults() error {
-	//Getting Current Directory
-	curDir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
+	//Getting Current Directory from environment variable
+	curDir := os.Getenv("P2PRC")
 
 	//Setting current directory to default path
 	defaultPath = curDir + "/"
@@ -62,7 +59,7 @@ func SetDefaults() error {
 	}
 
 	//Calling configuration file
-	_, err = ConfigInit()
+	_, err := ConfigInit()
 	if err != nil {
 		return err
 	}
@@ -70,23 +67,32 @@ func SetDefaults() error {
 }
 
 func ConfigInit()(*Config,error) {
-	//Sets default configuration to viper
-	for k,v := range defaults {
-		viper.SetDefault(k,v)
-	}
-	viper.SetConfigName(configName)
-	viper.SetConfigFile(configFile)
-	viper.SetConfigType(configType)
+
+	curDir := os.Getenv("P2PRC")
+	//Setting current directory to default path
+	defaultPath = curDir + "/"
+	//Paths to search for config file
+	configPaths = append(configPaths, defaultPath)
+
 	//Add all possible configurations paths
 	for _,v := range configPaths {
 		viper.AddConfigPath(v)
 	}
+
 	//Read config file
 	if err := viper.ReadInConfig(); err != nil {
 		// If the error thrown is config file not found
-			if err = viper.WriteConfig(); err != nil {
-				return nil,err
-			}
+		//Sets default configuration to viper
+		for k,v := range defaults {
+			viper.SetDefault(k,v)
+		}
+		viper.SetConfigName(configName)
+		viper.SetConfigFile(configFile)
+		viper.SetConfigType(configType)
+
+		if err = viper.WriteConfig(); err != nil {
+			return nil,err
+		}
 	}
 
 	// Adds configuration to the struct
