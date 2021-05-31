@@ -1,0 +1,31 @@
+---
+# vars file for cudnn
+cudnn_installer_map:
+  v11.5:
+    v8.2.0.53:
+      url: https://developer.nvidia.com/rdp/assets/cudnn-11.3-linux-x64-v8.2.53.tgz
+      local_file: cudnn-8.0-linux-x64-v5.1.tgz
+  v8.0:
+    v6.0:
+      url: https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v6/prod/8.0_20170427/cudnn-8.0-linux-x64-v6.0-tgz
+      local_file: cudnn-8.0-linux-x64-v6.0.tgz
+    v5.1:
+      url: https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/8.0/cudnn-8.0-linux-x64-v5.1-tgz
+      local_file: cudnn-8.0-linux-x64-v5.1.tgz
+    v5.0:
+      url: https://developer.nvidia.com/rdp/assets/cudnn-8.0-linux-x64-v5.0-ga-tgz
+      local_file: cudnn-8.0-linux-x64-v5.0-ga.tgz
+  v7.5:
+    v6.0:
+      url: https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v6/prod/7.5_20170427/cudnn-7.5-linux-x64-v6.0-tgz
+      local_file: cudnn-7.5-linux-x64-v6.0.tgz
+    v5.1:
+      url: https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/7.5/cudnn-7.5-linux-x64-v5.1-tgz
+      local_file: cudnn-7.5-linux-x64-v5.1.tgz
+    v5.0:
+      url: https://developer.nvidia.com/rdp/assets/cudnn-7.5-linux-x64-v5.0-ga.tgz
+      local_file: cudnn-7.5-linux-x64-v5.0-ga.tgz
+
+
+cudnn_installer: "{{ cudnn_installer_map[cuda_version_str][cudnn_version] }}"
+cudnn_installer_dir: "/tmp/cudnn_installer"

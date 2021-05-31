@@ -1,0 +1,6 @@
+---
+# defaults file for cudnn
+cuda_version: 8.0
+cuda_version_str: "v{{ cuda_version }}"
+
+cudnn_version: v5.1
