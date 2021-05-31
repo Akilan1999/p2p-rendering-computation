@@ -9,3 +9,4 @@ p2prc
 config.json
 *.tgz
 .vscode/
+hosts

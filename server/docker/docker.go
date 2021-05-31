@@ -82,9 +82,9 @@ func BuildRunContainer(NumPorts int, GPU string) (*DockerVM,error) {
 		return nil,err
 	}
 	RespDocker.ImagePath = config.DockerFile
-	if GPU == "true" {
-		RespDocker.ImagePath = "/home/asleepyguy/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd-gpu/"
-	}
+	//if GPU == "true" {
+	//	RespDocker.ImagePath = "/home/asleepyguy/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd-gpu/"
+	//}
 
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())

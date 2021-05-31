@@ -32,6 +32,9 @@
     - role: cudnn
       tags: [cudnn]
 
+    - role: ansible-role-nvidia-driver
+      tags: [ansible-role-nvidia-driver]
+
     # - role: nvidia # NVIDIA-Docker Runtime Setup
     #   tags: [nvidia]
 
