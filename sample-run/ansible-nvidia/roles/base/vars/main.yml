@@ -1,0 +1,5 @@
+---
+locales_dependencies:
+  - tzdata
+  - locales
+locales_gen_file: "{{ '/var/lib/locales/supported.d/local' if ansible_distribution == 'Ubuntu' else '/etc/locale.gen' }}"

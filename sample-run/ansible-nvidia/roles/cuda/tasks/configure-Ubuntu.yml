@@ -1,0 +1,7 @@
+---
+- name: Environment configure
+  lineinfile: >
+    dest=/etc/profile regexp="^{{ item.regexp }}" line="{{ item.line }}"
+  with_items:
+    - { regexp: "export PATH={{ cuda_home }}", line: "export PATH={{ cuda_home }}/bin:$PATH" }
+    - { regexp: "export LD_LIBRARY_PATH={{ cuda_home }}", line: "export LD_LIBRARY_PATH={{ cuda_home }}/lib64:$LD_LIBRARY_PATH" }

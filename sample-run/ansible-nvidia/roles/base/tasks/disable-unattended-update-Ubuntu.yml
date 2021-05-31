@@ -1,0 +1,12 @@
+---
+- name: Disable APT:Periodic::Update-Package-Lists
+  become: yes
+  shell: 'sudo find /etc/apt/apt.conf.d -type f -exec sed -i -e ''s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/g'' {} \;'
+
+- name: Disable APT::Periodic::Unattended-Upgrade
+  become: yes
+  shell: 'sudo find /etc/apt/apt.conf.d -type f -exec sed -i -e ''s/APT::Periodic::Unattended-Upgrade "1"/APT::Periodic::Unattended-Upgrade "0"/g'' {} \;'
+
+- name: Disable APT::Periodic::Update-Package-Lists
+  become: yes
+  shell: 'sudo find /etc/apt/apt.conf.d -type f -exec sed -i -e ''s/APT::Periodic::Update-Package-Lists "1"/APT::Periodic::Update-Package-Lists "0"/g'' {} \;'

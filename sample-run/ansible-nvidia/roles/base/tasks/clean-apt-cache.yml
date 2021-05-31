@@ -1,0 +1,4 @@
+---
+- shell: "sudo apt-get clean"
+
+- shell: "sudo rm -r /var/lib/apt/lists/*"

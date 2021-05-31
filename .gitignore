@@ -10,3 +10,6 @@ config.json
 *.tgz
 .vscode/
 hosts
+*.retry
+**/*.swp
+**/*.retry

@@ -1,0 +1,79 @@
+---
+
+- name: nvidia-docker (v2) release key is registered
+  apt_key:
+    url: https://nvidia.github.io/nvidia-docker/gpgkey
+    state: present
+
+- name: software-properties-common is installed for prerequisite for apt_repository ansible module
+  apt:
+    name: software-properties-common
+    state: present
+
+- name: nvidia-docker (v2) apt repository is registered
+  apt_repository:
+    repo: "{{ item }}"
+    filename: nvidia-docker
+    state: present
+    mode: 0644
+    update_cache: yes
+  with_items:
+    - 'deb https://nvidia.github.io/libnvidia-container/{{ ubuntu_version }}/amd64 /'
+    - 'deb https://nvidia.github.io/nvidia-container-runtime/{{ ubuntu_version }}/amd64 /'
+    - 'deb https://nvidia.github.io/nvidia-docker/{{ ubuntu_version }}/amd64 /'
+
+- name: nvidia-docker (v1) is uninstalled
+  apt:
+    name: nvidia-docker
+    state: absent
+
+- name: confirm content of /etc/docker/daemon.json
+  command: cat /etc/docker/daemon.json
+  register: nvidia_docker_daemon_json_backup
+  failed_when: False
+  changed_when: False
+
+- name: Pin nvidia-docker2 version
+  template:
+    src: "etc/apt/preferences.d/nvidia-docker2.pref.j2"
+    dest: "/etc/apt/preferences.d/nvidia-docker2.pref"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Pin nvidia-container-runtime version
+  template:
+    src: "etc/apt/preferences.d/nvidia-container-runtime.pref.j2"
+    dest: "/etc/apt/preferences.d/nvidia-container-runtime.pref"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: nvidia-docker (v2) is installed
+  apt:
+    name: "nvidia-docker2={{ nvidia_docker_version }}"
+    state: present
+  notify: restart docker service
+
+- name: confirm content of /etc/docker/daemon.json after installation of nvidia-docker2
+  command: cat /etc/docker/daemon.json
+  register: nvidia_docker_daemon_json_v2
+  changed_when: False
+
+- name: content of /etc/docker/daemon.json is merged
+  copy:
+    content: "{{ nvidia_docker_daemon_json_backup.stdout | from_json | combine(nvidia_docker_daemon_json_v2.stdout | from_json) }}"
+    dest: /etc/docker/daemon.json
+    validate: python3 -m json.tool %s
+  when: nvidia_docker_daemon_json_backup.stdout != ""
+
+- name: confirm content of /etc/docker/daemon.json after installation of nvidia-docker2
+  command: cat /etc/docker/daemon.json
+  register: nvidia_docker_daemon_json_v3
+  changed_when: False
+
+- name: content of /etc/docker/daemon.json is merged
+  copy:
+    content: "{{ nvidia_docker_daemon_json_v3.stdout | from_json | combine({'default-runtime':'nvidia'}) | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    validate: python3 -m json.tool %s

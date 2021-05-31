@@ -1,0 +1,20 @@
+---
+- name: Add an Apt signing key for CUDA
+  apt_key:
+    url: "{{ cuda_installer.cuda_apt_key }}"
+    state: present
+
+- name: Install CUDA repo
+  apt: "deb={{ cuda_installer.deb }} state=present update_cache=yes"
+  register: install_repo_result
+  ignore_errors: True
+
+- name: Skip if already installed or fail the play if the previous command did not succeed
+  fail: msg="the command failed {{ install_repo_result }}"
+  when: "install_repo_result.changed == 'false' and 'A later version is already installed' not in install_repo_result.stderr"
+
+- name: Install CUDA package
+  apt: "name=cuda state=present update_cache=yes"
+
+- name: Install CUDA {{ cuda_version_linux }}
+  apt: "name={{ cuda_version_linux }} state=present update_cache=yes"

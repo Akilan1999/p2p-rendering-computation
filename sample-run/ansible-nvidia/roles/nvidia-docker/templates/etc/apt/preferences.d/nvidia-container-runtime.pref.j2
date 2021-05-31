@@ -1,0 +1,4 @@
+Explanation: Pin added by Ansible role "{{ role_name }}"
+Package: nvidia-container-runtime
+Pin: version {{ nvidia_container_runtime_major_version }}+{{ nvidia_docker_version .split("+")[1] }}*
+Pin-Priority: 600

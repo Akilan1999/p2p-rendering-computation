@@ -1,0 +1,19 @@
+---
+- name: import task for Debian derivatives
+  include_tasks: debian_v1.yml
+  when: ansible_os_family == "Debian" and nvidia_docker_version.startswith('1')
+
+- name: import task for Debian derivatives
+  include_tasks: debian_v2.yml
+  when: ansible_os_family == "Debian" and nvidia_docker_version.startswith('2')
+
+- name: Reboot machine after nvidia-docker installed
+  shell: 'sleep 1 && shutdown -r now "Reboot triggered by Ansible" && sleep 1'
+  async: 1
+  poll: 0
+
+- name: Wait for system to become reachable
+  wait_for_connection:
+    delay: 60
+    sleep: 30
+    timeout: 600
