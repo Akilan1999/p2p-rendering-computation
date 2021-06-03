@@ -1,9 +1,0 @@
-- hosts: test
-  become: true
-  become_user: root
-  roles:
-    # - { role: base }
-    # - { role: docker-ce, docker_version: "5:18.09.3~3-0~ubuntu-bionic", docker_compose_version: 1.23.2 }
-    - { role: cuda, cuda_version_major: 10, cuda_version_minor: 0 }
-    - { role: cudnn, cuda_version_major: 10, cuda_version_minor: 0, cudnn_version: 7.3 }
-    #- { role: nvidia-docker, nvidia_docker_version: 2.0.3+docker18.09.3-1 }

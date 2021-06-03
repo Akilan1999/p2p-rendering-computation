@@ -11,5 +11,6 @@ general:
       - software-properties-common # known good with 0.96.24.32.7
       - git
       - golang
+      - apt-utils
     pip:
       - docker>=3.7.0 # known good with 3.7.0

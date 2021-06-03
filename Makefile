@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+/ https://www.youtube.com/channel/UCQdZltW7bh1ta-_nCH7LWYw/playlistSHELL := /bin/bash
 
 install:
 	go build -o p2prc

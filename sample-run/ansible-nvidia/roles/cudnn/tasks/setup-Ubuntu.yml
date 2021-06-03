@@ -1,3 +1,0 @@
----
-- name: Install CUDNN package
-  apt: "deb={{ cudnn_installer.deb }} state=present update_cache=yes"
