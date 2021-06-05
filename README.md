@@ -22,15 +22,7 @@ flexibility on tracking the container's usages and killing the containers at any
 1. [Introduction](Docs/Introduction.md)
 2. [Installation](Docs/Installation.md)
 3. [Design Architecture](Docs/DesignArchtectureIntro.md)
-   1. [Client Module](Docs/ClientArchitecture.md)
-   2. [P2P Module](Docs/P2PArchitecture.md)
-   3. [Server Module](Docs/ServerArchitecture.md)
 4. [Implementation](Docs/Implementation.md) 
-   1. [Client Module](Docs/ClientImplementation.md)
-   2. [P2P Module](Docs/P2PImplementation.md)
-   3. [Server Module](Docs/ServerImplementation.md)
-   4. [Config Module](Docs/ConfigImplementation.md)
-   5. [Cli Module](Docs/CliImplementation.md)
 
 
 
