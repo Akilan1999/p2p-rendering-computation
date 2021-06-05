@@ -17,12 +17,62 @@ flexibility on tracking the container's usages and killing the containers at any
 ## Demo
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/LRv3NR2lu7I/0.jpg)](https://www.youtube.com/watch?v=LRv3NR2lu7I "Simple P2P Cli application for creating containers")
 
+<br>
 
 ## Table of contents
-1. [Introduction](Docs/Introduction.md)
+1. [Introduction](#Introduction)
 2. [Installation](Docs/Installation.md)
 3. [Design Architecture](Docs/DesignArchtectureIntro.md)
 4. [Implementation](Docs/Implementation.md) 
 
+<br>
+
+## Introduction
+This project aims to create a peer to peer (p2p) network, where a user can use the p2p network to act as a client (i.e sending tasks) or the server (i.e executing the tasks). A prototype application will be developed, which comes bundled with a p2p module and possible to execute docker containers or virtual environments across selected nodes.
+
+### Objectives
+- Background review on peer to peer network, virtual environments, decentralized rendering tools and tools to batch any sort of tasks.
+- Creating p2p network
+- Server to create a containerised environment
+- The client node to run tasks on Server containerised node
+
+[Read more on the introduction](Docs/Introduction.md)
+
+<br>
+
+## Installation
+1. Ensure the Go compiler is installed 
+2. Ensure docker is installed 
+3. Clone this repository 
+```
+git clone https://github.com/Akilan1999/p2p-rendering-computation
+```
+4. Install and build the project 
+```
+make install 
+```
+5. Test if it works 
+```
+p2prc -h 
+```
+or 
+```
+./p2prc -h 
+```
+[Read more on the installation](Docs/Introduction.md)
+
+<br>
+
+## Design Architecture 
+The design architecture was inspired and based on the linux kernel design. The project is segmented into various modules. Each module is responsible for certain tasks in the project. The modules are highly dependent on each other hence the entire codebase can be considered as a huge monolithic chuck which acts as its own library
+
+[Read more on the Design Architecture](Docs/DesignArchtectureIntro.md)
+
+<br>
+
+## Implementaion
+The programming language used for this project was Golang. The reason Go lang was chosen was because it is a compiled language. The entire codebase is just a single binary file. When distributing to other linux distributing the only requirement would be the binary file to run the code. It is easy to write independant modules and be monolithic at the sametime using Go. Using Go.mod makes it very easy to handle external libraries and modularise code. The go.mod name for the project is git.sr.ht/~akilan1999/p2p-rendering-computation.
+
+[Read more on the Implementation](Docs/Implementation.md)
 
 
