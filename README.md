@@ -21,9 +21,9 @@ flexibility on tracking the container's usages and killing the containers at any
 
 ## Table of contents
 1. [Introduction](#Introduction)
-2. [Installation](Docs/Installation.md)
-3. [Design Architecture](Docs/DesignArchtectureIntro.md)
-4. [Implementation](Docs/Implementation.md) 
+2. [Installation](#Installation.md)
+3. [Design Architecture](#Design-Architecture)
+4. [Implementation](#Implementation) 
 
 <br>
 
