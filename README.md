@@ -16,8 +16,21 @@ flexibility on tracking the container's usages and killing the containers at any
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/LRv3NR2lu7I/0.jpg)](https://www.youtube.com/watch?v=LRv3NR2lu7I "Simple P2P Cli application for creating containers")
 
-1. [Installation](Docs/Installation.md)
-2. [Documentation](Docs/README.md)
+
+# Table of contents
+1. [Introduction](Introduction.md)
+2. [Installation](Installation.md)
+3. [Design Architecture](DesignArchtectureIntro.md)
+   1. [Client Module](ClientArchitecture.md)
+   2. [P2P Module](P2PArchitecture.md)
+   3. [Server Module](ServerArchitecture.md)
+4. [Implementation](Implementation.md) 
+   1. [Client Module](ClientImplementation.md)
+   2. [P2P Module](P2PImplementation.md)
+   3. [Server Module](ServerImplementation.md)
+   4. [Config Module](ConfigImplementation.md)
+   5. [Cli Module](CliImplementation.md)
+5. [Problems](Problems.md)   
 
 
 
