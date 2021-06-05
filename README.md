@@ -14,10 +14,11 @@ The main aim of this project was to create a custom peer to peer network. The us
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
 flexibility on tracking the container's usages and killing the containers at any point of time. 
 
+## Demo
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/LRv3NR2lu7I/0.jpg)](https://www.youtube.com/watch?v=LRv3NR2lu7I "Simple P2P Cli application for creating containers")
 
 
-# Table of contents
+## Table of contents
 1. [Introduction](Docs/Introduction.md)
 2. [Installation](Docs/Installation.md)
 3. [Design Architecture](Docs/DesignArchtectureIntro.md)
@@ -30,7 +31,6 @@ flexibility on tracking the container's usages and killing the containers at any
    3. [Server Module](Docs/ServerImplementation.md)
    4. [Config Module](Docs/ConfigImplementation.md)
    5. [Cli Module](Docs/CliImplementation.md)
-5. [Problems](Docs/Problems.md)   
 
 
 
