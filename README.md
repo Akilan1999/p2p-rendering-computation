@@ -59,7 +59,7 @@ or
 ```
 ./p2prc -h 
 ```
-[Read more on the installation](Docs/Introduction.md)
+[Read more on the installation](Docs/Installation.md)
 
 <br>
 
