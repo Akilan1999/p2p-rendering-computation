@@ -6,6 +6,7 @@ import (
 
 // Variables declared for CLI
 var (
+	AddServer        string
 	CreateVM         string
 	Ports            string
 	Mode             string
@@ -38,6 +39,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "List servers which can render tasks",
 		EnvVars: []string{"LIST_SERVERS"},
 		Destination: &ServerList,
+	},
+	&cli.StringFlag{
+		Name:        "AddServer",
+		Usage:       "Adds server IP address to iptables",
+		EnvVars: []string{"ADD_SERVER"},
+		Destination: &AddServer,
 	},
 	&cli.StringFlag{
 		Name:        "CreateVM",
