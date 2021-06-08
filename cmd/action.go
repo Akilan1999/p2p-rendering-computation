@@ -26,8 +26,30 @@ var CliAction = func(ctx *cli.Context) error {
 		p2p.PrintIpTable()
 	}
 
+	// Displays the IP table
 	if ServerList {
 		p2p.PrintIpTable()
+	}
+
+	if AddServer != "" {
+		res, err := p2p.ReadIpTable()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		//Create variable of type IpAddress and set IP address
+		// to it
+		var IpAddr p2p.IpAddress
+		IpAddr.Ipv4 = AddServer
+
+		// Append IP address to variable result which
+		// is a list
+		res.IpAddress = append(res.IpAddress, IpAddr)
+		
+		// Adds the new server IP to the iptable
+		res.WriteIpTable()
+
+
 	}
 
 	// Function called to stop and remove server from Docker
