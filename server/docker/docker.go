@@ -93,6 +93,22 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	}
 	RespDocker.ImagePath = config.DefaultDockerFile
 
+	if ContainerName != "" {
+		Containers, err := ViewAllContainers()
+		if err != nil {
+			return nil,err
+		}
+		for _, dockerContainer := range Containers.DockerContainer {
+			if dockerContainer.ContainerName == ContainerName {
+				RespDocker.ImagePath = config.DockerContainers + ContainerName + "/"
+				break
+			}
+		}
+		if RespDocker.ImagePath == config.DefaultDockerFile {
+			return nil, errors.New("Container " + ContainerName  + " does not exist in the server")
+		}
+	}
+
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {

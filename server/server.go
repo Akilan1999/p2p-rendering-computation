@@ -97,6 +97,7 @@ func Server() error{
 		// Get Number of ports to open and whether to use GPU or not
 		Ports := c.DefaultQuery("ports","0")
 		GPU := c.DefaultQuery("GPU","false")
+		ContainerName := c.DefaultQuery("ContainerName","")
         var PortsInt int
 
 		// Convert Get Request value to int
@@ -104,7 +105,7 @@ func Server() error{
 
 		// Creates container and returns-back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt,GPU,"")
+		resp, err := docker.BuildRunContainer(PortsInt,GPU,ContainerName)
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
