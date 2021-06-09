@@ -16,6 +16,7 @@ import (
 	"github.com/lithammer/shortuuid"
 	"github.com/phayes/freeport"
 	"io"
+	"io/ioutil"
 	"os/exec"
 	"time"
 )
@@ -33,6 +34,15 @@ type DockerVM struct {
 	 GPU string `json:"GPU"`
 }
 
+type DockerContainers struct {
+	 DockerContainer []DockerContainer `json:"DockerContainer"`
+}
+
+type DockerContainer struct {
+	ContainerName string `json:"DockerContainerName"`
+	ContainerDescription string `json:"ContainerDescription"`
+}
+
 type ErrorLine struct {
 	Error       string      `json:"error"`
 	ErrorDetail ErrorDetail `json:"errorDetail"`
@@ -44,7 +54,7 @@ type ErrorDetail struct {
 
 var dockerRegistryUserID = ""
 
-func BuildRunContainer(NumPorts int, GPU string) (*DockerVM,error) {
+func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerVM,error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
@@ -81,7 +91,7 @@ func BuildRunContainer(NumPorts int, GPU string) (*DockerVM,error) {
 	if err != nil {
 		return nil,err
 	}
-	RespDocker.ImagePath = config.DockerFile
+	RespDocker.ImagePath = config.DefaultDockerFile
 
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -238,7 +248,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	return nil
 }
 
-// StopAndRemoveContainer TODO: Implement and remove docker instance running
+// StopAndRemoveContainer 
 // Stop and remove a container
 // Reference (https://gist.github.com/frikky/e2efcea6c733ea8d8d015b7fe8a91bf6)
 func StopAndRemoveContainer(containername string) error {
@@ -264,6 +274,47 @@ func StopAndRemoveContainer(containername string) error {
 	}
 
 	return nil
+}
+
+// ViewAllContainers returns all containers runnable and which can be built
+func ViewAllContainers() (*DockerContainers, error){
+	// Traverse the folder path as per given in the config file
+	config, err := config.ConfigInit()
+	if err != nil {
+		return nil,err
+	}
+
+	folders, err := ioutil.ReadDir(config.DockerContainers)
+	if err != nil {
+		return nil, err
+	}
+
+	//Declare variable DockerContainers of type struct
+	var Containers *DockerContainers = new(DockerContainers)
+
+	for _, f := range folders {
+		if f.IsDir() {
+			fmt.Print(f.Name())
+			//Declare variable DockerContainer of type struct
+            var Container DockerContainer
+
+            // Setting container name to folder name
+            Container.ContainerName = f.Name()
+            // Getting Description from file description.txt
+			Description, err := ioutil.ReadFile(config.DockerContainers + "/" + Container.ContainerName + "/description.txt")
+			// if we os.Open returns an error then handle it
+			if err != nil {
+				return nil, err
+			}
+
+			// Get Description from description.txt
+			Container.ContainerDescription = string(Description)
+
+			Containers.DockerContainer = append(Containers.DockerContainer, Container)
+		}
+	}
+
+	return Containers,nil
 }
 
 func print(rd io.Reader) error {
