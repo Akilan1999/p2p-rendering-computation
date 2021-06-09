@@ -9,6 +9,7 @@ var (
 	AddServer        string
 	ViewImages       string
 	CreateVM         string
+	ContainerName    string
 	Ports            string
 	Mode             string
 	RemoveVM         string
@@ -58,6 +59,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Creates Docker container on the selected server",
 		EnvVars: []string{"CREATE_VM"},
 		Destination: &CreateVM,
+	},
+	&cli.StringFlag{
+		Name:        "ContainerName",
+		Usage:       "Specifying the container run on the server side",
+		EnvVars: []string{"CONTAINER_NAME"},
+		Destination: &ContainerName,
 	},
 	&cli.StringFlag{
 		Name:        "RemoveVM",

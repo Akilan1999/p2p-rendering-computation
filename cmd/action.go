@@ -81,7 +81,8 @@ var CliAction = func(ctx *cli.Context) error {
 			fmt.Sscanf(Ports, "%d", &PortsInt)
 		}
 
-		imageRes, err := client.StartContainer(CreateVM,PortsInt,GPU)
+		// Calls function to do Api call to start the container on the server side
+		imageRes, err := client.StartContainer(CreateVM,PortsInt,GPU,ContainerName)
 
 		if err != nil {
 			fmt.Print(err)
