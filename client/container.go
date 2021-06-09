@@ -65,6 +65,33 @@ func RemoveContianer(IP string,ID string) error {
 	return nil
 }
 
+// ViewContainers This function displays all containers available on server side
+func ViewContainers(IP string)(*docker.DockerContainers, error){
+	// Passes URL with route /ShowImages
+	URL := "http://" + IP + ":" + serverPort + "/ShowImages"
+	resp, err := http.Get(URL)
+	if err != nil {
+		return nil,err
+	}
+
+	// Convert response to byte value
+	byteValue, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil,err
+	}
+
+	// Create variable for result response type
+	var Result docker.DockerContainers
+
+	// Adds byte value to docker.DockerContainers struct
+	json.Unmarshal(byteValue, &Result)
+	if err != nil {
+		return nil,err
+	}
+
+	return &Result, nil
+}
+
 // PrintStartContainer Prints results Generated container
 func PrintStartContainer(d *docker.DockerVM){
 	fmt.Println("ID : " + fmt.Sprint(d.ID))
