@@ -104,7 +104,7 @@ func Server() error{
 
 		// Creates container and returns back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt,GPU)
+		resp, err := docker.BuildRunContainer(PortsInt,GPU,"")
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
@@ -120,6 +120,15 @@ func Server() error{
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 		c.String(http.StatusOK, "success")
+	})
+
+	//Show images avaliable
+	r.GET("/ShowImages", func(c *gin.Context) {
+		resp, err := docker.ViewAllContainers()
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+		c.JSON(http.StatusOK, resp)
 	})
 
 	// Future feature

@@ -9,7 +9,8 @@ var (
 	defaultPath string
 	defaults = map[string]interface{}{
             "IPTable": "/etc/p2p-rendering/ip_table.json",
-            "DockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
+            "DockerContainers": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/",
+            "DefaultDockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
             "SpeedTestFile":"/etc/p2p-rendering/50.bin",
     }
 	configName = "config"
@@ -19,9 +20,10 @@ var (
 )
 
 type Config struct {
-	IPTable string
-	DockerFile string
-	SpeedTestFile string
+	IPTable           string
+	DockerContainers  string
+	DefaultDockerFile string
+	SpeedTestFile     string
 }
 
 // Exists reports whether the named file or directory exists.
@@ -45,7 +47,8 @@ func SetDefaults() error {
 
 	//Setting default paths for the config file
 	defaults["IPTable"] = defaultPath + "p2p/ip_table.json"
-	defaults["DockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
+	defaults["DefaultDockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
+	defaults["DockerContainers"] = defaultPath + "server/docker/containers/"
 	defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
 
 	//Paths to search for config file
