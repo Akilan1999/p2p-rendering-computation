@@ -31,6 +31,7 @@ var CliAction = func(ctx *cli.Context) error {
 		p2p.PrintIpTable()
 	}
 
+	// Add provided IP to the IP table
 	if AddServer != "" {
 		res, err := p2p.ReadIpTable()
 		if err != nil {
@@ -50,6 +51,16 @@ var CliAction = func(ctx *cli.Context) error {
 		res.WriteIpTable()
 
 
+	}
+
+	// Displays all images available on the server side
+	if ViewImages != "" {
+		imageRes, err := client.ViewContainers(ViewImages)
+
+		if err != nil {
+			fmt.Print(err)
+		}
+		client.PrettyPrint(imageRes)
 	}
 
 	// Function called to stop and remove server from Docker

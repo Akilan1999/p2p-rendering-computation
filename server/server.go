@@ -102,7 +102,7 @@ func Server() error{
 		// Convert Get Request value to int
 		fmt.Sscanf(Ports, "%d", &PortsInt)
 
-		// Creates container and returns back result to
+		// Creates container and returns-back result to
 		// access container
 		resp, err := docker.BuildRunContainer(PortsInt,GPU,"")
 
