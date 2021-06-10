@@ -101,6 +101,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 		for _, dockerContainer := range Containers.DockerContainer {
 			if dockerContainer.ContainerName == ContainerName {
 				RespDocker.ImagePath = config.DockerContainers + ContainerName + "/"
+				RespDocker.TagName = ContainerName
 				break
 			}
 		}
