@@ -16,7 +16,8 @@ interact with the containers.
 
 [Instructions to install docker GPU](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 ````
-Do ensure that the docker command does not need sudo to run
+// Do ensure that the docker command does not need sudo to run
+sudo chmod 666 /var/run/docker.sock
 ````
 
 ### Build Project and install project
