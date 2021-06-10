@@ -7,7 +7,9 @@ import (
 // Variables declared for CLI
 var (
 	AddServer        string
+	ViewImages       string
 	CreateVM         string
+	ContainerName    string
 	Ports            string
 	Mode             string
 	RemoveVM         string
@@ -47,10 +49,22 @@ var AppConfigFlags = []cli.Flag{
 		Destination: &AddServer,
 	},
 	&cli.StringFlag{
+		Name:        "ViewImages",
+		Usage:       "View images available on the server IP address",
+		EnvVars: []string{"VIEW_IMAGES"},
+		Destination: &ViewImages,
+	},
+	&cli.StringFlag{
 		Name:        "CreateVM",
 		Usage:       "Creates Docker container on the selected server",
 		EnvVars: []string{"CREATE_VM"},
 		Destination: &CreateVM,
+	},
+	&cli.StringFlag{
+		Name:        "ContainerName",
+		Usage:       "Specifying the container run on the server side",
+		EnvVars: []string{"CONTAINER_NAME"},
+		Destination: &ContainerName,
 	},
 	&cli.StringFlag{
 		Name:        "RemoveVM",
@@ -82,6 +96,7 @@ var AppConfigFlags = []cli.Flag{
 		EnvVars: []string{"SPECS"},
 		Destination: &Specs,
 	},
+
 	&cli.BoolFlag{
 		Name:        "SetDefaultConfig",
 		Usage:       "Sets a default configuration file",
