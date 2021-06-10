@@ -41,9 +41,39 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
         g++-${GPP_VERSION} \
         moreutils
 
-# setup ssh service
-RUN ssh-keygen -f /root/.ssh/id_rsa -q -N ''
-RUN cp -v /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+# Make sure we don't get notifications we can't answer during building.
+env    DEBIAN_FRONTEND noninteractive
+
+
+# Prepare scripts and configs
+add    ./scripts/start /start
+
+# Download and install everything from the repos.
+run    apt-get -q -y update; apt-get -q -y upgrade && \
+       apt-get -q -y install sudo openssh-server && \
+       mkdir /var/run/sshd
+
+
+# Set root password
+run    echo 'root:password' >> /root/passwdfile
+
+
+# Create user and it's password
+run    useradd -m -G sudo master && \
+       echo 'master:password' >> /root/passwdfile
+
+
+# Apply root password
+run    chpasswd -c SHA512 < /root/passwdfile && \
+       rm /root/passwdfile
+
+
+# Port 22 is used for ssh
+expose 22
+
+
+# Assign /data as static volume.
+volume ["/data"]
 
 # Install Python.
 RUN apt-get update -qq && apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils
@@ -260,3 +290,10 @@ RUN sed -i "s/x = Dense(500,/x = Dense(50,/g" /horovod/examples/spark/keras/kera
 # Hack Keras Spark Rossmann Estimator example to be smaller.
 RUN sed -i "s/x = Dense(1000,/x = Dense(100,/g" /horovod/examples/spark/keras/keras_spark_rossmann_estimator.py
 RUN sed -i "s/x = Dense(500,/x = Dense(50,/g" /horovod/examples/spark/keras/keras_spark_rossmann_estimator.py
+
+# Fix all permissions
+run    chmod +x /start
+
+
+# Starting sshd
+cmd    ["/start"]
