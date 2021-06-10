@@ -1,19 +1,24 @@
 package docker
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestDocker(t *testing.T) {
-	//TODO overwrite with custom docker paths
-	resp,err := BuildRunContainer(2,"true","")
+	// Testing by providing default container name
+	_,err := BuildRunContainer(2,"false","docker-ubuntu-sshd")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Print(resp.VNCPort)
+	// Testing if no container name is provided if default is used
+	_,err = BuildRunContainer(2,"false","")
+
+	if err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestViewAllContainers(t *testing.T) {
