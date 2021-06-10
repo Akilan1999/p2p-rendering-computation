@@ -97,14 +97,15 @@ func Server() error{
 		// Get Number of ports to open and whether to use GPU or not
 		Ports := c.DefaultQuery("ports","0")
 		GPU := c.DefaultQuery("GPU","false")
+		ContainerName := c.DefaultQuery("ContainerName","")
         var PortsInt int
 
 		// Convert Get Request value to int
 		fmt.Sscanf(Ports, "%d", &PortsInt)
 
-		// Creates container and returns back result to
+		// Creates container and returns-back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt,GPU)
+		resp, err := docker.BuildRunContainer(PortsInt,GPU,ContainerName)
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
@@ -120,6 +121,15 @@ func Server() error{
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 		c.String(http.StatusOK, "success")
+	})
+
+	//Show images avaliable
+	r.GET("/ShowImages", func(c *gin.Context) {
+		resp, err := docker.ViewAllContainers()
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+		c.JSON(http.StatusOK, resp)
 	})
 
 	// Future feature
