@@ -19,6 +19,7 @@ var client = http.Client{}
 // StartContainer Start container using REST api Implementation
 // From the selected server IP address
 // TODO: Test cases for this function
+//Calls URL ex: http://0.0.0.0:8088/startcontainer?ports=0&GPU=false&ContainerName=docker-ubuntu-sshd
 func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*docker.DockerVM ,error) {
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
 	URL := "http://" + IP + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName

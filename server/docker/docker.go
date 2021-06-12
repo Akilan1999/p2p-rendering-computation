@@ -93,14 +93,18 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	}
 	RespDocker.ImagePath = config.DefaultDockerFile
 
-	if ContainerName != "" {
+	// We are checking if the container name is not nil and not equal to the default one used
+	// which is docker-ubuntu-sshd
+	if ContainerName != "" && ContainerName != "docker-ubuntu-sshd" {
 		Containers, err := ViewAllContainers()
 		if err != nil {
 			return nil,err
 		}
+
 		for _, dockerContainer := range Containers.DockerContainer {
 			if dockerContainer.ContainerName == ContainerName {
 				RespDocker.ImagePath = config.DockerContainers + ContainerName + "/"
+				RespDocker.TagName = ContainerName
 				break
 			}
 		}
@@ -310,7 +314,6 @@ func ViewAllContainers() (*DockerContainers, error){
 
 	for _, f := range folders {
 		if f.IsDir() {
-			fmt.Print(f.Name())
 			//Declare variable DockerContainer of type struct
             var Container DockerContainer
 
