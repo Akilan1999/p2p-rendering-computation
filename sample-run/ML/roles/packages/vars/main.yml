@@ -12,5 +12,9 @@ general:
       - git
       - golang
       - apt-utils
+      - libopenmpi-dev
+      - python3-setuptools
+      - python3-dev
     pip:
       - docker>=3.7.0 # known good with 3.7.0
+      - tensorflow

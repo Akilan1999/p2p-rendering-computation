@@ -5,7 +5,7 @@
 #   3. handlers - these steps run only in response to specific events. If the event does not occur, the handler does not run.
 ################################################################################
 ---
-- hosts: test # Alternatively, 'canary', 'blue'|'green', 'all' according to your deployment strategy and your /etc/ansible/hosts file
+- hosts: gpu # Alternatively, 'canary', 'blue'|'green', 'all' according to your deployment strategy and your /etc/ansible/hosts file
   become: yes # All commands must run as root
   strategy: free # Allows all hosts to run to the end of the playbook as fast as they can
 
