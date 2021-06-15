@@ -21,6 +21,15 @@ func TestDocker(t *testing.T) {
 
 }
 
+func TestContainerHorovod(t *testing.T) {
+	// Testing by providing the horovod cpu image
+	_,err := BuildRunContainer(2,"false","cpuhorovod")
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestViewAllContainers(t *testing.T) {
 	_,err := ViewAllContainers()
 
