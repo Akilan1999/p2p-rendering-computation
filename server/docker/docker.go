@@ -257,7 +257,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		for i := range d.Ports {
 			cmd.WriteString("-p " + fmt.Sprint(d.Ports[i]) + ":" + fmt.Sprint(d.Ports[i]) + " ")
 		}
-		cmd.WriteString("-v=/opt/data:/data p2p-ubuntu /start > /dev/null")
+		cmd.WriteString("-v=/opt/data:/data "+ d.TagName +" /start > /dev/null")
 		//"-v=/opt/data:/data p2p-ubuntu /start > /dev/null"
 		cmdStr := cmd.String()
 		_, err := exec.Command("/bin/sh", "-c", cmdStr).Output()
