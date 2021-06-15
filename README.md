@@ -24,6 +24,7 @@ flexibility on tracking the container's usages and killing the containers at any
 2. [Installation](#Installation.md)
 3. [Design Architecture](#Design-Architecture)
 4. [Implementation](#Implementation) 
+5. [Find out more](#Find-out-more)
 
 <br>
 
@@ -74,5 +75,13 @@ The design architecture was inspired and based on the linux kernel design. The p
 The programming language used for this project was Golang. The reason Go lang was chosen was because it is a compiled language. The entire codebase is just a single binary file. When distributing to other linux distributing the only requirement would be the binary file to run the code. It is easy to write independant modules and be monolithic at the sametime using Go. Using Go.mod makes it very easy to handle external libraries and modularise code. The go.mod name for the project is git.sr.ht/~akilan1999/p2p-rendering-computation.
 
 [Read more on the Implementation](Docs/Implementation.md)
+
+<br>
+
+## Find out more
+As we are working on the open source project p2prc (i.e  p2p network designed for computation).If you are interested in participating as a contributor
+or just providing feedback on new features to build  or even just curious about new features added to the project. We have decided to create a discord group.                 
+Group:
+https://discord.gg/b4nRGTjYqy
 
 
