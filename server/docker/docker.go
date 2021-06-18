@@ -230,7 +230,6 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		}
 		hostConfig := &container.HostConfig{
 			PortBindings: PortForwarding,
-			NetworkMode: "host",
 		}
 
 		res, err := dockerClient.ContainerCreate(ctx, config, hostConfig,
