@@ -1,3 +1,34 @@
 {
- "ip_address": null
+ "ip_address": [
+  {
+   "ipv4": "0.0.0.0",
+   "latency": 637095,
+   "download": 0,
+   "upload": 0
+  },
+  {
+   "ipv4": "127.0.0.1",
+   "latency": 420466,
+   "download": 0,
+   "upload": 0
+  },
+  {
+   "ipv4": "86.99.25.74",
+   "latency": 1217902,
+   "download": 0,
+   "upload": 0
+  },
+  {
+   "ipv4": "172.105.58.101",
+   "latency": 40664198,
+   "download": 0,
+   "upload": 0
+  },
+  {
+   "ipv4": "172.105.58.111",
+   "latency": 42065364,
+   "download": 0,
+   "upload": 0
+  }
+ ]
 }
