@@ -6,6 +6,8 @@ USER 0
 # Make sure we don't get notifications we can't answer during building.
 env    DEBIAN_FRONTEND noninteractive
 
+run    apt-get -q -y update; apt-get -q -y upgrade
+run    apt install net-tools
 
 # Prepare scripts and configs
 add    ./scripts/start /start
