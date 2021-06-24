@@ -2,10 +2,13 @@ package p2p
 
 // SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses)SpeedTest() error{
+
+	//temp variable to store elements IP addresses and other information
+	// of IP addresses that are pingable
+	var ActiveIP IpAddresses
     
-	// Index to remove from struct 
-	var RemoveIndex []int
-	for i, value := range ip.IpAddress {
+	// Index to remove from struct
+	for _, value := range ip.IpAddress {
 
 		var err error
 		//if len(ip.IpAddress) == 1 {
@@ -16,10 +19,6 @@ func (ip *IpAddresses)SpeedTest() error{
 		err = value.PingTest()
 
 		if err != nil {
-			RemoveIndex = append(RemoveIndex, i)
-			// Record index to remove 
-			//ip.IpAddress = append(ip.IpAddress[:i], ip.IpAddress[i+1:]...)
-			// Proceed to next element in the array  
 			continue
 		}
 
@@ -35,19 +34,12 @@ func (ip *IpAddresses)SpeedTest() error{
 		//}
 
 		//Set value to the list
-		ip.IpAddress[i] = value
+
+		ActiveIP.IpAddress = append(ActiveIP.IpAddress, value)
 
 	}
-	// Remove element from struct 
-	for _, index := range RemoveIndex {
-		// If there is only 1 element and that has to be
-		// removed
-		if len(ip.IpAddress) == 1 {
-		   ip.IpAddress = nil
-		   break
-		}
-		ip.IpAddress = append(ip.IpAddress[:index], ip.IpAddress[index+1:]...)
-	}
+
+	ip.IpAddress = ActiveIP.IpAddress
 
 	err := ip.WriteIpTable()
 	if err != nil {
@@ -110,6 +102,7 @@ func LocalSpeedTestIpTable() error {
 
 	return nil
 }
+
 
 // Helper function to remove element from an array of a struct
 //func remove(s []IpAddress, i int) []IpAddress {
