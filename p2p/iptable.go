@@ -17,6 +17,7 @@ type IpAddresses struct {
 
 type IpAddress struct {
 	Ipv4   string `json:"ipv4"`
+	Ipv6   string `json:"ipv6"`
 	Latency  time.Duration `json:"latency"`
 	Download float64    `json:"download"`
 	Upload float64 `json:"upload"`
