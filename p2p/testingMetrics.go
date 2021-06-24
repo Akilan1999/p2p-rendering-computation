@@ -150,7 +150,13 @@ func mustOpen(f string) *os.File {
 // PingTest executes test to measure latency
 func (s *IpAddress) PingTest() error {
 	//pingURL := strings.Split(s.URL, "/upload")[0] + "/latency.txt"
-	  pingURL := "http://" + s.Ipv4 + ":8088/server_info"
+	var pingURL string
+	if s.Ipv6 != "" {
+		pingURL = "http://[" + s.Ipv6 + "]:8088/server_info"
+	} else {
+		pingURL = "http://" + s.Ipv4 + ":8088/server_info"
+	}
+
 	l := time.Duration(100000000000) // 10sec
 	for i := 0; i < 3; i++ {
 		sTime := time.Now()

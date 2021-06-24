@@ -2,12 +2,14 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 )
@@ -26,10 +28,19 @@ func UpdateIpTable(IpAddress string) error {
 
 	client := http.Client{}
 
-	resp, err := UploadMultipartFile(client,"http://"+IpAddress+":8088/IpTable","json",config.IPTable)
+	var resp []byte
 
-	if err != nil {
-		return err
+	version := ip4or6(IpAddress)
+	if version == "version 6" {
+		resp, err = UploadMultipartFile(client,"http://["+IpAddress+"]:8088/IpTable","json",config.IPTable)
+		if err != nil {
+			return err
+		}
+	} else {
+		resp, err = UploadMultipartFile(client,"http://"+IpAddress+":8088/IpTable","json",config.IPTable)
+		if err != nil {
+			return err
+		}
 	}
 
 	//resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
@@ -81,11 +92,19 @@ func UpdateIpTableListClient() error {
 
 		// Appending current machine public IP address as should not be there in IP Table
 		var PublicIP p2p.IpAddress
+
+		ipv6, err := GetCurrentIPV6()
+		if err != nil {
+			return err
+		}
+
 		ip, err := CurrentPublicIP()
 		if err != nil {
 			return err
 		}
 		PublicIP.Ipv4 = ip
+		PublicIP.Ipv6 = ipv6
+
 		DoNotRead.IpAddress = append(DoNotRead.IpAddress, PublicIP)
 
 		// Updates IP table based on server IP table
@@ -243,4 +262,45 @@ func CurrentPublicIP() (string,error) {
 	json.Unmarshal(body, &ip)
 
 	return ip.Query, nil
+}
+
+// GetCurrentIPV6 gets the current IPV6	address based on the interface
+// specified in the config file
+func GetCurrentIPV6()(string,error){
+		Config, err := config.ConfigInit()
+		if err != nil {
+			return "",err
+		}
+		byNameInterface, err := net.InterfaceByName(Config.NetworkInterface)
+		if err != nil {
+			return "",err
+		}
+		addresses, err := byNameInterface.Addrs()
+		if err != nil {
+			return "",err
+		}
+		if addresses[1].String() == "" {
+			return "",errors.New("IPV6 address not detected")
+		}
+		IP,_,err := net.ParseCIDR(addresses[1].String())
+	    if err != nil {
+		   return "",err
+	    }
+
+		return IP.String(), nil
+}
+
+//Helper function to check if the IP address is IPV4 or
+//IPV6 (https://socketloop.com/tutorials/golang-check-if-ip-address-is-version-4-or-6)
+func ip4or6(s string) string {
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '.':
+			return "version 4"
+		case ':':
+			return "version 6"
+		}
+	}
+	return "unknown"
+
 }
