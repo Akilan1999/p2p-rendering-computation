@@ -14,7 +14,7 @@ import (
 
 //var dlSizes = [...]int{350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000}
 //var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
-var client = http.Client{}
+var httpclient = http.Client{}
 
 // DownloadTest executes the test to measure download speed
 //func (s *IpAddress) DownloadTest(savingMode bool) error {
@@ -80,7 +80,7 @@ var client = http.Client{}
 // Download Speed
 func (s *IpAddress)DownloadSpeed() error {
 	start := time.Now()
-	resp, err := client.Get("http://" + s.Ipv4 + ":8088/50")
+	resp, err := httpclient.Get("http://" + s.Ipv4 + ":8088/50")
 	if err != nil {
 		return err
 	}
