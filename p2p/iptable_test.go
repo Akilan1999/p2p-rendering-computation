@@ -58,3 +58,10 @@ func TestIpAddresses_RemoveDuplicates(t *testing.T) {
 	}
 
 }
+
+func TestViewNetworkInterface(t *testing.T) {
+	err := ViewNetworkInterface()
+	if err != nil {
+		t.Error()
+	}
+}
