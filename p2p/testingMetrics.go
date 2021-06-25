@@ -153,6 +153,7 @@ func (s *IpAddress) PingTest() error {
 	var pingURL string
 	if s.Ipv6 != "" {
 		pingURL = "http://[" + s.Ipv6 + "]:8088/server_info"
+		s.Ipv4 = ""
 	} else {
 		pingURL = "http://" + s.Ipv4 + ":8088/server_info"
 	}
