@@ -2,6 +2,11 @@
 
 Over here we will cover the basic steps to get the server and client side running. 
 
+## Alpha release install 
+https://github.com/Akilan1999/p2p-rendering-computation/releases/tag/v1.0.0-alpha
+
+## Install from Github master branch 
+
 ### Install Go lang 
 The entire the implementation of this project is done using Go lang. 
 Thus, we need go lang to compile to code to a binary file.
@@ -27,6 +32,11 @@ into a single binary
 make install
 ```
 
+### Set up configuration file 
+```
+make configfile 
+```
+
 ### Test if binary works
 ```
 p2prc --help
@@ -37,7 +47,7 @@ NAME:
    p2p-rendering-computation - p2p cli application to create and access VMs in other servers
 
 USAGE:
-   p2p-rendering-computation [global options] command [command options] [arguments...]
+   p2prc [global options] command [command options] [arguments...]
 
 VERSION:
    1.0.0
@@ -46,22 +56,72 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --Mode value        Specifies mode of running (default: "client") [$P2P_MODE]
-   --UpdateServerList  Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
-   --ListServers       List servers which can render tasks (default: false) [$LIST_SERVERS]
-   --CreateVM value    Creates Docker container on the selected server [$CREATE_VM]
-   --RemoveVM value    Stop and Remove Docker container [$REMOVE_VM]
-   --ID value          Docker Container ID [$ID]
-   --Ports value       Number of ports to open for the Docker Container [$NUM_PORTS]
-   --GPU               Create Docker Containers to access GPU (default: false) [$USE_GPU]
-   --Specs value       Specs of the server node [$SPECS]
-   --SetDefaultConfig  Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
-   --help, -h          show help (default: false)
-   --version, -v       print the version (default: false)
-
-
+   --Server, -s                          Starts server (default: false) [$SERVER]
+   --UpdateServerList, --us              Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
+   --ListServers, --ls                   List servers which can render tasks (default: false) [$LIST_SERVERS]
+   --AddServer value, --as value         Adds server IP address to iptables [$ADD_SERVER]
+   --ViewImages value, --vi value        View images available on the server IP address [$VIEW_IMAGES]
+   --CreateVM value, --touch value       Creates Docker container on the selected server [$CREATE_VM]
+   --ContainerName value, --cn value     Specifying the container run on the server side [$CONTAINER_NAME]
+   --RemoveVM value, --rm value          Stop and Remove Docker container [$REMOVE_VM]
+   --ID value, --id value                Docker Container ID [$ID]
+   --Ports value, -p value               Number of ports to open for the Docker Container [$NUM_PORTS]
+   --GPU, --gpu                          Create Docker Containers to access GPU (default: false) [$USE_GPU]
+   --Specification value, --specs value  Specs of the server node [$SPECS]
+   --SetDefaultConfig, --dc              Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
+   --NetworkInterfaces, --ni             Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
+   --help, -h                            show help (default: false)
+   --version, -v                         print the version (default: false)  
 ```
 
+<br>
 
+--------------
 
-#### Note: The steps on how to use the commands will be added later.
+<br>
+
+# Using the Cli commands 
+
+### Start as a server 
+Do ensure you have docker installed for this 
+```
+p2prc -s 
+```
+
+### View server Speciafication 
+```
+p2prc --specs=<ip address>
+```
+
+### Run container 
+use the ```--gpu``` if you know the other machine has a gpu. 
+```
+p2prc --touch=<server ip address> -p <number of ports> --gpu
+```
+
+### Remove container 
+The docker id is present in the output where you create a container
+```
+p2prc --rm=<server ip address> --id=<docker container id> 
+```
+
+### Adding servers to ip table 
+```
+p2prc --as=<server ip address you want to add> 
+```
+
+### Update ip table 
+```
+p2prc --us 
+```
+
+### List Servers 
+```
+p2prc --ls 
+```
+
+### View Network interfaces 
+```
+p2prc --ni
+```
+
