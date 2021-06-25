@@ -43,7 +43,12 @@ func Server() error{
 	r.POST("/IpTable", func(c *gin.Context) {
 		// Getting IPV4 address of client
 		var ClientHost p2p.IpAddress
-		ClientHost.Ipv4 = c.ClientIP()
+
+		if p2p.Ip4or6(c.ClientIP()) == "version 6" {
+			ClientHost.Ipv6 = c.ClientIP()
+		} else {
+			ClientHost.Ipv4 = c.ClientIP()
+		}
 
 		// Variable to store IP table information
 		var IPTable p2p.IpAddresses
@@ -73,12 +78,6 @@ func Server() error{
 
 		// Runs speed test to return only servers in the IP table pingable
 		err = IPTable.SpeedTestUpdatedIPTable()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
-
-		// Called step to remove duplicate IP addresses
-		err = p2p.RemoveDuplicates()
 		if err != nil {
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}

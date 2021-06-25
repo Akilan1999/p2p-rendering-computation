@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 	"io/ioutil"
 	"net/http"
@@ -12,7 +13,13 @@ import (
 // and other basic information which helps set a
 // cluster of computer
 func GetSpecs(IP string)(*server.SysInfo,error) {
-	URL := "http://" + IP + ":" + serverPort + "/server_info"
+	var URL string
+	version := p2p.Ip4or6(IP)
+	if version == "version 6" {
+		URL = "http://[" + IP + "]:" + serverPort + "/server_info"
+	} else {
+		URL = "http://" + IP + ":" + serverPort + "/server_info"
+	}
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil,err
