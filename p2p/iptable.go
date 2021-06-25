@@ -126,13 +126,13 @@ func PrintIpTable() error {
 
 // RemoveDuplicates This is a temporary fix current functions failing to remove
 // Duplicate IP addresses from local IP table
-func (table IpAddresses)RemoveDuplicates() error {
+func (table *IpAddresses)RemoveDuplicates() error {
 
 	var NoDuplicates IpAddresses
 	for i, _:= range table.IpAddress {
 		Exists := false
 		for k := range NoDuplicates.IpAddress {
-			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 || (NoDuplicates.IpAddress[k].Ipv6 != "" &&  NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6){
+			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6){
 				Exists = true
 				break
 			}
@@ -143,6 +143,8 @@ func (table IpAddresses)RemoveDuplicates() error {
 		}
 		NoDuplicates.IpAddress = append(NoDuplicates.IpAddress, table.IpAddress[i])
 	}
+
+	table.IpAddress = NoDuplicates.IpAddress
 
 	return nil
 }
