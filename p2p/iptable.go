@@ -2,9 +2,12 @@ package p2p
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"io/ioutil"
+	"net"
+	"net/http"
 	"os"
 	"time"
 )
@@ -17,9 +20,14 @@ type IpAddresses struct {
 
 type IpAddress struct {
 	Ipv4   string `json:"ipv4"`
+	Ipv6   string `json:"ipv6"`
 	Latency  time.Duration `json:"latency"`
 	Download float64    `json:"download"`
 	Upload float64 `json:"upload"`
+}
+
+type IP struct {
+	Query string
 }
 
 // ReadIpTable Read data from Ip tables from json file
@@ -49,11 +57,38 @@ func ReadIpTable()(*IpAddresses ,error){
 	// jsonFile's content into 'users' which we defined above
 	json.Unmarshal(byteValue, &ipAddresses)
 
+	var PublicIP IpAddress
+
+	ipv6, err := GetCurrentIPV6()
+	if err != nil {
+		return nil, err
+	}
+
+	ip, err := CurrentPublicIP()
+	if err != nil {
+		return nil, err
+	}
+	PublicIP.Ipv4 = ip
+	PublicIP.Ipv6 = ipv6
+
+	// Updates current machine IP address to the IP table
+	ipAddresses.IpAddress = append(ipAddresses.IpAddress, PublicIP)
+
+	//before writing to iptable ensures the duplicates are removed
+	if err = ipAddresses.RemoveDuplicates(); err != nil {
+		return nil, err
+	}
+
     return &ipAddresses, nil
 }
 
 // WriteIpTable Write to IP table json file
 func (i *IpAddresses) WriteIpTable() error {
+	//before writing to iptable ensures the duplicates are removed
+	if err := i.RemoveDuplicates(); err != nil {
+		return err
+	}
+
 	file, err := json.MarshalIndent(i, "", " ")
 	if err != nil {
 		return err
@@ -82,8 +117,8 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("\nIP Address: %s\nLatency: %s\n-----------" +
-			"-----------------\n",table.IpAddress[i].Ipv4,
+		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\n-----------" +
+			"-----------------\n",table.IpAddress[i].Ipv4,table.IpAddress[i].Ipv6,
 			table.IpAddress[i].Latency)
 	}
 	return nil
@@ -91,17 +126,13 @@ func PrintIpTable() error {
 
 // RemoveDuplicates This is a temporary fix current functions failing to remove
 // Duplicate IP addresses from local IP table
-func RemoveDuplicates() error {
-	table, err := ReadIpTable()
-	if err != nil {
-		return err
-	}
+func (table *IpAddresses)RemoveDuplicates() error {
 
 	var NoDuplicates IpAddresses
 	for i, _:= range table.IpAddress {
 		Exists := false
 		for k := range NoDuplicates.IpAddress {
-			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 {
+			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6){
 				Exists = true
 				break
 			}
@@ -113,9 +144,67 @@ func RemoveDuplicates() error {
 		NoDuplicates.IpAddress = append(NoDuplicates.IpAddress, table.IpAddress[i])
 	}
 
-	if err := NoDuplicates.WriteIpTable(); err != nil {
-		return nil
-	}
+	table.IpAddress = NoDuplicates.IpAddress
 
 	return nil
+}
+
+// CurrentPublicIP Get Current Public IP address
+func CurrentPublicIP() (string,error) {
+	req, err := http.Get("http://ip-api.com/json/")
+	if err != nil {
+		return "",err
+	}
+	defer req.Body.Close()
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return "",err
+	}
+
+	var ip IP
+	json.Unmarshal(body, &ip)
+
+	return ip.Query, nil
+}
+
+// GetCurrentIPV6 gets the current IPV6	address based on the interface
+// specified in the config file
+func GetCurrentIPV6()(string,error){
+	Config, err := config.ConfigInit()
+	if err != nil {
+		return "",err
+	}
+	byNameInterface, err := net.InterfaceByName(Config.NetworkInterface)
+	if err != nil {
+		return "",err
+	}
+	addresses, err := byNameInterface.Addrs()
+	if err != nil {
+		return "",err
+	}
+	if addresses[1].String() == "" {
+		return "",errors.New("IPV6 address not detected")
+	}
+	IP,_,err := net.ParseCIDR(addresses[1].String())
+	if err != nil {
+		return "",err
+	}
+
+	return IP.String(), nil
+}
+
+// Ip4or6 Helper function to check if the IP address is IPV4 or
+//IPV6 (https://socketloop.com/tutorials/golang-check-if-ip-address-is-version-4-or-6)
+func Ip4or6(s string) string {
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '.':
+			return "version 4"
+		case ':':
+			return "version 6"
+		}
+	}
+	return "unknown"
+
 }

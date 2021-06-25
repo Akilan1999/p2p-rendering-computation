@@ -43,7 +43,12 @@ func Server() error{
 	r.POST("/IpTable", func(c *gin.Context) {
 		// Getting IPV4 address of client
 		var ClientHost p2p.IpAddress
-		ClientHost.Ipv4 = c.ClientIP()
+
+		if p2p.Ip4or6(c.ClientIP()) == "version 6" {
+			ClientHost.Ipv6 = c.ClientIP()
+		} else {
+			ClientHost.Ipv4 = c.ClientIP()
+		}
 
 		// Variable to store IP table information
 		var IPTable p2p.IpAddresses
@@ -73,12 +78,6 @@ func Server() error{
 
 		// Runs speed test to return only servers in the IP table pingable
 		err = IPTable.SpeedTestUpdatedIPTable()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
-
-		// Called step to remove duplicate IP addresses
-		err = p2p.RemoveDuplicates()
 		if err != nil {
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}
@@ -131,24 +130,6 @@ func Server() error{
 		}
 		c.JSON(http.StatusOK, resp)
 	})
-
-	// Future feature
-	/*r.GET("/create_vm/:virtualization", func(c *gin.Context) {
-		virtualization := c.Param("virtualization")
-		// Runs based on Preallocated VM size
-		if virtualization == "docker" {
-		  sshinfo,err := docker.RunVM()
-		 if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		 }
-		 if sshinfo != nil {
-            c.JSON(http.StatusOK, sshinfo)
-		 }
-
-		} else {
-			c.String(200,"virtualization tool not selected")
-		}
-	})*/
 
 	// Port running on
 	err := r.Run(":8088")

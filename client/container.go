@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"io/ioutil"
 	"net/http"
@@ -22,7 +23,14 @@ var client = http.Client{}
 //Calls URL ex: http://0.0.0.0:8088/startcontainer?ports=0&GPU=false&ContainerName=docker-ubuntu-sshd
 func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*docker.DockerVM ,error) {
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
-	URL := "http://" + IP + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
+	var URL string
+	version := p2p.Ip4or6(IP)
+	if version == "version 6" {
+		URL = "http://[" + IP + "]:" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
+	} else {
+		URL = "http://" + IP + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
+	}
+
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil,err
@@ -48,7 +56,13 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 
 // RemoveContianer Stops and removes container from the server
 func RemoveContianer(IP string,ID string) error {
-	URL := "http://" + IP + ":" + serverPort + "/RemoveContainer?id=" + ID
+	var URL string
+	version := p2p.Ip4or6(IP)
+	if version == "version 6" {
+		URL = "http://[" + IP + "]:" + serverPort + "/RemoveContainer?id=" + ID
+	} else {
+		URL = "http://" + IP + ":" + serverPort + "/RemoveContainer?id=" + ID
+	}
 	resp, err := http.Get(URL)
 	if err != nil {
 		return err
@@ -69,7 +83,13 @@ func RemoveContianer(IP string,ID string) error {
 // ViewContainers This function displays all containers available on server side
 func ViewContainers(IP string)(*docker.DockerContainers, error){
 	// Passes URL with route /ShowImages
-	URL := "http://" + IP + ":" + serverPort + "/ShowImages"
+	var URL string
+	version := p2p.Ip4or6(IP)
+	if version == "version 6" {
+		URL = "http://[" + IP + "]:" + serverPort + "/ShowImages"
+	} else {
+		URL = "http://" + IP + ":" + serverPort + "/ShowImages"
+	}
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil,err

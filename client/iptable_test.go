@@ -1,6 +1,8 @@
 package client
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestUpdateIpTableListClient(t *testing.T) {
 	err := UpdateIpTableListClient()
@@ -9,3 +11,4 @@ func TestUpdateIpTableListClient(t *testing.T) {
 		t.Error(err)
 	}
 }
+

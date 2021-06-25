@@ -14,7 +14,7 @@ import (
 
 //var dlSizes = [...]int{350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000}
 //var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
-var client = http.Client{}
+var httpclient = http.Client{}
 
 // DownloadTest executes the test to measure download speed
 //func (s *IpAddress) DownloadTest(savingMode bool) error {
@@ -80,7 +80,7 @@ var client = http.Client{}
 // Download Speed
 func (s *IpAddress)DownloadSpeed() error {
 	start := time.Now()
-	resp, err := client.Get("http://" + s.Ipv4 + ":8088/50")
+	resp, err := httpclient.Get("http://" + s.Ipv4 + ":8088/50")
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,14 @@ func mustOpen(f string) *os.File {
 // PingTest executes test to measure latency
 func (s *IpAddress) PingTest() error {
 	//pingURL := strings.Split(s.URL, "/upload")[0] + "/latency.txt"
-	  pingURL := "http://" + s.Ipv4 + ":8088/server_info"
+	var pingURL string
+	if s.Ipv6 != "" {
+		pingURL = "http://[" + s.Ipv6 + "]:8088/server_info"
+		s.Ipv4 = ""
+	} else {
+		pingURL = "http://" + s.Ipv4 + ":8088/server_info"
+	}
+
 	l := time.Duration(100000000000) // 10sec
 	for i := 0; i < 3; i++ {
 		sTime := time.Now()
