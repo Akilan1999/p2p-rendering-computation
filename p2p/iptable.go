@@ -186,12 +186,37 @@ func GetCurrentIPV6()(string,error){
 	if addresses[1].String() == "" {
 		return "",errors.New("IPV6 address not detected")
 	}
-	IP,_,err := net.ParseCIDR(addresses[1].String())
+	IP,_,err := net.ParseCIDR(addresses[Config.NetworkInterfaceIPV6Index].String())
 	if err != nil {
 		return "",err
 	}
 
 	return IP.String(), nil
+}
+
+// ViewNetworkInterface This function is created to view the network interfaces available
+func ViewNetworkInterface() error {
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return err
+	}
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			return err
+		}
+		for index, a := range addrs {
+			switch v := a.(type) {
+			case *net.IPAddr:
+				fmt.Printf("(%v) %v : %s (%s)\n", index, i.Name, v, v.IP.DefaultMask())
+
+			case *net.IPNet:
+				fmt.Printf("(%v) %v : %s \n", index, i.Name, v)
+			}
+
+		}
+	}
+	return nil
 }
 
 // Ip4or6 Helper function to check if the IP address is IPV4 or
