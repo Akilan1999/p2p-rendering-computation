@@ -11,7 +11,7 @@ var (
 	CreateVM         string
 	ContainerName    string
 	Ports            string
-	Mode             string
+	Server           bool
 	RemoveVM         string
 	ID               string
 	Specs            string
@@ -24,75 +24,86 @@ var (
 
 var AppConfigFlags = []cli.Flag{
 	// Deprecated to be implemented using GRPC
-	&cli.StringFlag{
-		Name:        "Mode",
-		Value:       "client",
-		Usage:       "Specifies mode of running",
-		EnvVars: []string{"P2P_MODE"},
-		Destination: &Mode,
+	&cli.BoolFlag{
+		Name:        "Server",
+		Aliases: []string{"s"},
+		Usage:       "Starts server",
+		EnvVars: []string{"SERVER"},
+		Destination: &Server,
 	},
 	&cli.BoolFlag{
 		Name:        "UpdateServerList",
+		Aliases: []string{"us"},
 		Usage:       "Update List of Server available based on servers iptables",
 		EnvVars: []string{"UPDATE_SERVER_LIST"},
 		Destination: &UpdateServerList,
 	},
 	&cli.BoolFlag{
 		Name:        "ListServers",
+		Aliases: []string{"ls"},
 		Usage:       "List servers which can render tasks",
 		EnvVars: []string{"LIST_SERVERS"},
 		Destination: &ServerList,
 	},
 	&cli.StringFlag{
 		Name:        "AddServer",
+		Aliases: []string{"as"},
 		Usage:       "Adds server IP address to iptables",
 		EnvVars: []string{"ADD_SERVER"},
 		Destination: &AddServer,
 	},
 	&cli.StringFlag{
 		Name:        "ViewImages",
+		Aliases: []string{"vi"},
 		Usage:       "View images available on the server IP address",
 		EnvVars: []string{"VIEW_IMAGES"},
 		Destination: &ViewImages,
 	},
 	&cli.StringFlag{
 		Name:        "CreateVM",
+		Aliases: []string{"touch"},
 		Usage:       "Creates Docker container on the selected server",
 		EnvVars: []string{"CREATE_VM"},
 		Destination: &CreateVM,
 	},
 	&cli.StringFlag{
 		Name:        "ContainerName",
+		Aliases: []string{"cn"},
 		Usage:       "Specifying the container run on the server side",
 		EnvVars: []string{"CONTAINER_NAME"},
 		Destination: &ContainerName,
 	},
 	&cli.StringFlag{
 		Name:        "RemoveVM",
+		Aliases: []string{"rm"},
 		Usage:       "Stop and Remove Docker container",
 		EnvVars: []string{"REMOVE_VM"},
 		Destination: &RemoveVM,
 	},
 	&cli.StringFlag{
 		Name:        "ID",
+		Aliases: []string{"id"},
 		Usage:       "Docker Container ID",
 		EnvVars: []string{"ID"},
 		Destination: &ID,
 	},
 	&cli.StringFlag{
 		Name:        "Ports",
+		Aliases: []string{"p"},
 		Usage:       "Number of ports to open for the Docker Container",
 		EnvVars: []string{"NUM_PORTS"},
 		Destination: &Ports,
 	},
 	&cli.BoolFlag{
 		Name:        "GPU",
+		Aliases: []string{"gpu"},
 		Usage:       "Create Docker Containers to access GPU",
 		EnvVars: []string{"USE_GPU"},
 		Destination: &GPU,
 	},
 	&cli.StringFlag{
-		Name:        "Specs",
+		Name:        "Specification",
+		Aliases: []string{"specs"},
 		Usage:       "Specs of the server node",
 		EnvVars: []string{"SPECS"},
 		Destination: &Specs,
@@ -100,12 +111,14 @@ var AppConfigFlags = []cli.Flag{
 
 	&cli.BoolFlag{
 		Name:        "SetDefaultConfig",
+		Aliases: []string{"dc"},
 		Usage:       "Sets a default configuration file",
 		EnvVars: []string{"SET_DEFAULT_CONFIG"},
 		Destination: &SetDefaultConfig,
 	},
 	&cli.BoolFlag{
 		Name:        "NetworkInterfaces",
+		Aliases: []string{"ni"},
 		Usage:       "Shows the network interface in your computer",
 		EnvVars: []string{"NETWORK_INTERFACE"},
 		Destination: &NetworkInterface,
