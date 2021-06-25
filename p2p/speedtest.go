@@ -49,7 +49,7 @@ func (ip *IpAddresses)SpeedTest() error{
 	return nil
 }
 
-// SpeedTestUpdatedIPTable Called when ip tables from client/server is also passed on
+// SpeedTestUpdatedIPTable Called when ip tables from httpclient/server is also passed on
 func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 	targets, err := ReadIpTable()
 	if err != nil {
@@ -65,7 +65,9 @@ func (ip *IpAddresses)SpeedTestUpdatedIPTable() error{
 		// To ensure that there are no duplicate IP addresses
 		Exists := false
 		for k := range ip.IpAddress {
-			if ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 {
+			// Checks if both the IPV4 addresses are the same or the IPV6 address is not
+			// an empty string and IPV6 address are the same
+			if ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}
