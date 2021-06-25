@@ -19,6 +19,7 @@ var (
 	UpdateServerList bool
 	ServerList       bool
 	SetDefaultConfig bool
+	NetworkInterface bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -102,5 +103,11 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Sets a default configuration file",
 		EnvVars: []string{"SET_DEFAULT_CONFIG"},
 		Destination: &SetDefaultConfig,
+	},
+	&cli.BoolFlag{
+		Name:        "NetworkInterfaces",
+		Usage:       "Shows the network interface in your computer",
+		EnvVars: []string{"NETWORK_INTERFACE"},
+		Destination: &NetworkInterface,
 	},
 }

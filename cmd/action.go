@@ -109,6 +109,15 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 	}
 
+	//If the network interface flag is called
+	// Then all the network interfaces are displayed
+	if NetworkInterface {
+		err := p2p.ViewNetworkInterface()
+		if err != nil {
+			fmt.Print(err)
+		}
+	}
+
 
 	return nil
 }
