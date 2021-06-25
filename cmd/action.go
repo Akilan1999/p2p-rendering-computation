@@ -10,7 +10,7 @@ import (
 )
 
 var CliAction = func(ctx *cli.Context) error {
-	if Mode == "server" {
+	if Server {
 		// TODO: with RPC calls
 		server.Server()
 		//server.Rpc()
