@@ -41,8 +41,15 @@ var CliAction = func(ctx *cli.Context) error {
 		//Create variable of type IpAddress and set IP address
 		// to it
 		var IpAddr p2p.IpAddress
-		IpAddr.Ipv4 = AddServer
 
+		//Checking if the address is a ipv4
+		// or ipv6 address
+		ip4Orip6 := p2p.Ip4or6(AddServer)
+		if ip4Orip6 == "version 6" {
+			IpAddr.Ipv6 = AddServer
+		} else {
+			IpAddr.Ipv4 = AddServer
+		}
 		// Append IP address to variable result which
 		// is a list
 		res.IpAddress = append(res.IpAddress, IpAddr)
