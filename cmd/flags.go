@@ -108,7 +108,6 @@ var AppConfigFlags = []cli.Flag{
 		EnvVars: []string{"SPECS"},
 		Destination: &Specs,
 	},
-
 	&cli.BoolFlag{
 		Name:        "SetDefaultConfig",
 		Aliases: []string{"dc"},

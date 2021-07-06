@@ -1,11 +1,3 @@
 {
- "ip_address": [
-  {
-   "ipv4": "",
-   "ipv6": "2001:8f8:172d:ee93:7588:ad57:c351:3309",
-   "latency": 1213198,
-   "download": 0,
-   "upload": 0
-  }
- ]
+ "ip_address": null
 }
