@@ -113,7 +113,7 @@ The docker id is present in the output where you create a container
 p2prc --rm=<server ip address> --id=<docker container id> 
 ```
 
-### Adding servers to ip table 
+### Adding servers to ip table
 ```
 p2prc --as=<server ip address you want to add> 
 ```
