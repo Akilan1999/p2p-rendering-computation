@@ -12,8 +12,6 @@ var (
             "DockerContainers": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/",
             "DefaultDockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
             "SpeedTestFile":"/etc/p2p-rendering/50.bin",
-            "NetworkInterface": "wlp0s20f3",
-            "NetworkInterfaceIPV6Index": "1",
     }
 	configName = "config"
 	configType = "json"
@@ -26,8 +24,9 @@ type Config struct {
 	DockerContainers  string
 	DefaultDockerFile string
 	SpeedTestFile     string
-	NetworkInterface  string
-	NetworkInterfaceIPV6Index int
+	IPV6Address       string
+	//NetworkInterface  string
+	//NetworkInterfaceIPV6Index int
 }
 
 // Exists reports whether the named file or directory exists.
@@ -54,8 +53,9 @@ func SetDefaults() error {
 	defaults["DefaultDockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
 	defaults["DockerContainers"] = defaultPath + "server/docker/containers/"
 	defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
-	defaults["NetworkInterface"] = "wlp0s20f3"
-	defaults["NetworkInterfaceIPV6Index"] = "2"
+	defaults["IPV6Address"] = ""
+	//defaults["NetworkInterface"] = "wlp0s20f3"
+	//defaults["NetworkInterfaceIPV6Index"] = "2"
 
 	//Paths to search for config file
 	configPaths = append(configPaths, defaultPath)
