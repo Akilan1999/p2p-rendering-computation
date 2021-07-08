@@ -8,3 +8,6 @@ p2p-rendering-computation
 p2prc
 config.json
 .vscode/
+
+#ignore generated iptables
+p2p/iptable/
