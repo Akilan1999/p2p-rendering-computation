@@ -2,7 +2,6 @@ package p2p
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"io/ioutil"
@@ -175,23 +174,25 @@ func GetCurrentIPV6()(string,error){
 	if err != nil {
 		return "",err
 	}
-	byNameInterface, err := net.InterfaceByName(Config.NetworkInterface)
-	if err != nil {
-		return "",err
-	}
-	addresses, err := byNameInterface.Addrs()
-	if err != nil {
-		return "",err
-	}
-	if addresses[1].String() == "" {
-		return "",errors.New("IPV6 address not detected")
-	}
-	IP,_,err := net.ParseCIDR(addresses[Config.NetworkInterfaceIPV6Index].String())
-	if err != nil {
-		return "",err
-	}
 
-	return IP.String(), nil
+	// Fix in future release
+	//byNameInterface, err := net.InterfaceByName(Config.NetworkInterface)
+	//if err != nil {
+	//	return "",err
+	//}
+	//addresses, err := byNameInterface.Addrs()
+	//if err != nil {
+	//	return "",err
+	//}
+	//if addresses[1].String() == "" {
+	//	return "",errors.New("IPV6 address not detected")
+	//}
+	//IP,_,err := net.ParseCIDR(addresses[Config.NetworkInterfaceIPV6Index].String())
+	//if err != nil {
+	//	return "",err
+	//}
+
+	return Config.IPV6Address, nil
 }
 
 // ViewNetworkInterface This function is created to view the network interfaces available
@@ -230,6 +231,6 @@ func Ip4or6(s string) string {
 			return "version 6"
 		}
 	}
-	return "unknown"
+	return "version 6"
 
 }
