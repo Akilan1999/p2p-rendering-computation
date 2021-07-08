@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"io"
 	"os"
 )
 
@@ -39,6 +40,30 @@ func fileExists(name string) bool {
 	return true
 }
 
+// Copy the src file to dst. Any existing file will be overwritten and will not
+// copy file attributes.
+// Source: https://stackoverflow.com/questions/21060945/simple-way-to-copy-a-file
+func Copy(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	return out.Close()
+}
+
+
 // SetDefaults This function to be called only during a
 // make install
 func SetDefaults() error {
@@ -48,8 +73,15 @@ func SetDefaults() error {
 	//Setting current directory to default path
 	defaultPath = curDir + "/"
 
+	//Create ip_table.json in the json directory
+	err := Copy("p2p/ip_table.json","p2p/iptable/ip_table.json")
+	if err != nil {
+		return err
+	}
+
+
 	//Setting default paths for the config file
-	defaults["IPTable"] = defaultPath + "p2p/ip_table.json"
+	defaults["IPTable"] = defaultPath + "p2p/iptable/ip_table.json"
 	defaults["DefaultDockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
 	defaults["DockerContainers"] = defaultPath + "server/docker/containers/"
 	defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
@@ -68,7 +100,7 @@ func SetDefaults() error {
 	}
 
 	//Calling configuration file
-	_, err := ConfigInit()
+	_, err = ConfigInit()
 	if err != nil {
 		return err
 	}
