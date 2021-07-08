@@ -32,10 +32,18 @@ into a single binary
 make install
 ```
 
-### Set up configuration file 
+### Add appropriate paths to .bashrc 
+```
+export P2PRC=/<PATH>/p2p-rendering-computation
+export PATH=/<PATH>/p2p-rendering-computation:${PATH}
+```
+
+### Set up configuration file
 ```
 make configfile 
 ```
+Open the config file ```config.json``` and add the IPv6 address 
+if you have one. 
 
 ### Test if binary works
 ```
