@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestDocker(t *testing.T) {
+func TestDockerUbuntuSSHDProvided(t *testing.T) {
 	// Testing by providing default container name
 	_,err := BuildRunContainer(2,"false","docker-ubuntu-sshd")
 
@@ -12,13 +12,15 @@ func TestDocker(t *testing.T) {
 		t.Error(err)
 	}
 
-	// Testing if no container name is provided if default is used
-	_,err = BuildRunContainer(2,"false","")
+}
+
+func TestDockerDefaultContainer(t *testing.T) {
+	// Testing by providing without providing default container name
+	_,err := BuildRunContainer(2,"false","")
 
 	if err != nil {
 		t.Error(err)
 	}
-
 }
 
 func TestContainerHorovod(t *testing.T) {
