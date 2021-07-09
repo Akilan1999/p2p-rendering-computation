@@ -131,12 +131,11 @@ func (table *IpAddresses)RemoveDuplicates() error {
 	for i, _:= range table.IpAddress {
 		Exists := false
 		for k := range NoDuplicates.IpAddress {
-			if NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6){
+			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4) || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}
 		}
-
 		if Exists {
 			continue
 		}
