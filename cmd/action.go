@@ -53,7 +53,6 @@ var CliAction = func(ctx *cli.Context) error {
 		// Append IP address to variable result which
 		// is a list
 		res.IpAddress = append(res.IpAddress, IpAddr)
-		
 		// Adds the new server IP to the iptable
 		res.WriteIpTable()
 

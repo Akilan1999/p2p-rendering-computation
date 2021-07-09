@@ -65,3 +65,13 @@ func TestViewNetworkInterface(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestIp4or6(t *testing.T) {
+	// This test ensures that the ipv6 address gets detected
+	test := "2001:8f8:172d:7e27:4f23:ae4:bce5:e037"
+	res := Ip4or6(test)
+	if res != "version 6" {
+		t.Fail()
+	}
+
+}
