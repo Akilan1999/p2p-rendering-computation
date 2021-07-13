@@ -11,3 +11,5 @@ config.json
 
 #ignore generated iptables
 p2p/iptable/
+#ignore plugins added
+plugin/deploy
