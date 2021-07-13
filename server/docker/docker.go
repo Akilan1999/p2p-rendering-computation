@@ -137,7 +137,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 
 }
 
-//Builds docker image (TODO: relative path for Dockerfile folder)
+//Builds docker image (TODO: relative path for Dockerfile deploy)
 func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 	//defer cancel()
@@ -298,7 +298,7 @@ func StopAndRemoveContainer(containername string) error {
 
 // ViewAllContainers returns all containers runnable and which can be built
 func ViewAllContainers() (*DockerContainers, error){
-	// Traverse the folder path as per given in the config file
+	// Traverse the deploy path as per given in the config file
 	config, err := config.ConfigInit()
 	if err != nil {
 		return nil,err
@@ -317,7 +317,7 @@ func ViewAllContainers() (*DockerContainers, error){
 			//Declare variable DockerContainer of type struct
             var Container DockerContainer
 
-            // Setting container name to folder name
+            // Setting container name to deploy name
             Container.ContainerName = f.Name()
             // Getting Description from file description.txt
 			Description, err := ioutil.ReadFile(config.DockerContainers + "/" + Container.ContainerName + "/description.txt")

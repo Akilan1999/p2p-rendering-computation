@@ -15,8 +15,8 @@
     state: started
   when: inventory_hostname == rsync.master
 
-# Synchronize the data folder across hosts
-- name: synchronize the data folder
+# Synchronize the data deploy across hosts
+- name: synchronize the data deploy
   delegate_to: "{{ rsync.master }}"
   synchronize:
     src: "{{ sync.source }}"

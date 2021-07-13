@@ -26,6 +26,7 @@ type Config struct {
 	DefaultDockerFile string
 	SpeedTestFile     string
 	IPV6Address       string
+	PluginPath        string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }
@@ -86,6 +87,7 @@ func SetDefaults() error {
 	defaults["DockerContainers"] = defaultPath + "server/docker/containers/"
 	defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
 	defaults["IPV6Address"] = ""
+	defaults["PluginPath"] = defaultPath + "plugin/deploy"
 	//defaults["NetworkInterface"] = "wlp0s20f3"
 	//defaults["NetworkInterfaceIPV6Index"] = "2"
 
