@@ -8,7 +8,7 @@ import (
 )
 
 // VERSION specifies the version of the platform
-var VERSION = "1.0.0"
+var VERSION = "beta-1.0.0"
 var mode string
 
 // Varaibles if mode is client
