@@ -20,6 +20,7 @@ var (
 	ServerList       bool
 	SetDefaultConfig bool
 	NetworkInterface bool
+	ViewPlugin       bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -121,5 +122,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Shows the network interface in your computer",
 		EnvVars: []string{"NETWORK_INTERFACE"},
 		Destination: &NetworkInterface,
+	},
+	&cli.BoolFlag{
+		Name:        "ViewPlugins",
+		Aliases: []string{"vp"},
+		Usage:       "Shows plugins available to be executed",
+		EnvVars: []string{"VIEW_PLUGIN"},
+		Destination: &ViewPlugin,
 	},
 }

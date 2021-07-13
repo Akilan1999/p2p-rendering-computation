@@ -5,6 +5,7 @@ import (
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/plugin"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 	"github.com/urfave/cli/v2"
 )
@@ -122,6 +123,16 @@ var CliAction = func(ctx *cli.Context) error {
 		if err != nil {
 			fmt.Print(err)
 		}
+	}
+
+	// If the view plugin flag is called then display all
+	// plugins available 
+	if ViewPlugin {
+		plugins ,err := plugin.DetectPlugins()
+		if err != nil {
+			fmt.Print(err)
+		}
+		client.PrettyPrint(plugins)
 	}
 
 
