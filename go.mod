@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/Microsoft/hcsshim v0.8.15 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
+	github.com/apenella/go-ansible v1.1.0
 	github.com/containerd/continuity v0.0.0-20210315143101-93e15499afd5 // indirect
 	github.com/docker/docker v20.10.0-beta1.0.20201113105859-b6bfff2a628f+incompatible
 	github.com/docker/go-connections v0.4.0
@@ -19,7 +20,6 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/shirou/gopsutil v3.20.12+incompatible
-	github.com/showwin/speedtest-go v1.1.1
 	github.com/spf13/viper v1.4.0
 	github.com/urfave/cli/v2 v2.3.0
 	gitlab.com/NebulousLabs/fastrand v0.0.0-20181126182046-603482d69e40 // indirect
