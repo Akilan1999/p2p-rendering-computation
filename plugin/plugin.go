@@ -1,8 +1,14 @@
 package plugin
 
 import (
+	"context"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"io/ioutil"
+
+	"github.com/apenella/go-ansible/pkg/execute"
+	"github.com/apenella/go-ansible/pkg/options"
+	"github.com/apenella/go-ansible/pkg/playbook"
+	"github.com/apenella/go-ansible/pkg/stdoutcallback/results"
 )
 
 // Plugins Array of all plugins detected
@@ -14,6 +20,14 @@ type Plugins struct {
 type Plugin struct {
 	FolderName         string
 	PluginDescription  string
+	Execute            []*ExecuteIP
+}
+
+// ExecuteIP IP Address to execute Ansible instruction
+type ExecuteIP struct {
+	IPAddress   string
+	SSHPortNo   string
+	Success      bool
 }
 
 // DetectPlugins Detects all the plugins available
@@ -51,4 +65,62 @@ func DetectPlugins()(*Plugins,error){
 		}
 
 	return plugins,nil
+}
+
+// ExecutePlugin Function to execute plugins that are called
+func (p *Plugin) ExecutePlugin() error {
+	// Get Execute plugin path from config file
+	config, err:= config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
+	// Run ip address to execute ansible inside
+	for _,execute := range p.Execute {
+		err := execute.RunAnsible(p.FolderName,config.PluginPath)
+		if err != nil {
+			return err
+		}
+		// If ran successfully then change success flag to true
+		execute.Success = true
+	}
+	return nil
+}
+
+// RunAnsible Executes based on credentials on the struct
+func (e *ExecuteIP)RunAnsible(FolderName string,path string) error {
+	ansiblePlaybookConnectionOptions := &options.AnsibleConnectionOptions{
+		User: "master",
+	}
+
+	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
+		Inventory: e.IPAddress + ",",
+		ExtraVars: map[string]interface{}{
+			"ansible_port":e.SSHPortNo,
+		},
+	}
+
+	ansiblePlaybookPrivilegeEscalationOptions := &options.AnsiblePrivilegeEscalationOptions{
+		Become:        true,
+		AskBecomePass: true,
+	}
+
+	playbook := &playbook.AnsiblePlaybookCmd{
+		Playbooks:                  []string{path + "/" + FolderName + "site.yml"},
+		ConnectionOptions:          ansiblePlaybookConnectionOptions,
+		PrivilegeEscalationOptions: ansiblePlaybookPrivilegeEscalationOptions,
+		Options:                    ansiblePlaybookOptions,
+		Exec: execute.NewDefaultExecute(
+			execute.WithTransformers(
+				results.Prepend("success"),
+			),
+		),
+	}
+
+	err := playbook.Run(context.TODO())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
