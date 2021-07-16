@@ -12,6 +12,9 @@ build:
 configfile:
 	./p2prc --SetDefaultConfig
 
+testcases:
+	sh plugin/generate_test_case.sh
+
 run:
 	go run main.go
 
