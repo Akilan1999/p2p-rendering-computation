@@ -1,4 +1,12 @@
 # Plugin Module Implementation 
+## Topics
+1. [Introduciton](#introduction)
+2. [Site.yml](#site-File-Template)
+3. [Host](#hosts-file)
+4. [Description](#description-file)
+
+## Introduction
+    
 The plugin module is designed to ensure clients can execute instructions in a declarative manner across different 
 containers created. This means the user (i.e client) needs to write the instruction only once, and these instructions 
 can be executed across different nodes in a repetitive manner. 
@@ -23,7 +31,7 @@ plugin
               n: n number of plugins possible 
 ```
 
-### Site File Template (i.e site.yml)
+## Site File Template
 The site file is also known as the Ansible playbook and is incharge of executing 
 instructions in a declarative manner. The below example specifies how to make one. 
 ```
@@ -37,7 +45,7 @@ instructions in a declarative manner. The below example specifies how to make on
 ```
 Read more about ansible tasks: https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#about-playbooks
 
-### Hosts file (i.e hosts) 
+## Hosts file
 hosts file is also known as the inventory file. This file consists of all the information required to connect to other 
 nodes to execute Ansible instructions. In this project this file needs to be set in a certain configuration because the 
 go code or binary will populate this file automatically with the appropriate information required to connect to local or 
@@ -60,7 +68,7 @@ main:
       ansible_sudo_pass: password
 ```
 
-### Description file (i.e description.txt)
+## Description file
 This is a simple text file used to describe what the module does. 
 When the client is looking at various commands via the ClI.
 The description is displayed along-side the plugin name. 
