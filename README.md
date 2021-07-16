@@ -15,7 +15,7 @@ client has total flexibility on how to batch the tasks and the user acting as th
 flexibility on tracking the container's usages and killing the containers at any point of time. 
 
 ## Demo
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/LRv3NR2lu7I/0.jpg)](https://www.youtube.com/watch?v=LRv3NR2lu7I "Simple P2P Cli application for creating containers")
+[![IMAGE ALT TEXT](https://i.ytimg.com/vi/hthrxLineoI/hqdefault.jpg)](https://www.youtube.com/watch?v=hthrxLineoI "p2prc beta v1.0.0")
 
 <br>
 
