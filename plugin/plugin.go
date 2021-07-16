@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"io/ioutil"
 
@@ -65,6 +66,36 @@ func DetectPlugins()(*Plugins,error){
 		}
 
 	return plugins,nil
+}
+
+// RunPlugin Executes plugins based on the plugin name provided
+func RunPlugin(pluginName string ,IPAddresses []*ExecuteIP) (*Plugin,error) {
+	plugins, err := DetectPlugins()
+	if err != nil {
+		return nil,err
+	}
+
+	// Variable to store struct information about the plugin
+	var plugindetected *Plugin
+	for _,plugin := range plugins.PluginsDetected {
+		if plugin.FolderName == pluginName {
+			plugindetected = plugin
+			plugindetected.Execute = IPAddresses
+			break
+		}
+	}
+
+	if plugindetected == nil {
+		return nil, errors.New("Plugin not detected")
+	}
+
+	// Executing the plugin
+	err  = plugindetected.ExecutePlugin()
+	if err != nil {
+		return nil,err
+	}
+
+	return plugindetected,nil
 }
 
 // ExecutePlugin Function to execute plugins that are called
