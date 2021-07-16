@@ -1,1 +1,1 @@
-cp -r TestAnsible/ deploy/
+cp -r plugin/TestAnsible/ deploy/
