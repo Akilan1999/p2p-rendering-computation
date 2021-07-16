@@ -133,8 +133,15 @@ p2prc --ls
 p2prc --ni
 ```
 
+<br>
+
+--------------
+
+<br>
+
 # Using Plugins 
-This feature is still Under Development 
+This feature is still Under Development:
+[Read more on the implementation](PluginImplementation.md)
 
 #### Dependencies
 - Ansible:
@@ -146,12 +153,6 @@ This feature is still Under Development
   - ```sudo nano /etc/ansible/ansible.cfg```: Open the following file. If this file is not found then where
     ever the file ```ansible.cfg``` is located.
   -  Add or uncomment ```host_key_checking = False```
-
-<br>
-
---------------
-
-<br>
   
 #### Run Test Cases 
 - Generate Test Case Ansible file 
