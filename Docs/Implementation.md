@@ -16,3 +16,4 @@ the project is git.sr.ht/~akilan1999/p2p-rendering-computation.
 ## [Server Module](ServerImplementation.md)
 ## [Client Module](ClientImplementation.md)
 ## [P2P Module](P2PImplementation.md)
+## [Plugin Module](PluginImplementation.md)

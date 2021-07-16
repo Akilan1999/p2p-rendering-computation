@@ -12,5 +12,6 @@
    3. [Server Module](ServerImplementation.md)
    4. [Config Module](ConfigImplementation.md)
    5. [Cli Module](CliImplementation.md)
+   6. [Plugin Module](PluginImplementation.md)
 5. [Problems](Problems.md)   
 
