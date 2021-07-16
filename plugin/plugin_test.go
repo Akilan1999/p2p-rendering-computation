@@ -3,6 +3,8 @@ package plugin
 import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"strconv"
 	"testing"
 )
 
@@ -19,18 +21,44 @@ func TestRunPlugin(t *testing.T) {
 	var testips []*ExecuteIP
 	var testip1,testip2 ExecuteIP
 
+	// Create docker container and get SSH port
+	container1 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
 	//Test IP 1 configuration
 	testip1.IPAddress = "0.0.0.0"
-	testip1.SSHPortNo = "33383"
+	testip1.SSHPortNo = strconv.Itoa(container1.SSHPort)
 
+	// Create docker container and get SSH port
+	container2 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
 	//Test IP 2 configuration
 	testip2.IPAddress = "0.0.0.0"
-	testip2.SSHPortNo = "34447"
+	testip2.SSHPortNo = strconv.Itoa(container2.SSHPort)
 
 	testips = append(testips, &testip1)
 	testips = append(testips, &testip2)
 
-	_,err := RunPlugin("TestAnsible",testips)
+	_,err = RunPlugin("TestAnsible",testips)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container1 after Ansible is executed
+	err = docker.StopAndRemoveContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	err = docker.StopAndRemoveContainer(container2.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
