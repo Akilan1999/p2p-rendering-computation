@@ -1,1 +1,1 @@
-cp -r TestAnsible/ deploy/TestAnsbile
+cp -r TestAnsible/ deploy/
