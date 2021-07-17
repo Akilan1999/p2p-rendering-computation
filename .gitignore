@@ -13,3 +13,5 @@ config.json
 p2p/iptable/
 #ignore plugins added
 plugin/deploy/
+#ignore track container file
+client/trackcontianers/
