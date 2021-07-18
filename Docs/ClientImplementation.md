@@ -4,7 +4,7 @@
 1. [Updating the IP table](#updating-the-IP-table)
 2. [Reading server specifications](#reading-server-specifications)
 3. [Client creating and removing container](#Client-creating-and-removing-container)
-4. [Tracking Containers](#Ttacking-Containers)
+4. [Tracking Containers](#Tracking-Containers)
 
 This section focuses in depth on how the client module works. The client module is incharge of communicating with
 different servers based on the IP addresses provided to the user. The IP addresses are derived
