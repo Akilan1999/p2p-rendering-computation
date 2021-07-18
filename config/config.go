@@ -82,7 +82,7 @@ func SetDefaults() error {
 	}
 
 	//Creates a copy of trackcontainers.json in the appropriate directory
-	err = Copy("p2p/trackcontainers.json","client/trackcontainers/trackcontainers.json")
+	err = Copy("client/trackcontainers.json","client/trackcontainers/trackcontainers.json")
 	if err != nil {
 		return err
 	}
