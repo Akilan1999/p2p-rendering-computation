@@ -21,6 +21,7 @@ var (
 	SetDefaultConfig bool
 	NetworkInterface bool
 	ViewPlugin       bool
+	TrackedContainers bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -129,5 +130,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Shows plugins available to be executed",
 		EnvVars: []string{"VIEW_PLUGIN"},
 		Destination: &ViewPlugin,
+	},
+	&cli.BoolFlag{
+		Name:        "TrackedContainers",
+		Aliases: []string{"tc"},
+		Usage:       "View containers which have " +
+			         "been created from the client side ",
+		EnvVars: []string{"TRACKED_CONTAINERS"},
+		Destination: &TrackedContainers,
 	},
 }

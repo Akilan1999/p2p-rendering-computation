@@ -51,6 +51,12 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 		return nil,err
 	}
 
+	// Adds the container to the tracked list
+	err = AddTrackContainer(&dockerResult, IP)
+	if err != nil {
+		return nil, err
+	}
+
 	return &dockerResult, nil
 }
 
@@ -77,6 +83,13 @@ func RemoveContianer(IP string,ID string) error {
 	if string(byteValue[:]) == "success" {
 		fmt.Println("success")
 	}
+
+    // Remove container created from the tracked list
+	err = RemoveTrackedContainer(ID)
+	if err != nil {
+		return err
+	}
+	
 	return nil
 }
 

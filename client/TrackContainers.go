@@ -116,6 +116,20 @@ func RemoveTrackedContainer(id string) error {
 	return nil
 }
 
+// ViewTrackedContainers View Containers currently tracked
+func ViewTrackedContainers() (error,*TrackContainers) {
+	config,err := config.ConfigInit()
+	if err != nil {
+		return err,nil
+	}
+	trackedContianers, err := ReadTrackContainers(config.TrackContainersPath)
+	if err != nil {
+		return err,nil
+	}
+
+	return nil,trackedContianers
+}
+
 // ReadTrackContainers Reads containers which are currently tracked
 func ReadTrackContainers(filename string) (*TrackContainers, error) {
 	buf, err := ioutil.ReadFile(filename)
