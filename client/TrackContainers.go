@@ -78,6 +78,44 @@ func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
 	return nil
 }
 
+// RemoveTrackedContainer This function removos tracked container from the trackcontainer JSON file
+func RemoveTrackedContainer(id string) error {
+	//Get config information to derive paths for track containers json file
+	config,err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+	// Getting tracked container struct
+	trackedContianers, err := ReadTrackContainers(config.TrackContainersPath)
+	// Storing index of element to remove
+	var removeElement int
+	removeElement = -1
+	for i := range trackedContianers.TrackcontianerList {
+		if trackedContianers.TrackcontianerList[i].Id == id {
+			removeElement = i
+			break
+		}
+	}
+	// Checks if the element to be removed has been detected
+	if removeElement == -1 {
+		return errors.New("Container ID not found in the tracked list")
+	}
+	// Remove the detected element from the struct
+	trackedContianers.TrackcontianerList = append(trackedContianers.TrackcontianerList[:removeElement], trackedContianers.TrackcontianerList[removeElement+1:]...)
+
+	// write modified information to the tracked json file
+	data,err := json.Marshal(trackedContianers)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(config.TrackContainersPath,data,0777)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ReadTrackContainers Reads containers which are currently tracked
 func ReadTrackContainers(filename string) (*TrackContainers, error) {
 	buf, err := ioutil.ReadFile(filename)

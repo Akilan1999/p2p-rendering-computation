@@ -17,7 +17,7 @@ func TestAddTrackContainer(t *testing.T) {
 	// Testing the AddTrackContainer Function
 	err = AddTrackContainer(container1,"0.0.0.0")
 	if err != nil {
-
+		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
 		if err != nil {
 			fmt.Println(err)
@@ -26,8 +26,77 @@ func TestAddTrackContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Fail()
 	}
-
+    // Killing docker container created
 	err = docker.StopAndRemoveContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+}
+
+// Testing the remove container function
+// NOTE: This test can also be considered as a whole flow on the process of
+// tracked containers
+func TestRemoveTrackedContainer(t *testing.T) {
+	container1 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	container2 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Testing the AddTrackContainer Function and adding the first container created
+	err = AddTrackContainer(container1,"0.0.0.0")
+	if err != nil {
+		// Killing docker container created
+		err = docker.StopAndRemoveContainer(container1.ID)
+		if err != nil {
+			fmt.Println(err)
+			t.Fail()
+		}
+		fmt.Println(err)
+		t.Fail()
+	}
+	// Killing docker container created
+	err = docker.StopAndRemoveContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Testing the AddTrackContainer Function and the adding the second container created
+	err = AddTrackContainer(container2,"0.0.0.0")
+	if err != nil {
+		// Killing docker container created
+		err = docker.StopAndRemoveContainer(container2.ID)
+		if err != nil {
+			fmt.Println(err)
+			t.Fail()
+		}
+		fmt.Println(err)
+		t.Fail()
+	}
+	// Killing docker container created
+	err = docker.StopAndRemoveContainer(container2.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container 1 from the tracked list
+	err = RemoveTrackedContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container 2 from the tracked list
+	err = RemoveTrackedContainer(container2.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
