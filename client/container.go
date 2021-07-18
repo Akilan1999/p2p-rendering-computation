@@ -80,6 +80,7 @@ func RemoveContianer(IP string,ID string) error {
 		return err
 	}
 
+	// Checks if success is returned in the body
 	if string(byteValue[:]) == "success" {
 		fmt.Println("success")
 	}
@@ -89,7 +90,7 @@ func RemoveContianer(IP string,ID string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

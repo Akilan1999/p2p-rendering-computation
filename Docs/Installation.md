@@ -133,6 +133,12 @@ p2prc --ls
 p2prc --ni
 ```
 
+### Viewing Containers created Client side 
+```
+p2prc --tc
+```
+[read more on tracking containers](ClientImplementation.md#tracking-containers) 
+
 <br>
 
 --------------
