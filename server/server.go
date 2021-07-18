@@ -131,7 +131,7 @@ func Server() error{
 		c.JSON(http.StatusOK, resp)
 	})
 
-	// Port running on
+	//Port running on
 	err := r.Run(":8088")
 	if err != nil {
 		return err
