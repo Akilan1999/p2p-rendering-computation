@@ -1,0 +1,11 @@
+{
+  "ports": [
+    {
+      "port_name": "SSH",
+      "internal_port": 22,
+      "type": "tcp",
+      "Allocated port": 0,
+      "Description": "SSH Port"
+    }
+  ]
+}
