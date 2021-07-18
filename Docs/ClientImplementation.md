@@ -1,10 +1,15 @@
 # Client Module Implementation
 
-This section focuses in depth on how the client module works. To understand the architecture of
-the client module refer to section 4.2. The client module is incharge of communicating with
+## Topics
+1. [Updating the IP table](#updating-the-IP-table)
+2. [Reading server specifications](#reading-server-specifications)
+3. [Client creating and removing container](#Client-creating-and-removing-container)
+4. [Tracking Containers](#Ttacking-Containers )
+
+This section focuses in depth on how the client module works. The client module is incharge of communicating with
 different servers based on the IP addresses provided to the user. The IP addresses are derived
-from peer to peer modules. Section 5.6 talks more in depth regarding the peer to peer module.
-The objective here is how the client module interacts with peer to peer module and server module.
+from peer to peer modules. The objective here is how the client module interacts with peer to peer module 
+and server module.
 
 ### Updating the IP table
 The client module calls the peer to peer module to get the local IP table initially, Based on the
@@ -32,3 +37,23 @@ At the moment the username and password are hard coded from the server side for 
 VNC.
 To remove a container the client module only requires the server IP address and the container ID.
 The client prints the response from the server Rest api.
+
+### Tracking Containers 
+Clients create docker images in multiple machines. This means if the client (i.e user) has many 
+containers created there needs to be a way to track them. To track containers there is a file 
+called ```trackcontainers.json``` which tracks all the containers running. The snippet below 
+show a sample structure of file ```trackcontainer.json```.
+
+```
+{
+	"TrackContainer": [
+		{
+			"ID": "<ID>",
+			"Container": {<docker.DockerVM struct>},
+			"IpAddress": "<IP Address>"
+		}
+	]
+} 
+```
+The default path to the container tracker is ```client/trackcontainers/trackcontainers.json```. 
+

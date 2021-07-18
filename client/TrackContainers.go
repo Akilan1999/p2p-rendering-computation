@@ -66,7 +66,7 @@ func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
 	trackContainers.TrackcontianerList = append(trackContainers.TrackcontianerList, trackContainer)
 
 	// write modified information to the tracked json file
-	data,err := json.Marshal(trackContainers)
+	data,err := json.MarshalIndent(trackContainers, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func RemoveTrackedContainer(id string) error {
 	trackedContianers.TrackcontianerList = append(trackedContianers.TrackcontianerList[:removeElement], trackedContianers.TrackcontianerList[removeElement+1:]...)
 
 	// write modified information to the tracked json file
-	data,err := json.Marshal(trackedContianers)
+	data,err := json.MarshalIndent(trackedContianers, "", "\t")
 	if err != nil {
 		return err
 	}
