@@ -135,6 +135,16 @@ var CliAction = func(ctx *cli.Context) error {
 		client.PrettyPrint(plugins)
 	}
 
+	// If the flag Tracked Container is called or the flag
+	// --tc
+	if TrackedContainers {
+		err, trackedContainers := client.ViewTrackedContainers()
+		if err != nil {
+			fmt.Print(err)
+		}
+		client.PrettyPrint(trackedContainers)
+	}
+
 
 	return nil
 }
