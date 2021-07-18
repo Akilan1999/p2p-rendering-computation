@@ -65,7 +65,6 @@ var dockerRegistryUserID = ""
 // BuildRunContainer Function is incharge to invoke building and running contianer and also allocating external
 // ports
 func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerVM,error) {
-
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
@@ -123,9 +122,22 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	if err != nil {
 		return nil,err
 	}
-	// Allocate external ports
+	// Allocate external ports to ports available in the ports.json file
 	for i := range PortsInformation.PortSet {
 		PortsInformation.PortSet[i].ExternalPort = OpenPorts[i]
+	}
+	//Length of Ports allocated from thr port file
+	portFileLength := len(PortsInformation.PortSet)
+	// Allocate New ports the user wants to generate
+	for i := 0; i < NumPorts; i++ {
+		var TempPort Port
+		TempPort.PortName = "AutoGen Port"
+		TempPort.Type = "tcp"
+		TempPort.InternalPort = OpenPorts[portFileLength + i]
+		TempPort.ExternalPort = OpenPorts[portFileLength + i]
+		TempPort.Description = "Auto generated TCP port"
+		//Append temp port to port information
+		PortsInformation.PortSet = append(PortsInformation.PortSet, TempPort)
 	}
 	// Setting ports to the docker VM struct
 	RespDocker.Ports = *PortsInformation
