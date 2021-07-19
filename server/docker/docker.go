@@ -22,15 +22,12 @@ import (
 )
 
 type DockerVM struct {
-	 SSHPort int `json:"SSHPort"`
 	 SSHUsername string `json:"SSHUsername"`
 	 SSHPassword string `json:"SSHPassword"`
-	 VNCPort int `json:"VNCPort"`
-	 VNCPassword string `json:"VNCPassword"`
 	 ID string `json:"ID"`
 	 TagName string `json:"TagName"`
 	 ImagePath string `json:"ImagePath"`
-	 Ports []int `json:"OpenPorts"`
+	 Ports Ports `json:"Ports"`
 	 GPU string `json:"GPU"`
 }
 
@@ -41,6 +38,17 @@ type DockerContainers struct {
 type DockerContainer struct {
 	ContainerName string `json:"DockerContainerName"`
 	ContainerDescription string `json:"ContainerDescription"`
+}
+
+type Ports struct {
+	PortSet []Port `json:"Port"`
+}
+type Port struct {
+	PortName string `json:"PortName"`
+	InternalPort int `json:"InternalPort"`
+    Type string `json:"Type"`
+	ExternalPort int `json:"ExternalPort"`
+	Description  string `json:"Description"`
 }
 
 type ErrorLine struct {
@@ -54,29 +62,17 @@ type ErrorDetail struct {
 
 var dockerRegistryUserID = ""
 
+// BuildRunContainer Function is incharge to invoke building and running contianer and also allocating external
+// ports
 func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerVM,error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
-
-	// Count: 2 allocated ports for VNC and SSH + other ports
-	// to open
-	count := NumPorts + 2
-
-	// Gets 2 TCP ports empty
-	Ports, err := freeport.GetFreePorts(count)
-	if err != nil {
-		return nil,err
-	}
-
-	for i := 2; i < count; i++ {
-		RespDocker.Ports = append(RespDocker.Ports, Ports[i])
-	}
 
 	// Sets if GPU is selected or not
 	RespDocker.GPU = GPU
 
 	// Sets Free port to Struct
-	RespDocker.SSHPort = Ports[0]
+	//RespDocker.SSHPort = Ports[0]
 	//RespDocker.VNCPort = Ports[1]
 	// Sets appropriate username and password to the
 	// variables in the struct
@@ -112,6 +108,39 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 			return nil, errors.New("Container " + ContainerName  + " does not exist in the server")
 		}
 	}
+
+	PortsInformation, err := OpenPortsFile(RespDocker.ImagePath + "/ports.json")
+	if err != nil {
+		return nil, err
+	}
+
+	// Number of perts we want to open + number of ports required inside the
+	// docker container
+	count := NumPorts + len(PortsInformation.PortSet)
+	// Creates number of ports
+	OpenPorts, err := freeport.GetFreePorts(count)
+	if err != nil {
+		return nil,err
+	}
+	// Allocate external ports to ports available in the ports.json file
+	for i := range PortsInformation.PortSet {
+		PortsInformation.PortSet[i].ExternalPort = OpenPorts[i]
+	}
+	//Length of Ports allocated from thr port file
+	portFileLength := len(PortsInformation.PortSet)
+	// Allocate New ports the user wants to generate
+	for i := 0; i < NumPorts; i++ {
+		var TempPort Port
+		TempPort.PortName = "AutoGen Port"
+		TempPort.Type = "tcp"
+		TempPort.InternalPort = OpenPorts[portFileLength + i]
+		TempPort.ExternalPort = OpenPorts[portFileLength + i]
+		TempPort.Description = "Auto generated TCP port"
+		//Append temp port to port information
+		PortsInformation.PortSet = append(PortsInformation.PortSet, TempPort)
+	}
+	// Setting ports to the docker VM struct
+	RespDocker.Ports = *PortsInformation
 
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -190,12 +219,12 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 		// Port forwarding for VNC and SSH ports
 		PortForwarding := nat.PortMap{
-			"22/tcp": []nat.PortBinding{
-				{
-					HostIP: "0.0.0.0",
-					HostPort: fmt.Sprint(d.SSHPort),
-				},
-			},
+			//"22/tcp": []nat.PortBinding{
+			//	{
+			//		HostIP: "0.0.0.0",
+			//		HostPort: fmt.Sprint(d.SSHPort),
+			//	},
+			//},
 			//"6901/tcp": []nat.PortBinding{
 			//	{
 			//		HostIP: "0.0.0.0",
@@ -204,9 +233,9 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 			//},
 		}
 
-		for i := range d.Ports {
-
-			Port, err := nat.NewPort("tcp",fmt.Sprint(d.Ports[i]))
+		for i := range d.Ports.PortSet {
+			// Parameters "tcp or udp", external port
+			Port, err := nat.NewPort(d.Ports.PortSet[i].Type,fmt.Sprint(d.Ports.PortSet[i].InternalPort))
 			if err != nil {
 				return err
 			}
@@ -217,7 +246,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 			PortForwarding[Port] = []nat.PortBinding{
 				{
 					HostIP: "0.0.0.0",
-					HostPort: fmt.Sprint(d.Ports[i]),
+					HostPort: fmt.Sprint(d.Ports.PortSet[i].ExternalPort),
 				},
 			}
 		}
@@ -253,9 +282,9 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		d.ID = id
 
 		var cmd bytes.Buffer
-		cmd.WriteString("docker run -d=true --name="+ id +" --restart=always --gpus all -p " + fmt.Sprint(d.VNCPort) + ":" + "6901 " + "-p " + fmt.Sprint(d.SSHPort) + ":" + "22 ")
-		for i := range d.Ports {
-			cmd.WriteString("-p " + fmt.Sprint(d.Ports[i]) + ":" + fmt.Sprint(d.Ports[i]) + " ")
+		cmd.WriteString("docker run -d=true --name="+ id +" --restart=always --gpus all ")
+		for i := range d.Ports.PortSet {
+			cmd.WriteString("-p " + fmt.Sprint(d.Ports.PortSet[i].ExternalPort) + ":" + fmt.Sprint(d.Ports.PortSet[i].InternalPort) + " ")
 		}
 		cmd.WriteString("-v=/opt/data:/data "+ d.TagName +" /start > /dev/null")
 		//"-v=/opt/data:/data p2p-ubuntu /start > /dev/null"
@@ -355,4 +384,19 @@ func print(rd io.Reader) error {
 	}
 
 	return nil
+}
+
+func OpenPortsFile(filename string) (*Ports, error) {
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	c := &Ports{}
+	err = json.Unmarshal(buf, c)
+	if err != nil {
+		return nil, fmt.Errorf("in file %q: %v", filename, err)
+	}
+
+	return c, nil
 }
