@@ -159,6 +159,31 @@ it does not utilize server resources when it is not being used, or the task that
 To run this function all that is needed is the docker container ID. If the function is successful it returns
 a string that says success.
 
+### Ports json file 
+This file will help map internal ports inside a container to external ports inside a container. A common example 
+would be the SSH port which is port 22 inside the docker container and is mapped to random TCP port outside container 
+so that any external machines can directly connect into the container. The below representation mentions of where 
+the ports.json file is located and also the format of that file. 
+```
+|_ <Container name>
+        |_ Dockerfile
+        |_ description.txt 
+        |_ ports.json  // The ports file 
+```
+Format of the ports.json file 
+```
+{
+  "Port": [
+    {
+      "PortName": "<Port name>",
+      "InternalPort": <internal port>,
+      "Type": "<tcp/udp>",
+      "Description": "<description about the port>"
+    }, ... n
+  ]
+}
+```
+
 
 
 

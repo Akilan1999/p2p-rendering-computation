@@ -128,18 +128,18 @@ func ViewContainers(IP string)(*docker.DockerContainers, error){
 }
 
 // PrintStartContainer Prints results Generated container
-func PrintStartContainer(d *docker.DockerVM){
-	fmt.Println("ID : " + fmt.Sprint(d.ID))
-	fmt.Println("SSH port: " + fmt.Sprint(d.SSHPort))
-	fmt.Println("SSH username: " + fmt.Sprint(d.SSHUsername))
-	fmt.Println("SSH password: " + fmt.Sprint(d.SSHPassword))
-	fmt.Println("VNC port: " + fmt.Sprint(d.VNCPort))
-	fmt.Println("VNC password: " + fmt.Sprint(d.VNCPassword))
-	fmt.Println("Ports Open (All TCP ports):")
-	for i := range d.Ports {
-		fmt.Println(d.Ports[i])
-	}
-}
+//func PrintStartContainer(d *docker.DockerVM){
+//	fmt.Println("ID : " + fmt.Sprint(d.ID))
+//	fmt.Println("SSH port: " + fmt.Sprint(d.SSHPort))
+//	fmt.Println("SSH username: " + fmt.Sprint(d.SSHUsername))
+//	fmt.Println("SSH password: " + fmt.Sprint(d.SSHPassword))
+//	fmt.Println("VNC port: " + fmt.Sprint(d.VNCPort))
+//	fmt.Println("VNC password: " + fmt.Sprint(d.VNCPassword))
+//	fmt.Println("Ports Open (All TCP ports):")
+//	for i := range d.Ports {
+//		fmt.Println(d.Ports[i])
+//	}
+//}
 
 
 // TODO implementation using RPC calls
