@@ -105,7 +105,7 @@ func (s *IpAddress)UploadSpeed() error {
 
 	b, w := createMultipartFormData("file",config.SpeedTestFile)
 
-	req, err := http.NewRequest("GET", "http://" + s.Ipv4 + ":8088/upload", &b)
+	req, err := http.NewRequest("GET", "http://" + s.Ipv4 + ":" + s.ServerPort + "/upload", &b)
 	if err != nil {
 		return err
 	}
@@ -152,10 +152,10 @@ func (s *IpAddress) PingTest() error {
 	//pingURL := strings.Split(s.URL, "/upload")[0] + "/latency.txt"
 	var pingURL string
 	if s.Ipv6 != "" {
-		pingURL = "http://[" + s.Ipv6 + "]:8088/server_info"
+		pingURL = "http://[" + s.Ipv6 + "]:" + s.ServerPort + "/server_info"
 		s.Ipv4 = ""
 	} else {
-		pingURL = "http://" + s.Ipv4 + ":8088/server_info"
+		pingURL = "http://" + s.Ipv4 + ":" + s.ServerPort + "/server_info"
 	}
 
 	l := time.Duration(100000000000) // 10sec

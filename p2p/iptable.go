@@ -23,6 +23,7 @@ type IpAddress struct {
 	Latency  time.Duration `json:"latency"`
 	Download float64    `json:"download"`
 	Upload float64 `json:"upload"`
+	ServerPort string `json:"serverport"`
 }
 
 type IP struct {
@@ -69,6 +70,7 @@ func ReadIpTable()(*IpAddresses ,error){
 	}
 	PublicIP.Ipv4 = ip
 	PublicIP.Ipv6 = ipv6
+	PublicIP.ServerPort = config.ServerPort
 
 	// Updates current machine IP address to the IP table
 	ipAddresses.IpAddress = append(ipAddresses.IpAddress, PublicIP)
@@ -120,6 +122,7 @@ func PrintIpTable() error {
 			"-----------------\n",table.IpAddress[i].Ipv4,table.IpAddress[i].Ipv6,
 			table.IpAddress[i].Latency)
 	}
+
 	return nil
 }
 
