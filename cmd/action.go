@@ -25,22 +25,23 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 		// Reads from ip table and passes it
 		// on to struct print function
-		Servers, err := p2p.ReadIpTable()
-		if err != nil {
-			return err
-		}
-		client.PrettyPrint(Servers)
+		//Servers, err := p2p.ReadIpTable()
+		//if err != nil {
+		//	return err
+		//}
+		//client.PrettyPrint(Servers)
+		p2p.PrintIpTable()
 	}
 
 	// Displays the IP table
 	if ServerList {
 		// Reads from ip table and passes it
 		// on to struct print function
-		Servers, err := p2p.ReadIpTable()
-		if err != nil {
-			return err
-		}
-		client.PrettyPrint(Servers)
+		//Servers, err := p2p.ReadIpTable()
+		//if err != nil {
+		//	return err
+		//}
+		p2p.PrintIpTable()
 	}
 
 	// Add provided IP to the IP table
