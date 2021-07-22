@@ -118,9 +118,9 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\n-----------" +
+		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\n-----------" +
 			"-----------------\n",table.IpAddress[i].Ipv4,table.IpAddress[i].Ipv6,
-			table.IpAddress[i].Latency)
+			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort)
 	}
 
 	return nil
