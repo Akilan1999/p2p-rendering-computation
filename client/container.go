@@ -10,12 +10,10 @@ import (
 	"strconv"
 )
 
-const (
+var (
 	serverPort = "8088"
+	client = http.Client{}
 )
-
-
-var client = http.Client{}
 
 // StartContainer Start container using REST api Implementation
 // From the selected server IP address
@@ -25,6 +23,13 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
 	var URL string
 	version := p2p.Ip4or6(IP)
+
+	//Get port number of the server
+	serverPort, err := GetServerPort(IP)
+	if err != nil {
+		return nil, err
+	}
+
 	if version == "version 6" {
 		URL = "http://[" + IP + "]:" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
 	} else {
@@ -64,6 +69,13 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 func RemoveContianer(IP string,ID string) error {
 	var URL string
 	version := p2p.Ip4or6(IP)
+
+	//Get port number of the server
+	serverPort, err := GetServerPort(IP)
+	if err != nil {
+		return err
+	}
+
 	if version == "version 6" {
 		URL = "http://[" + IP + "]:" + serverPort + "/RemoveContainer?id=" + ID
 	} else {
@@ -99,6 +111,13 @@ func ViewContainers(IP string)(*docker.DockerContainers, error){
 	// Passes URL with route /ShowImages
 	var URL string
 	version := p2p.Ip4or6(IP)
+
+	//Get port number of the server
+	serverPort, err := GetServerPort(IP)
+	if err != nil {
+		return nil, err
+	}
+
 	if version == "version 6" {
 		URL = "http://[" + IP + "]:" + serverPort + "/ShowImages"
 	} else {
@@ -125,6 +144,28 @@ func ViewContainers(IP string)(*docker.DockerContainers, error){
 	}
 
 	return &Result, nil
+}
+
+// GetServerPort Helper function to do find out server port information
+func GetServerPort(IpAddress string) (string,error) {
+	// Getting information from the clients ip table
+	ipTable, err := p2p.ReadIpTable()
+	if err != nil {
+		return "",err
+	}
+
+	// Iterate thorough ip table struct and find
+	// out which port is for the ip address provided
+	// in the parameter of the function
+	for _, address := range ipTable.IpAddress {
+		// If we found a match then return a port
+		if address.Ipv4 == IpAddress || address.Ipv6 == IpAddress {
+			return address.ServerPort, nil
+		}
+	}
+
+	// We return default port
+	return "8088",nil
 }
 
 // PrintStartContainer Prints results Generated container

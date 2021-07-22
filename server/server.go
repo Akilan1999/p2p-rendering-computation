@@ -122,7 +122,7 @@ func Server() error{
 		c.String(http.StatusOK, "success")
 	})
 
-	//Show images avaliable
+	//Show images available
 	r.GET("/ShowImages", func(c *gin.Context) {
 		resp, err := docker.ViewAllContainers()
 		if err != nil {
@@ -131,8 +131,14 @@ func Server() error{
 		c.JSON(http.StatusOK, resp)
 	})
 
-	//Port running on
-	err := r.Run(":8088")
+	//Get Server port based on the config file
+	config, err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
+	// Run gin server on the specified port
+	err = r.Run(":" + config.ServerPort)
 	if err != nil {
 		return err
 	}

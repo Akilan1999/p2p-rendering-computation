@@ -15,6 +15,13 @@ import (
 func GetSpecs(IP string)(*server.SysInfo,error) {
 	var URL string
 	version := p2p.Ip4or6(IP)
+
+	//Get port number of the server
+	serverPort, err := GetServerPort(IP)
+	if err != nil {
+		return nil, err
+	}
+
 	if version == "version 6" {
 		URL = "http://[" + IP + "]:" + serverPort + "/server_info"
 	} else {

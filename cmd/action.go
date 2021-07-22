@@ -23,13 +23,24 @@ var CliAction = func(ctx *cli.Context) error {
 		if err != nil {
 			fmt.Print(err)
 		}
-
-		p2p.PrintIpTable()
+		// Reads from ip table and passes it
+		// on to struct print function
+		Servers, err := p2p.ReadIpTable()
+		if err != nil {
+			return err
+		}
+		client.PrettyPrint(Servers)
 	}
 
 	// Displays the IP table
 	if ServerList {
-		p2p.PrintIpTable()
+		// Reads from ip table and passes it
+		// on to struct print function
+		Servers, err := p2p.ReadIpTable()
+		if err != nil {
+			return err
+		}
+		client.PrettyPrint(Servers)
 	}
 
 	// Add provided IP to the IP table
@@ -50,6 +61,13 @@ var CliAction = func(ctx *cli.Context) error {
 			IpAddr.Ipv6 = AddServer
 		} else {
 			IpAddr.Ipv4 = AddServer
+		}
+
+		// If a server port is provided then set it
+		if Ports != "" {
+			IpAddr.ServerPort = Ports
+		} else {
+			IpAddr.ServerPort = "8088"
 		}
 		// Append IP address to variable result which
 		// is a list

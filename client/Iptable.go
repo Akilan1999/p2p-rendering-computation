@@ -13,7 +13,7 @@ import (
 )
 
 // UpdateIpTable Does the following to update it's IP table
-func UpdateIpTable(IpAddress string) error {
+func UpdateIpTable(IpAddress string, serverPort string) error {
 
 	config, err := config.ConfigInit()
 	if err != nil {
@@ -22,16 +22,17 @@ func UpdateIpTable(IpAddress string) error {
 
 	client := http.Client{}
 
+
 	var resp []byte
 
 	version := p2p.Ip4or6(IpAddress)
 	if version == "version 6" {
-	  resp, err = UploadMultipartFile(client,"http://["+IpAddress+"]:8088/IpTable","json",config.IPTable)
+	  resp, err = UploadMultipartFile(client,"http://[" + IpAddress + "]:" + serverPort + "/IpTable","json",config.IPTable)
 	  if err != nil {
 		return err
 	  }
 	} else {
-		resp, err = UploadMultipartFile(client,"http://"+IpAddress+":8088/IpTable","json",config.IPTable)
+		resp, err = UploadMultipartFile(client,"http://" + IpAddress + ":" + serverPort + "/IpTable","json",config.IPTable)
 		if err != nil {
 			return err
 		}
@@ -114,9 +115,9 @@ func UpdateIpTableListClient() error {
 			//}
 
 			if Addresses.IpAddress[j].Ipv6 != "" {
-				err = UpdateIpTable(Addresses.IpAddress[j].Ipv6)
+				err = UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort)
 			} else {
-				err = UpdateIpTable(Addresses.IpAddress[j].Ipv4)
+				err = UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort)
 			}
 
 			if err != nil {
