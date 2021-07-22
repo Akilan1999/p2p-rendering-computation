@@ -28,6 +28,7 @@ type Config struct {
 	IPV6Address         string
 	PluginPath          string
 	TrackContainersPath string
+	ServerPort          string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }
@@ -96,6 +97,7 @@ func SetDefaults() error {
 	defaults["IPV6Address"] = ""
 	defaults["PluginPath"] = defaultPath + "plugin/deploy"
 	defaults["TrackContainersPath"] = defaultPath + "client/trackcontainers/trackcontainers.json"
+	defaults["ServerPort"] = "8088"
 	//defaults["NetworkInterface"] = "wlp0s20f3"
 	//defaults["NetworkInterfaceIPV6Index"] = "2"
 
