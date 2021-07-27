@@ -23,6 +23,7 @@ path of the IP table json file is received from the configuration module.
       "latency": "<latency>",
       "download": "<download>",
       "upload": "<upload>"
+      "port no": "<server port no>"
     }
   ]
 }
