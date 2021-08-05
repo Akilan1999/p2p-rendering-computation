@@ -14,8 +14,8 @@ The main aim of this project was to create a custom peer to peer network. The us
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
 flexibility on tracking the container's usages and killing the containers at any point of time. 
 
-## Demo
-[![IMAGE ALT TEXT](https://i.ytimg.com/vi/hthrxLineoI/hqdefault.jpg)](https://www.youtube.com/watch?v=hthrxLineoI "p2prc beta v1.0.0")
+## Gophers talk 
+[![IMAGE ALT TEXT](https://i.ytimg.com/vi/ovcZLEhQxWk/hqdefault.jpg)](https://www.youtube.com/watch?v=ovcZLEhQxWk "P2PRC - Gophers monthly talk")
 
 <br>
 
