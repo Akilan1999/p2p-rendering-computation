@@ -164,6 +164,23 @@ var CliAction = func(ctx *cli.Context) error {
 		client.PrettyPrint(trackedContainers)
 	}
 
+	//Executing plugin when the plugin flag is called
+	// --plugin
+	if ExecutePlugin != "" {
+		// The execute plugin requires the container ID provided when being executed
+		if ID != "" {
+			err := plugin.RunPluginCli(ExecutePlugin, ID)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Success")
+			}
+		} else {
+			fmt.Println("provide container ID")
+		}
+
+	}
+
 
 	return nil
 }
