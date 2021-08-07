@@ -5,6 +5,18 @@
       "InternalPort": 22,
       "Type": "tcp",
       "Description": "SSH Port"
+    },
+    {
+      "PortName": "NoVNC",
+      "InternalPort": 5901,
+      "Type": "tcp",
+      "Description": "NoVNC port"
+    },
+    {
+      "PortName": "NoVNC",
+      "InternalPort": 6081,
+      "Type": "tcp",
+      "Description": "NoVNC port"
     }
   ]
 }

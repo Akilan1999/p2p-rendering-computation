@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"strconv"
@@ -30,7 +31,7 @@ func TestRunPlugin(t *testing.T) {
 
 	//Test IP 1 configuration
 	testip1.IPAddress = "0.0.0.0"
-	testip1.SSHPortNo = strconv.Itoa(container1.SSHPort)
+	testip1.SSHPortNo = strconv.Itoa(container1.Ports.PortSet[0].ExternalPort)
 
 	// Create docker container and get SSH port
 	container2 ,err := docker.BuildRunContainer(0,"false","")
@@ -40,7 +41,7 @@ func TestRunPlugin(t *testing.T) {
 	}
 	//Test IP 2 configuration
 	testip2.IPAddress = "0.0.0.0"
-	testip2.SSHPortNo = strconv.Itoa(container2.SSHPort)
+	testip2.SSHPortNo = strconv.Itoa(container2.Ports.PortSet[0].ExternalPort)
 
 	testips = append(testips, &testip1)
 	testips = append(testips, &testip2)
@@ -85,6 +86,45 @@ func TestExecuteIP_ModifyHost(t *testing.T) {
 	testip.SSHPortNo = "41289"
 
 	err = testip.ModifyHost(&plugin,Config.PluginPath)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+}
+
+// Test to ensure the cli function runs as intended and executes
+// the test ansible script
+func TestRunPluginCli(t *testing.T) {
+	// Create docker container and get SSH port
+	container1 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Ensuring created container is the added to the tracked list
+	err = client.AddTrackContainer(container1, "0.0.0.0")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Running test Ansible script
+	err = RunPluginCli("TestAnsible", container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removes container information from the tracker IP addresses
+	err = client.RemoveTrackedContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container1 after Ansible is executed
+	err = docker.StopAndRemoveContainer(container1.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
