@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -229,4 +230,40 @@ func ReadHost(filename string) (*Host, error) {
 	}
 
 	return c, nil
+}
+
+// RunPluginCli Runs ansible plugin based on plugin name and contianer name which
+// is derived from the tracked containers file
+func RunPluginCli(PluginName string, ContainerID string) error {
+	// Gets container information based on container ID
+	ContainerInformation, err := client.GetContainerInformation(ContainerID)
+	if err != nil {
+		return err
+	}
+
+	// Setting Up IP's for which the plugins will be executed
+	var ExecuteIPs []*ExecuteIP
+	var ExecuteIP ExecuteIP
+	// Getting port no of SSH port
+	for _,port := range ContainerInformation.Container.Ports.PortSet {
+		if port.PortName == "SSH" {
+			ExecuteIP.SSHPortNo = fmt.Sprint(port.ExternalPort)
+			break
+		}
+	}
+	// Handle error if SSH port is not provided
+	if ExecuteIP.SSHPortNo == "" {
+		return errors.New("SSH port not found")
+	}
+	// IP address of the container 
+	ExecuteIP.IPAddress = ContainerInformation.IpAddress
+    // Append IP to list of executor IP
+	ExecuteIPs = append(ExecuteIPs, &ExecuteIP)
+	// Run plugin to execute plugin
+	_, err = RunPlugin(PluginName,ExecuteIPs)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

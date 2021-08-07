@@ -64,22 +64,25 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --Server, -s                          Starts server (default: false) [$SERVER]
-   --UpdateServerList, --us              Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
-   --ListServers, --ls                   List servers which can render tasks (default: false) [$LIST_SERVERS]
-   --AddServer value, --as value         Adds server IP address to iptables [$ADD_SERVER]
-   --ViewImages value, --vi value        View images available on the server IP address [$VIEW_IMAGES]
-   --CreateVM value, --touch value       Creates Docker container on the selected server [$CREATE_VM]
-   --ContainerName value, --cn value     Specifying the container run on the server side [$CONTAINER_NAME]
-   --RemoveVM value, --rm value          Stop and Remove Docker container [$REMOVE_VM]
-   --ID value, --id value                Docker Container ID [$ID]
-   --Ports value, -p value               Number of ports to open for the Docker Container [$NUM_PORTS]
-   --GPU, --gpu                          Create Docker Containers to access GPU (default: false) [$USE_GPU]
-   --Specification value, --specs value  Specs of the server node [$SPECS]
-   --SetDefaultConfig, --dc              Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
-   --NetworkInterfaces, --ni             Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
-   --help, -h                            show help (default: false)
-   --version, -v                         print the version (default: false)  
+   --Server, -s                           Starts server (default: false) [$SERVER]
+   --UpdateServerList, --us               Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
+   --ListServers, --ls                    List servers which can render tasks (default: false) [$LIST_SERVERS]
+   --AddServer value, --as value          Adds server IP address to iptables [$ADD_SERVER]
+   --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
+   --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
+   --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
+   --RemoveVM value, --rm value           Stop and Remove Docker container [$REMOVE_VM]
+   --ID value, --id value                 Docker Container ID [$ID]
+   --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
+   --GPU, --gpu                           Create Docker Containers to access GPU (default: false) [$USE_GPU]
+   --Specification value, --specs value   Specs of the server node [$SPECS]
+   --SetDefaultConfig, --dc               Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
+   --NetworkInterfaces, --ni              Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
+   --ViewPlugins, --vp                    Shows plugins available to be executed (default: false) [$VIEW_PLUGIN]
+   --TrackedContainers, --tc              View containers which have been created from the client side  (default: false) [$TRACKED_CONTAINERS]
+   --ExecutePlugin value, --plugin value  Plugin which needs to be executed [$EXECUTE_PLUGIN]
+   --help, -h                             show help (default: false)
+   --version, -v                          print the version (default: false)
 ```
 
 <br>
@@ -136,6 +139,11 @@ p2prc --ni
 ### Viewing Containers created Client side 
 ```
 p2prc --tc
+```
+
+### Running plugin 
+```
+p2prc --plugin <plugin name> --id <container id>
 ```
 [read more on tracking containers](ClientImplementation.md#tracking-containers) 
 
