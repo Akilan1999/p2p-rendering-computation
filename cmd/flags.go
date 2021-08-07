@@ -6,22 +6,23 @@ import (
 
 // Variables declared for CLI
 var (
-	AddServer        string
-	ViewImages       string
-	CreateVM         string
-	ContainerName    string
-	Ports            string
-	Server           bool
-	RemoveVM         string
-	ID               string
-	Specs            string
-	GPU              bool
-	UpdateServerList bool
-	ServerList       bool
-	SetDefaultConfig bool
-	NetworkInterface bool
-	ViewPlugin       bool
+	AddServer         string
+	ViewImages        string
+	CreateVM          string
+	ContainerName     string
+	Ports             string
+	Server            bool
+	RemoveVM          string
+	ID                string
+	Specs             string
+	GPU               bool
+	UpdateServerList  bool
+	ServerList        bool
+	SetDefaultConfig  bool
+	NetworkInterface  bool
+	ViewPlugin        bool
 	TrackedContainers bool
+	ExecutePlugin     string
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -138,5 +139,12 @@ var AppConfigFlags = []cli.Flag{
 			         "been created from the client side ",
 		EnvVars: []string{"TRACKED_CONTAINERS"},
 		Destination: &TrackedContainers,
+	},
+	&cli.StringFlag{
+		Name:        "ExecutePlugin",
+		Aliases: []string{"plugin"},
+		Usage:       "Plugin which needs to be executed",
+		EnvVars: []string{"EXECUTE_PLUGIN"},
+		Destination: &ExecutePlugin,
 	},
 }

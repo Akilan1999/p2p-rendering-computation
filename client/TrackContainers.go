@@ -145,3 +145,21 @@ func ReadTrackContainers(filename string) (*TrackContainers, error) {
 
 	return c, nil
 }
+
+// GetContainerInformation gets information about container based on
+// container ID provided
+func GetContainerInformation(ID string) (*TrackContainer, error) {
+	// Getting the current containers
+	err, CurrentContainers := ViewTrackedContainers()
+	if err != nil {
+		return nil, err
+	}
+	// Iterating through all tracked containers to get the container information
+	// of the ID passed through the function parameter
+	for _, container := range CurrentContainers.TrackcontianerList {
+		if container.Container.ID == ID {
+			return &container, nil
+		}
+	}
+	return nil, errors.New("Container not found. ")
+}

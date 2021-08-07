@@ -1,0 +1,41 @@
+{
+	"TrackContainer": [
+		{
+			"ID": "858912730fb34f3cce38ef6d405e04519e44f50c2a496cd400e75aaa0def3c80",
+			"Container": {
+				"SSHUsername": "master",
+				"SSHPassword": "password",
+				"ID": "858912730fb34f3cce38ef6d405e04519e44f50c2a496cd400e75aaa0def3c80",
+				"TagName": "p2p-ubuntu",
+				"ImagePath": "/home/akilan/Documents/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
+				"Ports": {
+					"Port": [
+						{
+							"PortName": "SSH",
+							"InternalPort": 22,
+							"Type": "tcp",
+							"ExternalPort": 44269,
+							"Description": "SSH Port"
+						},
+						{
+							"PortName": "NoVNC",
+							"InternalPort": 5901,
+							"Type": "tcp",
+							"ExternalPort": 40725,
+							"Description": "NoVNC port"
+						},
+						{
+							"PortName": "NoVNC",
+							"InternalPort": 6081,
+							"Type": "tcp",
+							"ExternalPort": 40053,
+							"Description": "NoVNC port"
+						}
+					]
+				},
+				"GPU": "false"
+			},
+			"IpAddress": "0.0.0.0"
+		}
+	]
+}
