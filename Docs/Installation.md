@@ -140,12 +140,12 @@ p2prc --ni
 ```
 p2prc --tc
 ```
+[read more on tracking containers](ClientImplementation.md#tracking-containers)
 
 ### Running plugin 
 ```
 p2prc --plugin <plugin name> --id <container id>
-```
-[read more on tracking containers](ClientImplementation.md#tracking-containers) 
+``` 
 
 <br>
 
