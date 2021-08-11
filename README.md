@@ -41,9 +41,12 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 
 <br>
 
-## Installation
+## Installation from source
 1. Ensure the Go compiler is installed 
-2. Ensure docker is installed (Should run without sudo)
+   ```
+   go version
+   ```
+3. Ensure docker is installed (Should run without sudo)
    ```
    docker ps
    ```
@@ -74,7 +77,7 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
    ```
    ./p2prc -h 
    ```
-[Read more on the installation](Docs/Installation.md)
+[Read more on the installation and usage](Docs/Installation.md)
 
 <br>
 
