@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"github.com/google/uuid"
 	"io/ioutil"
@@ -17,9 +18,12 @@ type Groups struct {
 type Group struct {
 	ID string `json:"ID"`
 	TrackContainerList []*TrackContainer `json:"TrackContainer"`
+	// Sneaky as required only when removing the element
+	// Set when GetGroup function is called
+	index int
 }
 
-// CreateGroup Creates a new group to add a set of trackcontainers
+// CreateGroup Creates a new group to add a set of track containers
 func CreateGroup() (*Group, error){
 	// Creating variable of type new group
 	var NewGroup Group
@@ -37,6 +41,53 @@ func CreateGroup() (*Group, error){
 	}
 
 	return &NewGroup,nil
+}
+
+// RemoveGroup Removes group based on the group ID provided
+func RemoveGroup(GroupID string) error {
+	// Read group information from the
+	//grouptrackcontainer json file
+	groups, err := ReadGroup()
+	if err != nil {
+		return err
+	}
+	// Gets Group struct based on group ID
+	// provided
+	group, err := GetGroup(GroupID)
+	if err != nil {
+		return err
+	}
+    // Remove Group struct from the groups variable
+	groups.GroupList = append(groups.GroupList[:group.index], groups.GroupList[group.index+1:]...)
+
+	// Write new groups to the grouptrackcontainer json file
+	err = groups.WriteGroup()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetGroup Gets group information based on
+// group id provided
+func GetGroup(GroupID string) (*Group,error) {
+	// Read group information from the
+	//grouptrackcontainer json file
+	groups, err := ReadGroup()
+	if err != nil {
+		return nil, err
+	}
+	// Iterate through the set of groups and
+	// if the group ID matches then return it
+	for i, group := range groups.GroupList {
+		if group.ID == GroupID {
+			group.index = i
+			return group, nil
+		}
+	}
+
+	return nil,errors.New("Group not found. ")
 }
 
 // AddGroupToFile Adds Group struct to the GroupTrackContainer File
