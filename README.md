@@ -43,16 +43,31 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 
 ## Installation
 1. Ensure the Go compiler is installed 
-2. Ensure docker is installed 
-3. Clone this repository 
+2. Ensure docker is installed (Should run without sudo)
+   ```
+   docker ps
+   ```
+4. Clone this repository 
 ```
 git clone https://github.com/Akilan1999/p2p-rendering-computation
 ```
-4. Install and build the project 
+4. Install and build the project
 ```
 make install 
 ```
-5. Test if it works 
+    - If you look closely you will get outputs such as:
+```
+export P2PRC=/<path>/p2p-rendering-computation
+export PATH=/<path>/p2p-rendering-computation:${PATH}
+```
+    - Add them to your .bashrc file
+
+5. Generate Config file 
+```
+make configfile
+```
+
+6. Test if it works 
 ```
 p2prc -h 
 ```
