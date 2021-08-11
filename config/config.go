@@ -21,14 +21,15 @@ var (
 )
 
 type Config struct {
-	IPTable             string
-	DockerContainers    string
-	DefaultDockerFile   string
-	SpeedTestFile       string
-	IPV6Address         string
-	PluginPath          string
-	TrackContainersPath string
-	ServerPort          string
+	IPTable             	 string
+	DockerContainers    	 string
+	DefaultDockerFile   	 string
+	SpeedTestFile       	 string
+	IPV6Address         	 string
+	PluginPath          	 string
+	TrackContainersPath 	 string
+	ServerPort          	 string
+	GroupTrackContainersPath string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }
@@ -88,6 +89,12 @@ func SetDefaults() error {
 		return err
 	}
 
+	//Creates a copy of trackcontainers.json in the appropriate directory
+	err = Copy("client/grouptrackcontainers.json","client/trackcontainers/grouptrackcontainers.json")
+	if err != nil {
+		return err
+	}
+
 
 	//Setting default paths for the config file
 	defaults["IPTable"] = defaultPath + "p2p/iptable/ip_table.json"
@@ -97,6 +104,7 @@ func SetDefaults() error {
 	defaults["IPV6Address"] = ""
 	defaults["PluginPath"] = defaultPath + "plugin/deploy"
 	defaults["TrackContainersPath"] = defaultPath + "client/trackcontainers/trackcontainers.json"
+	defaults["GroupTrackContainersPath"] = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
 	defaults["ServerPort"] = "8088"
 	//defaults["NetworkInterface"] = "wlp0s20f3"
 	//defaults["NetworkInterfaceIPV6Index"] = "2"
