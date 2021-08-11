@@ -47,34 +47,33 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
    ```
    docker ps
    ```
-4. Clone this repository 
-```
-git clone https://github.com/Akilan1999/p2p-rendering-computation
-```
+3. Clone this repository 
+   ```
+   git clone https://github.com/Akilan1999/p2p-rendering-computation
+   ```
 4. Install and build the project
-```
-make install 
-```
-    - If you look closely you will get outputs such as:
-```
-export P2PRC=/<path>/p2p-rendering-computation
-export PATH=/<path>/p2p-rendering-computation:${PATH}
-```
-    - Add them to your .bashrc file
+   ```
+   make install 
+   ```
+- If you look closely you will get outputs such as:
 
+      // Add them to your .bashrc file      
+      export P2PRC=/<path>/p2p-rendering-computation
+      export PATH=/<path>/p2p-rendering-computation:${PATH}
+    
 5. Generate Config file 
-```
-make configfile
-```
+   ```
+   make configfile
+   ```
 
-6. Test if it works 
-```
-p2prc -h 
-```
-or 
-```
-./p2prc -h 
-```
+5. Test if it works 
+   ```
+   p2prc -h 
+   ```
+   or 
+   ```
+   ./p2prc -h 
+   ```
 [Read more on the installation](Docs/Installation.md)
 
 <br>
