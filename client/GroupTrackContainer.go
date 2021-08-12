@@ -69,6 +69,37 @@ func RemoveGroup(GroupID string) error {
 	return nil
 }
 
+// AddContainerToGroup Adds container information to the Group based on the Group ID
+func AddContainerToGroup(ContainerID string, GroupID string) (*Group, error) {
+	// Gets container information based on container ID provided
+	containerInfo, err := GetContainerInformation(ContainerID)
+	if err != nil {
+		return nil, err
+	}
+	// Gets group information based on the group ID provided
+	group, err := GetGroup(GroupID)
+	if err != nil {
+		return nil, err
+	}
+	// Adds container information the group
+	group.AddContainer(containerInfo)
+
+	// Get Groups information from reading the grouptrackcontainer.json file
+	groups, err := ReadGroup()
+	if err != nil {
+		return nil, err
+	}
+    // Updating specific element in the group list with the added container
+	groups.GroupList[group.index] = group
+	// Write groups information on the grouptrackcontainer.json file
+	err = groups.WriteGroup()
+	if err != nil {
+		return nil, err
+	}
+
+	return group, nil
+}
+
 // GetGroup Gets group information based on
 // group id provided
 func GetGroup(GroupID string) (*Group,error) {
@@ -158,5 +189,11 @@ func (grp *Groups)WriteGroup() error {
 		return err
 	}
 
+	return nil
+}
+
+// AddContainer Adds a container to the Tracked container list of the group
+func (grp *Group)AddContainer(Container *TrackContainer) error {
+	grp.TrackContainerList = append(grp.TrackContainerList, Container)
 	return nil
 }
