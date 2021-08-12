@@ -100,6 +100,46 @@ func AddContainerToGroup(ContainerID string, GroupID string) (*Group, error) {
 	return group, nil
 }
 
+// RemoveContainerGroup Remove Container from the group ID specified
+func RemoveContainerGroup(ContainerID string, GroupID string) (*Group,error) {
+	// Get container information based on container ID provided
+	containerInfo, err := GetContainerInformation(ContainerID)
+	if err != nil {
+		return nil,err
+	}
+	// Gets group information based on the group ID provided
+	group, err := GetGroup(GroupID)
+	if err != nil {
+		return nil,err
+	}
+	// Remove container from the appropriate group
+	err = group.RemoveContainerGroup(containerInfo)
+	if err != nil {
+		return nil,err
+	}
+	// Get Groups information from reading the grouptrackcontainer.json file
+	groups, err := ReadGroup()
+	if err != nil {
+		return nil, err
+	}
+	// Updating specific element in the group list with the remove container
+	groups.GroupList[group.index] = group
+	// Write groups information on the grouptrackcontainer.json file
+	err = groups.WriteGroup()
+	if err != nil {
+		return nil, err
+	}
+
+	return group, nil
+}
+
+// RemoveContainerGroups Remove Container from groups (i.e which ever groups has information
+// about that container). This is mostly called when a container is deleted or removed from
+// the tracked container list
+func RemoveContainerGroups(ContainerID string) {
+
+}
+
 // GetGroup Gets group information based on
 // group id provided
 func GetGroup(GroupID string) (*Group,error) {
@@ -195,5 +235,17 @@ func (grp *Groups)WriteGroup() error {
 // AddContainer Adds a container to the Tracked container list of the group
 func (grp *Group)AddContainer(Container *TrackContainer) error {
 	grp.TrackContainerList = append(grp.TrackContainerList, Container)
+	return nil
+}
+
+// RemoveContainerGroup Removes container information from the group
+func (grp *Group)RemoveContainerGroup(Container *TrackContainer) error {
+	// Iterating through all container in the Group of Tracked Container
+	for i, container := range grp.TrackContainerList {
+		// If the container ID matches then remove the container from the group
+		if container.Id == Container.Id {
+			grp.TrackContainerList = append(grp.TrackContainerList[:i], grp.TrackContainerList[i+1:]...)
+		}
+	}
 	return nil
 }
