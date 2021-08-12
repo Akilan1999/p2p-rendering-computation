@@ -136,8 +136,23 @@ func RemoveContainerGroup(ContainerID string, GroupID string) (*Group,error) {
 // RemoveContainerGroups Remove Container from groups (i.e which ever groups has information
 // about that container). This is mostly called when a container is deleted or removed from
 // the tracked container list
-func RemoveContainerGroups(ContainerID string) {
-
+func RemoveContainerGroups(ContainerID string) error {
+	// Get container information based on container ID provided
+	containerInfo, err := GetContainerInformation(ContainerID)
+	if err != nil {
+		return err
+	}
+	// Get Groups information from reading the grouptrackcontainer.json file
+	groups, err := ReadGroup()
+	if err != nil {
+		return err
+	}
+	// Removes container information from all groups it is found in
+	err = groups.RemoveContainerGroups(containerInfo)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetGroup Gets group information based on
@@ -194,16 +209,12 @@ func ReadGroup() (*Groups,error) {
 	if err != nil {
 		return nil,err
 	}
-
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
-
 	// read our opened xmlFile as a byte array.
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-
 	// we initialize our Users array
 	var groups Groups
-
 	// we unmarshal our byteArray which contains our
 	// jsonFile's content into 'users' which we defined above
 	json.Unmarshal(byteValue, &groups)
@@ -217,7 +228,6 @@ func (grp *Groups)WriteGroup() error {
 	if err != nil {
 		return err
 	}
-
 	// Get Path from config
 	config, err := config.ConfigInit()
 	if err != nil {
@@ -228,7 +238,6 @@ func (grp *Groups)WriteGroup() error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -246,6 +255,22 @@ func (grp *Group)RemoveContainerGroup(Container *TrackContainer) error {
 		if container.Id == Container.Id {
 			grp.TrackContainerList = append(grp.TrackContainerList[:i], grp.TrackContainerList[i+1:]...)
 		}
+	}
+	return nil
+}
+
+// RemoveContainerGroups removes container found in all groups
+func (grp *Groups)RemoveContainerGroups(Container *TrackContainer) error {
+	// Iterating through all groups
+	for i,group := range grp.GroupList {
+		// Removes the container in the following group
+		// if it exists
+		err := group.RemoveContainerGroup(Container)
+		if err != nil {
+			return err
+		}
+		// Set group information to list groups
+		grp.GroupList[i] = group
 	}
 	return nil
 }
