@@ -1,12 +1,46 @@
 {
  "Groups": [
   {
-   "ID": "grp72f16ae0-4f68-4245-b570-93fb31de887e",
-   "TrackContainer": null
-  },
-  {
-   "ID": "grpf184d181-68ac-4829-a801-a7a585421f68",
-   "TrackContainer": null
+   "ID": "grp8c59a8bd-56c2-4234-b7b7-3ef4727da927",
+   "TrackContainer": [
+    {
+     "ID": "9c407a796018eba3db51eda61d6e6f75adea2da66bca2e7a2b1c1cdb08f282aa",
+     "Container": {
+      "SSHUsername": "master",
+      "SSHPassword": "password",
+      "ID": "9c407a796018eba3db51eda61d6e6f75adea2da66bca2e7a2b1c1cdb08f282aa",
+      "TagName": "p2p-ubuntu",
+      "ImagePath": "/home/akilan/Documents/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
+      "Ports": {
+       "Port": [
+        {
+         "PortName": "SSH",
+         "InternalPort": 22,
+         "Type": "tcp",
+         "ExternalPort": 43835,
+         "Description": "SSH Port"
+        },
+        {
+         "PortName": "NoVNC",
+         "InternalPort": 5901,
+         "Type": "tcp",
+         "ExternalPort": 34383,
+         "Description": "NoVNC port"
+        },
+        {
+         "PortName": "NoVNC",
+         "InternalPort": 6081,
+         "Type": "tcp",
+         "ExternalPort": 34501,
+         "Description": "NoVNC port"
+        }
+       ]
+      },
+      "GPU": "false"
+     },
+     "IpAddress": "0.0.0.0"
+    }
+   ]
   }
  ]
 }

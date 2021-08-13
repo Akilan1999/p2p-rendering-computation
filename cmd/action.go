@@ -181,6 +181,69 @@ var CliAction = func(ctx *cli.Context) error {
 
 	}
 
+	// Executing function to create new group
+	// Creates new group and outputs JSON file
+	if CreateGroup {
+		group, err := client.CreateGroup()
+		if err != nil {
+			return err
+		}
+		client.PrettyPrint(group)
+	}
+
+	// Actions to be performed when the
+	// group flag is called
+	// --group <Group ID>
+	if Group != "" {
+		// Remove container from group based on group ID provided
+		// --rmcgroup --id <contianer id>
+		if RemoveContainerGroup && ID != "" {
+			group, err := client.RemoveContainerGroup(ID, Group)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				client.PrettyPrint(group)
+			}
+		} else if  ID != "" { // Add container to group based on group ID provided
+			// --id <Container ID>
+			group, err := client.AddContainerToGroup(ID,Group)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				client.PrettyPrint(group)
+			}
+		} else { // View all information about current group
+			group, err := client.GetGroup(Group)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				client.PrettyPrint(group)
+			}
+		}
+	}
+
+	// Execute function to remove entire group
+	// when remove group flag is called
+	// --rmgroup
+	if RemoveGroup != "" {
+		err := client.RemoveGroup(RemoveGroup)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Group Removed")
+		}
+	}
+
+	// Execute Function to view all groups
+	if Groups {
+		groups, err := client.ReadGroup()
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			client.PrettyPrint(groups)
+		}
+	}
+
 
 	return nil
 }
