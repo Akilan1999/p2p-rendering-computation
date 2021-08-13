@@ -5,6 +5,7 @@
 2. [Reading server specifications](#reading-server-specifications)
 3. [Client creating and removing container](#Client-creating-and-removing-container)
 4. [Tracking Containers](#Tracking-Containers)
+5. [Grouping Containers](#Grouping-Containers)
 
 This section focuses in depth on how the client module works. The client module is incharge of communicating with
 different servers based on the IP addresses provided to the user. The IP addresses are derived
@@ -56,4 +57,29 @@ show a sample structure of file ```trackcontainer.json```.
 } 
 ```
 The default path to the container tracker is ```client/trackcontainers/trackcontainers.json```. 
+
+### Grouping Containers 
+When starting a set container possibility to be able to group them. 
+The benefit this would be that when executing plugins the group ID would be enough to execute 
+plugin in a set of containers. This provides the possibility to execute repetitive tasks in containers in 
+a single cli command. To store groups there is a file called ```grouptrackcontainer.json``` which tracks all
+the groups currently present set by the client. The snippet below
+show a sample structure of file ```grouptrackcontainer.json```.
+
+```
+{
+ "Groups": [
+  {
+   "ID": "grp<Random UUID>",
+   "TrackContainer": [{client.TrackContainers struct}]
+  }
+ ]
+}
+```
+The default path to the container tracker is ```client/trackcontainers/grouptrackcontainer.json```. 
+
+### Note:
+The group id will be auto-generated and will have its own prefix  in the start which will mostly be ```grp<UUID>```.  
+When a container is removed using the command. ```p2prc --rm <IP Address> --id <Container id>```. It will be automatically deleted 
+from the groups it exists in. 
 
