@@ -152,6 +152,12 @@ func RemoveContainerGroups(ContainerID string) error {
 	if err != nil {
 		return err
 	}
+	// Write groups information on the grouptrackcontainer.json file
+	err = groups.WriteGroup()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
