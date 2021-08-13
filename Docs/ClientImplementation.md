@@ -78,3 +78,7 @@ show a sample structure of file ```grouptrackcontainer.json```.
 ```
 The default path to the container tracker is ```client/trackcontainers/grouptrackcontainer.json```. 
 
+### Note:
+The group id will be auto-generated and will will have it's own prefix  in the start which will mostly be ```grp<uuid>```.  
+When a container is removed using the command. ```p2prc --rm <ip address> --id <container id>```. It will be automatically deleted from the groups it exists in. 
+
