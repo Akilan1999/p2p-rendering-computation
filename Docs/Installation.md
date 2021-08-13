@@ -147,6 +147,33 @@ p2prc --tc
 p2prc --plugin <plugin name> --id <container id>
 ``` 
 
+### Create group
+```
+p2prc --cgroup
+```
+### Add container to group
+```
+p2prc --group <group id> --id <container id>
+``` 
+### View groups
+```
+p2prc --groups
+```
+### View specific group
+```
+p2prc --group <group id>
+```
+### Delete container from group
+```
+p2prc --rmcgroup --group <group id> --id <contianer id> 
+```
+### Delete entire group
+```
+p2prc --rmgroup <group id>
+```
+
+[read more on grouping containers](ClientImplementation.md#Grouping-Containers)
+
 <br>
 
 --------------
