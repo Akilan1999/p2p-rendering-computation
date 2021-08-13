@@ -12,7 +12,7 @@ import (
 
 // TrackContainers This struct stores arrays of current containers running
 type TrackContainers struct {
-  	TrackcontianerList []TrackContainer `json:"TrackContainer"`
+  	TrackContainerList []TrackContainer `json:"TrackContainer"`
 }
 
 // TrackContainer Stores information of current containers
@@ -63,7 +63,7 @@ func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
 	if &trackContainer == nil {
 		return errors.New("trackContainer variable is nil")
 	}
-	trackContainers.TrackcontianerList = append(trackContainers.TrackcontianerList, trackContainer)
+	trackContainers.TrackContainerList = append(trackContainers.TrackContainerList, trackContainer)
 
 	// write modified information to the tracked json file
 	data,err := json.MarshalIndent(trackContainers, "", "\t")
@@ -86,12 +86,12 @@ func RemoveTrackedContainer(id string) error {
 		return err
 	}
 	// Getting tracked container struct
-	trackedContianers, err := ReadTrackContainers(config.TrackContainersPath)
+	trackedContainers, err := ReadTrackContainers(config.TrackContainersPath)
 	// Storing index of element to remove
 	var removeElement int
 	removeElement = -1
-	for i := range trackedContianers.TrackcontianerList {
-		if trackedContianers.TrackcontianerList[i].Id == id {
+	for i := range trackedContainers.TrackContainerList {
+		if trackedContainers.TrackContainerList[i].Id == id {
 			removeElement = i
 			break
 		}
@@ -101,10 +101,10 @@ func RemoveTrackedContainer(id string) error {
 		return errors.New("Container ID not found in the tracked list")
 	}
 	// Remove the detected element from the struct
-	trackedContianers.TrackcontianerList = append(trackedContianers.TrackcontianerList[:removeElement], trackedContianers.TrackcontianerList[removeElement+1:]...)
+	trackedContainers.TrackContainerList = append(trackedContainers.TrackContainerList[:removeElement], trackedContainers.TrackContainerList[removeElement+1:]...)
 
 	// write modified information to the tracked json file
-	data,err := json.MarshalIndent(trackedContianers, "", "\t")
+	data,err := json.MarshalIndent(trackedContainers, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -156,7 +156,7 @@ func GetContainerInformation(ID string) (*TrackContainer, error) {
 	}
 	// Iterating through all tracked containers to get the container information
 	// of the ID passed through the function parameter
-	for _, container := range CurrentContainers.TrackcontianerList {
+	for _, container := range CurrentContainers.TrackContainerList {
 		if container.Container.ID == ID {
 			return &container, nil
 		}

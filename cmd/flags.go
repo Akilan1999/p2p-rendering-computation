@@ -6,23 +6,28 @@ import (
 
 // Variables declared for CLI
 var (
-	AddServer         string
-	ViewImages        string
-	CreateVM          string
-	ContainerName     string
-	Ports             string
-	Server            bool
-	RemoveVM          string
-	ID                string
-	Specs             string
-	GPU               bool
-	UpdateServerList  bool
-	ServerList        bool
-	SetDefaultConfig  bool
-	NetworkInterface  bool
-	ViewPlugin        bool
-	TrackedContainers bool
-	ExecutePlugin     string
+	AddServer         	 string
+	ViewImages        	 string
+	CreateVM          	 string
+	ContainerName     	 string
+	Ports            	 string
+	Server            	 bool
+	RemoveVM          	 string
+	ID                	 string
+	Specs             	 string
+	GPU               	 bool
+	UpdateServerList  	 bool
+	ServerList        	 bool
+	SetDefaultConfig  	 bool
+	NetworkInterface  	 bool
+	ViewPlugin        	 bool
+	TrackedContainers 	 bool
+	ExecutePlugin     	 string
+	CreateGroup       	 bool
+	Group			  	 string
+	Groups               bool
+	RemoveContainerGroup bool
+	RemoveGroup 		 string
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -146,5 +151,40 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Plugin which needs to be executed",
 		EnvVars: []string{"EXECUTE_PLUGIN"},
 		Destination: &ExecutePlugin,
+	},
+	&cli.BoolFlag{
+		Name:        "CreateGroup",
+		Aliases: []string{"cgroup"},
+		Usage:       "Creates a new group",
+		EnvVars: []string{"CREATE_GROUP"},
+		Destination: &CreateGroup,
+	},
+	&cli.StringFlag{
+		Name:        "Group",
+		Aliases: []string{"group"},
+		Usage:       "group flag with argument group ID",
+		EnvVars: []string{"GROUP"},
+		Destination: &Group,
+	},
+	&cli.BoolFlag{
+		Name:        "Groups",
+		Aliases: []string{"groups"},
+		Usage:       "View all groups",
+		EnvVars: []string{"GROUPS"},
+		Destination: &Groups,
+	},
+	&cli.BoolFlag{
+		Name:        "RemoveContainerGroup",
+		Aliases: []string{"rmcgroup"},
+		Usage:       "Remove specific container in the group",
+		EnvVars: []string{"REMOVE_CONTAINER_GROUP"},
+		Destination: &RemoveContainerGroup,
+	},
+	&cli.StringFlag{
+		Name:        "RemoveGroup",
+		Aliases: []string{"rmgroup"},
+		Usage:       "Removes the entire group",
+		EnvVars: []string{"REMOVE_GROUP"},
+		Destination: &RemoveGroup,
 	},
 }

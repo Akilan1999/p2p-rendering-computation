@@ -97,6 +97,11 @@ func RemoveContianer(IP string,ID string) error {
 		fmt.Println("success")
 	}
 
+	// Remove container from groups it exists in
+	err = RemoveContainerGroups(ID)
+	if err != nil {
+		return err
+	}
     // Remove container created from the tracked list
 	err = RemoveTrackedContainer(ID)
 	if err != nil {
