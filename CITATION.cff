@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Selvacoumar
+    given-names: Akilan
+title: P2PRC
+license: "GPL-2.0"
+version: 1.0.0
+date-released: 2021-07-22
