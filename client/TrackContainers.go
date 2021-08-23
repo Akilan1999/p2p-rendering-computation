@@ -163,3 +163,14 @@ func GetContainerInformation(ID string) (*TrackContainer, error) {
 	}
 	return nil, errors.New("Container not found. ")
 }
+
+// CheckID Checks if the ID belongs to a group or a single container
+func CheckID(ID string) (string,error) {
+    // For group checks if the 1st characters is "grp"
+	if ID[0:3] == "grp" {
+		return "group", nil
+	} else {
+		return "container", nil
+	}
+	return "",nil
+}

@@ -167,9 +167,9 @@ var CliAction = func(ctx *cli.Context) error {
 	//Executing plugin when the plugin flag is called
 	// --plugin
 	if ExecutePlugin != "" {
-		// The execute plugin requires the container ID provided when being executed
+		// To execute plugin requires the container ID or group ID provided when being executed
 		if ID != "" {
-			err := plugin.RunPluginCli(ExecutePlugin, ID)
+			err := plugin.CheckRunPlugin(ExecutePlugin, ID)
 			if err != nil {
 				fmt.Println(err)
 			} else {

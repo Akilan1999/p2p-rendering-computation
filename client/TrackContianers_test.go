@@ -102,3 +102,19 @@ func TestRemoveTrackedContainer(t *testing.T) {
 		t.Fail()
 	}
 }
+
+// Test function that checks if the ID belongs to
+// a group or container running
+func TestCheckID(t *testing.T) {
+    id := "grp123"
+	checkID, err := CheckID(id)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+	if checkID == "group" {
+		fmt.Println("pass")
+	} else {
+		t.Fail()
+	}
+}
