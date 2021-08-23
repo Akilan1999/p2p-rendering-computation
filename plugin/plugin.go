@@ -232,9 +232,9 @@ func ReadHost(filename string) (*Host, error) {
 	return c, nil
 }
 
-// RunPluginCli Runs ansible plugin based on plugin name and contianer name which
+// RunPluginContainer Runs ansible plugin based on plugin name and contianer name which
 // is derived from the tracked containers file
-func RunPluginCli(PluginName string, ContainerID string) error {
+func RunPluginContainer(PluginName string, ContainerID string) error {
 	// Gets container information based on container ID
 	ContainerInformation, err := client.GetContainerInformation(ContainerID)
 	if err != nil {
@@ -263,6 +263,40 @@ func RunPluginCli(PluginName string, ContainerID string) error {
 	_, err = RunPlugin(PluginName,ExecuteIPs)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// CheckRunPlugin Checks if the ID belongs to the group or container
+// calls the plugin function the appropriate amount of times
+func CheckRunPlugin(PluginName string, ID string) error {
+	// Check if the ID belongs to the group or container ID
+	id, err := client.CheckID(ID)
+	if err != nil {
+		return err
+	}
+	// When the ID belongs to a group
+	if id == "group" {
+		// gets the group information
+		group, err := client.GetGroup(ID)
+		if err != nil {
+			return err
+		}
+		// Iterate through each container information in the group
+		// and run the plugin in each of them
+		for _, container := range group.TrackContainerList {
+			// runs plugin for each container
+			err := RunPluginContainer(PluginName, container.Id)
+			if err != nil {
+				return err
+			}
+		}
+	} else { // This means the following ID is a container ID
+		err := RunPluginContainer(PluginName, ID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -94,7 +94,7 @@ func TestExecuteIP_ModifyHost(t *testing.T) {
 
 // Test to ensure the cli function runs as intended and executes
 // the test ansible script
-func TestRunPluginCli(t *testing.T) {
+func TestRunPluginContainer(t *testing.T) {
 	// Create docker container and get SSH port
 	container1 ,err := docker.BuildRunContainer(0,"false","")
 	if err != nil {
@@ -110,7 +110,7 @@ func TestRunPluginCli(t *testing.T) {
 	}
 
 	// Running test Ansible script
-	err = RunPluginCli("TestAnsible", container1.ID)
+	err = RunPluginContainer("TestAnsible", container1.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -129,4 +129,110 @@ func TestRunPluginCli(t *testing.T) {
 		fmt.Println(err)
 		t.Fail()
 	}
+}
+
+// Testing the function can plugin can run with
+// group ID and container ID
+func TestCheckRunPlugin(t *testing.T) {
+	// Create docker container and get SSH port
+	container1 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+	// Create docker container and get SSH port
+	container2 ,err := docker.BuildRunContainer(0,"false","")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Ensuring created container1 is the added to the tracked list
+	err = client.AddTrackContainer(container1, "0.0.0.0")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+	// Ensuring created container2 is the added to the tracked list
+	err = client.AddTrackContainer(container2, "0.0.0.0")
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Create group to add created containers
+	group, err := client.CreateGroup()
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+
+	// Add container 1 to the group
+	_, err = client.AddContainerToGroup(container1.ID, group.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Add container 2 to the group
+	_, err = client.AddContainerToGroup(container2.ID, group.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// -------------------------- Main test cases -------------------------------
+
+	// Checking function against container ID
+	err = CheckRunPlugin("TestAnsible", container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Checking function against group ID
+	err = CheckRunPlugin("TestAnsible", group.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// ----------------------------------------------------------------------------
+
+	// Remove created group
+	err = client.RemoveGroup(group.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removes container1 information from the tracker IP addresses
+	err = client.RemoveTrackedContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container1 after Ansible is executed
+	err = docker.StopAndRemoveContainer(container1.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removes container2 information from the tracker IP addresses
+	err = client.RemoveTrackedContainer(container2.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
+	// Removing container2 after Ansible is executed
+	err = docker.StopAndRemoveContainer(container2.ID)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+
 }
