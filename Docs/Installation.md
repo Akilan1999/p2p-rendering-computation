@@ -144,7 +144,7 @@ p2prc --tc
 
 ### Running plugin 
 ```
-p2prc --plugin <plugin name> --id <container id>
+p2prc --plugin <plugin name> --id <container id or group id>
 ``` 
 
 ### Create group
@@ -165,7 +165,7 @@ p2prc --group <group id>
 ```
 ### Delete container from group
 ```
-p2prc --rmcgroup --group <group id> --id <contianer id> 
+p2prc --rmcgroup --group <group id> --id <container id> 
 ```
 ### Delete entire group
 ```
