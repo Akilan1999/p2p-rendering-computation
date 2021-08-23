@@ -4,6 +4,8 @@
   <br>
 </h1>
 
+<!-- seperator -->
+
 
 [![GPLv2 license](https://img.shields.io/badge/License-GPLv2-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Akilan1999/p2p-rendering-computation/graphs/commit-activity)
