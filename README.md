@@ -63,11 +63,7 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
       // Add them to your .bashrc file      
       export P2PRC=/<path>/p2p-rendering-computation
       export PATH=/<path>/p2p-rendering-computation:${PATH}
-    
-5. Generate Config file 
-   ```
-   make configfile
-   ```
+
 
 5. Test if it works 
    ```

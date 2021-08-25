@@ -1,4 +1,0 @@
----
-# Nvidia Docker Runtime Setup
-- import_tasks: debian.yml
-  when: ansible_facts['os_family']|lower == 'debian' # debian, ubuntu
