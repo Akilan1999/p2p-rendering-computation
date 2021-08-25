@@ -15,3 +15,5 @@ p2p/iptable/
 plugin/deploy/
 #ignore track container file
 client/trackcontainers/
+# Test generated files
+generate/p2prctest

@@ -18,6 +18,7 @@ require (
 	github.com/moby/sys/mount v0.2.0 // indirect
 	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
+	github.com/otiai10/copy v1.6.0
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/shirou/gopsutil v3.20.12+incompatible
 	github.com/spf13/viper v1.4.0
@@ -29,6 +30,6 @@ require (
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/grpc v1.35.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 	gotest.tools/v3 v3.0.3 // indirect
 )
