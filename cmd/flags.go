@@ -28,6 +28,10 @@ var (
 	Groups               bool
 	RemoveContainerGroup bool
 	RemoveGroup 		 string
+	// Generate only allowed in dev release
+	// -- REMOVE ON REGULAR RELEASE --
+	Generate             string
+	//--------------------------------
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -187,4 +191,14 @@ var AppConfigFlags = []cli.Flag{
 		EnvVars: []string{"REMOVE_GROUP"},
 		Destination: &RemoveGroup,
 	},
+	// Generate only allowed in dev release
+	// -- REMOVE ON REGULAR RELEASE --
+	&cli.StringFlag{
+		Name:        "Generate",
+		Aliases: []string{"gen"},
+		Usage:       "Generates a new copy of P2PRC which can be modified based on your needs",
+		EnvVars: []string{"GENERATE"},
+		Destination: &Generate,
+	},
+	//--------------------------------
 }
