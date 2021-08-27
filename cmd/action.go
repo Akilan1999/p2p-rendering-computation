@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/generate"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/plugin"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
@@ -243,6 +244,24 @@ var CliAction = func(ctx *cli.Context) error {
 			client.PrettyPrint(groups)
 		}
 	}
+	// -- REMOVE ON REGULAR RELEASE --
+	// when flag --gen is called an extension
+	// of the project is created to repurpose
+	// the project for custom purpose
+	if Generate != "" {
+		err := generate.GenerateNewProject(Generate)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Created new folder: " + Generate)
+			fmt.Println("1. Enter inside " + Generate + "directory")
+			fmt.Println("2. go mod init <name of your module (ex: github.com/akilan1999/lol)>")
+			fmt.Println("3. sh install.sh " + Generate)
+			fmt.Println("4. ./" + Generate + " -h (This is to test if the binary is working")
+		}
+	}
+	//--------------------------------
+
 
 
 	return nil
