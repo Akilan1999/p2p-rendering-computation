@@ -15,6 +15,7 @@ import (
 	"strings"
 )
 
+// NewProject Struct information required when creating a new project
 type NewProject struct {
 	Name 	  	   string
 	Module    	   string
@@ -78,6 +79,8 @@ func GenerateNewProject(name string, module string) error {
 		switch {
 		case strings.HasSuffix(src, "main.go"):
 			return false, nil
+		case strings.HasSuffix(src, "generate.go"):
+			return false, nil
 		case strings.HasSuffix(src, ".go"):
 			return true, nil
 		case strings.HasSuffix(src, "go.mod"):
@@ -106,6 +109,18 @@ func GenerateNewProject(name string, module string) error {
 
 	// Creating a new go.mod file in the appropriate directory
 	err = newProject.CreateGoMod()
+	if err != nil {
+		return err
+	}
+
+	// Get current project mod name
+	err = newProject.GetCurrentGoModule()
+	if err != nil {
+		return err
+	}
+
+	// Change the appropriate imports
+	err = newProject.ChangeImportFiles()
 	if err != nil {
 		return err
 	}
@@ -141,18 +156,33 @@ func (a *NewProject)ChangeImportFiles() error {
 	//----------------------------------------------------------------
 	// Action performed:
 	// Files we would need to modify the imports in
-	// generate/generate.go -> config module
-	// cmd/action.go -> config module, server module, generate module
-	// cmd/flags.go -> config module, server module, generate module
-	// server/server.go -> config module
-	// main.go -> cmd module
+	// - generate/generate.go -> config module
+	// - cmd/action.go -> config module, server module, generate module
+	// - cmd/flags.go -> config module, server module, generate module
+	// - server/server.go -> config module
+	// - main.go -> cmd module
 	//-----------------------------------------------------------------
-	a.FileNameAST = a.NewDir + "generate/generator.go"
-	err := a.ChangeImports("", a.Module+"config")
+
+	//-----------------------------------------------------------------
+	// 1.0 - generate/generate.go -> config module
+	a.FileNameAST = a.NewDir + "generate/generate.go"
+	// Get AST information of the file
+	err := a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule + "/config" , a.Module + "/config")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
 	if err != nil {
 		return err
 	}
 	return nil
+	//-----------------------------------------------------------------
 }
 
 // GetCurrentGoModule Gets the current go module name
