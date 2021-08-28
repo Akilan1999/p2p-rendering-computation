@@ -5,22 +5,31 @@ package generate
 import (
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"github.com/otiai10/copy"
+	"go/ast"
+	"go/token"
 	"os"
+	"os/exec"
 	"strings"
 )
 
 type NewProject struct {
 	Name 	  string
+	Module    string
 	NewDir    string
 	P2PRCPath string
-	Option    *copy.Options
+	Option *copy.Options
+	Token       *token.FileSet
+	AST         *ast.File
+	FileNameAST string
 }
 
 // GenerateNewProject creates a new copy of the P2PRC
 // project for custom modification
-func GenerateNewProject(name string) error {
+func GenerateNewProject(name string, module string) error {
 	// Create new variable of type NewProject
 	var newProject NewProject
+	//Setting module name to the new project
+	newProject.Module = module
 	// Get path of the current directory
 	curDir, err := config.GetCurrentPath()
 	if err != nil {
@@ -78,6 +87,8 @@ func GenerateNewProject(name string) error {
 		return err
 	}
 
+	// Creating a new go.mod file in the appropriate directory
+
 	return nil
 }
 
@@ -86,6 +97,17 @@ func CreateFolder(name string,path string) error {
 	//Create a folder/directory at a full qualified path
 	err := os.Mkdir(path + name, 0755)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CreateGoMod Creates a new go module for the new project created
+func (a *NewProject)CreateGoMod() error {
+	// Create new go.mod in the appropriate directory
+	cmd := exec.Command("go","mod","init",a.Module)
+	cmd.Dir = a.NewDir
+	if err := cmd.Start(); err != nil {
 		return err
 	}
 	return nil

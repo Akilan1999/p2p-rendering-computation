@@ -17,3 +17,4 @@ plugin/deploy/
 client/trackcontainers/
 # Test generated files
 generate/p2prctest
+generate/Test
