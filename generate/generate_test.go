@@ -29,7 +29,7 @@ func TestGenerateNewProject(t *testing.T) {
 // Testing AST function to ensure imports are
 // working as intended
 func TestChangingImportAST(t *testing.T) {
-   // Create a new variable of type
+   // Create a new variable of type NewProject
 	var np NewProject
 	// Get current directory
 	path, err := config.GetCurrentPath()
@@ -66,4 +66,27 @@ func TestChangingImportAST(t *testing.T) {
 		t.Error(err)
 	}
 
+}
+
+// Testing the if Go Mod is created
+func TestNewProject_CreateGoMod(t *testing.T) {
+	// Create a new variable of type NewProject
+	var np NewProject
+	path, err := config.GetCurrentPath()
+	if err != nil {
+		fmt.Println(err)
+		t.Error(err)
+	}
+	// Set new project name as Test
+	np.Name = "Test"
+	// Set new project module as github.com/Test
+	np.Module = "github.com/Test"
+	// Set Path of the new project
+	np.NewDir = path + "Test/"
+	// Creating a go.mod file
+	err = np.CreateGoMod()
+	if err != nil {
+		fmt.Println(err)
+		t.Error(err)
+	}
 }
