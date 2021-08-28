@@ -107,7 +107,7 @@ func (a *NewProject)CreateGoMod() error {
 	// Create new go.mod in the appropriate directory
 	cmd := exec.Command("go","mod","init",a.Module)
 	cmd.Dir = a.NewDir
-	if err := cmd.Start(); err != nil {
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 	return nil
