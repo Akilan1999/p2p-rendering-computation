@@ -249,7 +249,7 @@ var CliAction = func(ctx *cli.Context) error {
 	// of the project is created to repurpose
 	// the project for custom purpose
 	if Generate != "" {
-		err := generate.GenerateNewProject(Generate)
+		err := generate.GenerateNewProject(Generate,"test")
 		if err != nil {
 			fmt.Println(err)
 		} else {
