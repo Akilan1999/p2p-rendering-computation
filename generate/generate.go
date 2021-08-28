@@ -3,24 +3,28 @@
 package generate
 
 import (
+	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"github.com/otiai10/copy"
 	"go/ast"
 	"go/token"
+	modfile "golang.org/x/mod/modfile"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 )
 
 type NewProject struct {
-	Name 	  string
-	Module    string
-	NewDir    string
-	P2PRCPath string
-	Option *copy.Options
-	Token       *token.FileSet
-	AST         *ast.File
-	FileNameAST string
+	Name 	  	   string
+	Module    	   string
+	NewDir         string
+	P2PRCPath 	   string
+	CurrentModule  string
+	Option 	  	   *copy.Options
+	Token          *token.FileSet
+	AST            *ast.File
+	FileNameAST    string
 }
 
 // GenerateNewProject creates a new copy of the P2PRC
@@ -54,9 +58,22 @@ func GenerateNewProject(name string, module string) error {
 	// - remove go.mod and go.sum and create new ones
 
 	// Files we require to skip
+
 	var Options copy.Options
 
+	// IF YOU ARE RELEASING AN EXTENSION OF P2PRC
+	// MODIFY HERE (AN EXTENSION FROM YOUR EXTENSION :P)
 	// Skip or have the appropriate files and directories not needed
+	//----------------------------------------------------------------
+	// Action performed:
+	// - Ensuring main.go file exists
+	// - Skipping all .go files
+	// - Skipping go.mod file
+	// - Skipping go.sum file
+	// - Skipping .idea/ directory
+	// - Skipping Makefile file
+	// - Skipping <Project Name>/ directory
+	//----------------------------------------------------------------
 	Options.Skip = func(src string) (bool, error) {
 		switch {
 		case strings.HasSuffix(src, "main.go"):
@@ -88,6 +105,10 @@ func GenerateNewProject(name string, module string) error {
 	}
 
 	// Creating a new go.mod file in the appropriate directory
+	err = newProject.CreateGoMod()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -110,5 +131,41 @@ func (a *NewProject)CreateGoMod() error {
 	if err := cmd.Run(); err != nil {
 		return err
 	}
+	return nil
+}
+
+// ChangeImportFiles Changes Appropriate imports in the appropriate file
+func (a *NewProject)ChangeImportFiles() error {
+	// IF YOU ARE RELEASING AN EXTENSION OF P2PRC
+	// MODIFY HERE (AN EXTENSION FROM YOUR EXTENSION :P)
+	//----------------------------------------------------------------
+	// Action performed:
+	// Files we would need to modify the imports in
+	// generate/generate.go -> config module
+	// cmd/action.go -> config module, server module, generate module
+	// cmd/flags.go -> config module, server module, generate module
+	// server/server.go -> config module
+	// main.go -> cmd module
+	//-----------------------------------------------------------------
+	a.FileNameAST = a.NewDir + "generate/generator.go"
+	err := a.ChangeImports("", a.Module+"config")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetCurrentGoModule Gets the current go module name
+func (a *NewProject)GetCurrentGoModule() (error) {
+	goModBytes, err := ioutil.ReadFile(a.P2PRCPath + "go.mod")
+	if err != nil {
+		return err
+	}
+	modName := modfile.ModulePath(goModBytes)
+	fmt.Fprintf(os.Stdout, "modName=%+v\n", modName)
+
+	// Set current module to struct of file NewProject
+    a.CurrentModule = modName
+
 	return nil
 }

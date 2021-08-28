@@ -90,3 +90,23 @@ func TestNewProject_CreateGoMod(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+// Testing if the current go module is returned
+func TestNewProject_GetCurrentGoModule(t *testing.T) {
+	// Create a new variable of type NewProject
+	var np NewProject
+	path, err := config.GetPathP2PRC()
+	if err != nil {
+		fmt.Println(err)
+		t.Error(err)
+	}
+	// Set Current project path
+	np.P2PRCPath = path
+	// Get module name
+	err = np.GetCurrentGoModule()
+	if err != nil {
+		fmt.Println(err)
+		t.Error(err)
+	}
+	fmt.Println(np.CurrentModule)
+}
