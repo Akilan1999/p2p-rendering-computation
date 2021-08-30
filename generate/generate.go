@@ -69,7 +69,11 @@ func GenerateNewProject(name string, module string) error {
 	// Action performed:
 	// - Ensuring main.go file exists
 	// - Ensuring generate.go file exists
+	// - Ensuring modifyGenerate.go file exists
+	// - Ensuring generate_test.go file exists
 	// - Ensuring server/server.go file exists
+	// - Ensuring server/gopsutil.go file exists
+	// - Ensuring server/gpu.go file exists
 	// - Ensuring cmd/action.go file exists
 	// - Ensuring cmd/flags.go file exists
 	// - Skipping all .go files apart from the ones listed above
@@ -85,11 +89,23 @@ func GenerateNewProject(name string, module string) error {
 			return false, nil
 		case strings.HasSuffix(src, "generate.go"):
 			return false, nil
+		case strings.HasSuffix(src, "modifyGenerate.go"):
+			return false, nil
+		case strings.HasSuffix(src, "generate_test.go"):
+			return false, nil
 		case strings.HasSuffix(src, "server/server.go"):
+			return false, nil
+		case strings.HasSuffix(src, "server/gopsutil.go"):
+			return false, nil
+		case strings.HasSuffix(src, "server/gpu.go"):
 			return false, nil
 		case strings.HasSuffix(src, "cmd/action.go"):
 			return false, nil
 		case strings.HasSuffix(src, "cmd/flags.go"):
+			return false, nil
+		case strings.HasSuffix(src, "config/config.go"):
+			return false, nil
+		case strings.HasSuffix(src, "config/config_test.go"):
 			return false, nil
 		case strings.HasSuffix(src, ".go"):
 			return true, nil
@@ -194,6 +210,7 @@ func (a *NewProject) ChangeImportFiles() error {
 	// Action performed:
 	// Files we would need to modify the imports in
 	// - generate/generate.go -> config module
+	// - generate/generate_test.go -> config module
 	// - cmd/action.go -> config module, server module, generate module
 	// - cmd/flags.go -> config module, server module, generate module
 	// - server/server.go -> config module
@@ -205,6 +222,24 @@ func (a *NewProject) ChangeImportFiles() error {
 	a.FileNameAST = a.NewDir + "generate/generate.go"
 	// Get AST information of the file
 	err := a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule+"/config", a.Module+"/config")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
+	if err != nil {
+		return err
+	}
+	//-----------------------------------------------------------------
+	// 1.1 - generate/generate_test.go -> config module
+	a.FileNameAST = a.NewDir + "generate/generate_test.go"
+	// Get AST information of the file
+	err = a.GetASTGoFile()
 	if err != nil {
 		return err
 	}

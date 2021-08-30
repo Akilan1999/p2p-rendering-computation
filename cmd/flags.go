@@ -31,6 +31,7 @@ var (
 	// Generate only allowed in dev release
 	// -- REMOVE ON REGULAR RELEASE --
 	Generate             string
+	Modulename           string
 	//--------------------------------
 )
 
@@ -199,6 +200,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Generates a new copy of P2PRC which can be modified based on your needs",
 		EnvVars: []string{"GENERATE"},
 		Destination: &Generate,
+	},
+	&cli.StringFlag{
+		Name:        "ModuleName",
+		Aliases: []string{"mod"},
+		Usage:       "New go project module name",
+		EnvVars: []string{"MODULENAME"},
+		Destination: &Modulename,
 	},
 	//--------------------------------
 }

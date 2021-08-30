@@ -249,15 +249,23 @@ var CliAction = func(ctx *cli.Context) error {
 	// of the project is created to repurpose
 	// the project for custom purpose
 	if Generate != "" {
-		err := generate.GenerateNewProject(Generate,"test")
+		var err error
+		// If the module name is provided
+		if Modulename != "" {
+			err = generate.GenerateNewProject(Generate,Modulename)
+		} else {
+			err = generate.GenerateNewProject(Generate,Generate)
+		}
 		if err != nil {
 			fmt.Println(err)
 		} else {
 			fmt.Println("Created new folder: " + Generate)
-			fmt.Println("1. Enter inside " + Generate + "directory")
-			fmt.Println("2. go mod init <name of your module (ex: github.com/akilan1999/lol)>")
-			fmt.Println("3. sh install.sh " + Generate)
-			fmt.Println("4. ./" + Generate + " -h (This is to test if the binary is working")
+			fmt.Println("1. Enter inside " + Generate + " directory")
+			fmt.Println("2. git remote add " + Generate + " <PATH to the github repo>")
+			fmt.Println("3. git push " + Generate + " <PATH to the github repo>")
+			fmt.Println("4. go mod tidy")
+			fmt.Println("5. sh install.sh " + Generate)
+			fmt.Println("6. ./" + Generate + " -h (This is to test if the binary is working)")
 		}
 	}
 	//--------------------------------
