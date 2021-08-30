@@ -17,15 +17,15 @@ import (
 
 // NewProject Struct information required when creating a new project
 type NewProject struct {
-	Name 	  	   string
-	Module    	   string
-	NewDir         string
-	P2PRCPath 	   string
-	CurrentModule  string
-	Option 	  	   *copy.Options
-	Token          *token.FileSet
-	AST            *ast.File
-	FileNameAST    string
+	Name		string
+	Module		string
+	NewDir		string
+	P2PRCPath	string
+	CurrentModule	string
+	Option		*copy.Options
+	Token		*token.FileSet
+	AST		*ast.File
+	FileNameAST	string
 }
 
 // GenerateNewProject creates a new copy of the P2PRC
@@ -68,7 +68,11 @@ func GenerateNewProject(name string, module string) error {
 	//----------------------------------------------------------------
 	// Action performed:
 	// - Ensuring main.go file exists
-	// - Skipping all .go files
+	// - Ensuring generate.go file exists
+	// - Ensuring server/server.go file exists
+	// - Ensuring cmd/action.go file exists
+	// - Ensuring cmd/flags.go file exists
+	// - Skipping all .go files apart from the ones listed above
 	// - Skipping go.mod file
 	// - Skipping go.sum file
 	// - Skipping .idea/ directory
@@ -80,6 +84,12 @@ func GenerateNewProject(name string, module string) error {
 		case strings.HasSuffix(src, "main.go"):
 			return false, nil
 		case strings.HasSuffix(src, "generate.go"):
+			return false, nil
+		case strings.HasSuffix(src, "server/server.go"):
+			return false, nil
+		case strings.HasSuffix(src, "cmd/action.go"):
+			return false, nil
+		case strings.HasSuffix(src, "cmd/flags.go"):
 			return false, nil
 		case strings.HasSuffix(src, ".go"):
 			return true, nil
@@ -102,7 +112,7 @@ func GenerateNewProject(name string, module string) error {
 	newProject.Option = &Options
 
 	// Copies all files from P2PRC to the new project created
-	err = copy.Copy(newProject.P2PRCPath, newProject.NewDir,*newProject.Option)
+	err = copy.Copy(newProject.P2PRCPath, newProject.NewDir, *newProject.Option)
 	if err != nil {
 		return err
 	}
@@ -125,13 +135,30 @@ func GenerateNewProject(name string, module string) error {
 		return err
 	}
 
+	// Add changes inside the new project
+	err = newProject.GitAdd()
+	if err != nil {
+		return err
+	}
+
+	// commit changes inside the new project
+	err = newProject.GitCommit()
+	if err != nil {
+		return err
+	}
+	// Creates go.sum file
+	//err = newProject.CreateGoModTidy()
+	//if err != nil {
+	//	return err
+	//}
+
 	return nil
 }
 
 // CreateFolder Creates a new folder based on the name and path provided
-func CreateFolder(name string,path string) error {
+func CreateFolder(name string, path string) error {
 	//Create a folder/directory at a full qualified path
-	err := os.Mkdir(path + name, 0755)
+	err := os.Mkdir(path+name, 0755)
 	if err != nil {
 		return err
 	}
@@ -139,9 +166,19 @@ func CreateFolder(name string,path string) error {
 }
 
 // CreateGoMod Creates a new go module for the new project created
-func (a *NewProject)CreateGoMod() error {
+func (a *NewProject) CreateGoMod() error {
 	// Create new go.mod in the appropriate directory
-	cmd := exec.Command("go","mod","init",a.Module)
+	cmd := exec.Command("go", "mod", "init", a.Module)
+	cmd.Dir = a.NewDir
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *NewProject) CreateGoModTidy() error {
+	// Installs all the appropriate dependencies and creates go.sum
+	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = a.NewDir
 	if err := cmd.Run(); err != nil {
 		return err
@@ -150,7 +187,7 @@ func (a *NewProject)CreateGoMod() error {
 }
 
 // ChangeImportFiles Changes Appropriate imports in the appropriate file
-func (a *NewProject)ChangeImportFiles() error {
+func (a *NewProject) ChangeImportFiles() error {
 	// IF YOU ARE RELEASING AN EXTENSION OF P2PRC
 	// MODIFY HERE (AN EXTENSION FROM YOUR EXTENSION :P)
 	//----------------------------------------------------------------
@@ -172,7 +209,7 @@ func (a *NewProject)ChangeImportFiles() error {
 		return err
 	}
 	// Change the appropriate Go file
-	err = a.ChangeImports(a.CurrentModule + "/config" , a.Module + "/config")
+	err = a.ChangeImports(a.CurrentModule+"/config", a.Module+"/config")
 	if err != nil {
 		return err
 	}
@@ -181,12 +218,105 @@ func (a *NewProject)ChangeImportFiles() error {
 	if err != nil {
 		return err
 	}
-	return nil
+
 	//-----------------------------------------------------------------
+	//-----------------------------------------------------------------
+	// 2.0 - cmd/action.go -> config module, server module, generate module
+	a.FileNameAST = a.NewDir + "cmd/action.go"
+	// Get AST information of the file
+	err = a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule+"/config", a.Module+"/config")
+	if err != nil {
+		return err
+	}
+	err = a.ChangeImports(a.CurrentModule+"/server", a.Module+"/server")
+	if err != nil {
+		return err
+	}
+	err = a.ChangeImports(a.CurrentModule+"/generate", a.Module+"/generate")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
+	if err != nil {
+		return err
+	}
+	//-----------------------------------------------------------------
+	// 2.1 - cmd/flags.go -> config module, server module, generate module
+	a.FileNameAST = a.NewDir + "cmd/flags.go"
+	// Get AST information of the file
+	err = a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule+"/config", a.Module+"/config")
+	if err != nil {
+		return err
+	}
+	err = a.ChangeImports(a.CurrentModule+"/server", a.Module+"/server")
+	if err != nil {
+		return err
+	}
+	err = a.ChangeImports(a.CurrentModule+"/generate", a.Module+"/generate")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
+	if err != nil {
+		return err
+	}
+	//-----------------------------------------------------------------
+	//-----------------------------------------------------------------
+	// 3.0 - server/server.go -> config module
+	a.FileNameAST = a.NewDir + "server/server.go"
+	// Get AST information of the file
+	err = a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule+"/config", a.Module+"/config")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
+	if err != nil {
+		return err
+	}
+	//-----------------------------------------------------------------
+	//-----------------------------------------------------------------
+	// 4.0 - server/server.go -> config module
+	a.FileNameAST = a.NewDir + "main.go"
+	// Get AST information of the file
+	err = a.GetASTGoFile()
+	if err != nil {
+		return err
+	}
+	// Change the appropriate Go file
+	err = a.ChangeImports(a.CurrentModule+"/cmd", a.Module+"/cmd")
+	if err != nil {
+		return err
+	}
+	// Writes the change to the appropriate file
+	err = a.WriteGoAst()
+	if err != nil {
+		return err
+	}
+	//-----------------------------------------------------------------
+
+	return nil
 }
 
 // GetCurrentGoModule Gets the current go module name
-func (a *NewProject)GetCurrentGoModule() (error) {
+func (a *NewProject) GetCurrentGoModule() error {
 	goModBytes, err := ioutil.ReadFile(a.P2PRCPath + "go.mod")
 	if err != nil {
 		return err
@@ -195,7 +325,27 @@ func (a *NewProject)GetCurrentGoModule() (error) {
 	fmt.Fprintf(os.Stdout, "modName=%+v\n", modName)
 
 	// Set current module to struct of file NewProject
-    a.CurrentModule = modName
+	a.CurrentModule = modName
 
+	return nil
+}
+
+func (a *NewProject) GitAdd() error {
+	// Installs all the appropriate dependencies and creates go.sum
+	cmd := exec.Command("git", "add", ".")
+	cmd.Dir = a.NewDir
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *NewProject) GitCommit() error {
+	// Installs all the appropriate dependencies and creates go.sum
+	cmd := exec.Command("git", "commit", "-m=removed appropriate go files")
+	cmd.Dir = a.NewDir
+	if err := cmd.Run(); err != nil {
+		return err
+	}
 	return nil
 }
