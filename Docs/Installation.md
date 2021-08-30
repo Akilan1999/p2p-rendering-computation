@@ -171,8 +171,13 @@ p2prc --rmcgroup --group <group id> --id <container id>
 ```
 p2prc --rmgroup <group id>
 ```
-
 [read more on grouping containers](ClientImplementation.md#Grouping-Containers)
+### Extending usecase of P2PRC (Requires a go compiler to run)
+```
+p2prc --gen <project name> --mod <go module name>
+```
+
+
 
 <br>
 
