@@ -176,6 +176,7 @@ p2prc --rmgroup <group id>
 ```
 p2prc --gen <project name> --mod <go module name>
 ```
+[read more about the generate module](GenerateImplementation.md)
 
 
 
