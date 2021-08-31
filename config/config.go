@@ -8,12 +8,7 @@ import (
 
 var (
 	defaultPath string
-	defaults = map[string]interface{}{
-            "IPTable": "/etc/p2p-rendering/ip_table.json",
-            "DockerContainers": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/",
-            "DefaultDockerFile": "/home/akilan/Documents/p2prendering/p2p-redering-computation/server/docker/containers/docker-ubuntu-sshd/",
-            "SpeedTestFile":"/etc/p2p-rendering/50.bin",
-    }
+	defaults = map[string]interface{}{}
 	configName = "config"
 	configType = "json"
 	configFile = "config.json"
@@ -67,18 +62,30 @@ func Copy(src, dst string) error {
 	return out.Close()
 }
 
+// GetPathP2PRC Getting P2PRC Directory from environment variable
+func GetPathP2PRC()(string,error) {
+	curDir := os.Getenv("P2PRC")
+	return curDir + "/", nil
+}
+
+// GetCurrentPath Getting P2PRC Directory from environment variable
+func GetCurrentPath()(string,error) {
+	curDir := os.Getenv("PWD")
+	return curDir + "/", nil
+}
+
 
 // SetDefaults This function to be called only during a
 // make install
 func SetDefaults() error {
-	//Getting Current Directory from environment variable
-	curDir := os.Getenv("P2PRC")
-
 	//Setting current directory to default path
-	defaultPath = curDir + "/"
+	defaultPath, err := GetPathP2PRC()
+	if err != nil{
+		return err
+	}
 
 	//Creates ip_table.json in the json directory
-	err := Copy("p2p/ip_table.json","p2p/iptable/ip_table.json")
+	err = Copy("p2p/ip_table.json","p2p/iptable/ip_table.json")
 	if err != nil {
 		return err
 	}
@@ -129,9 +136,11 @@ func SetDefaults() error {
 
 func ConfigInit()(*Config,error) {
 
-	curDir := os.Getenv("P2PRC")
 	//Setting current directory to default path
-	defaultPath = curDir + "/"
+	defaultPath, err := GetPathP2PRC()
+	if err != nil{
+		return nil, err
+	}
 	//Paths to search for config file
 	configPaths = append(configPaths, defaultPath)
 
