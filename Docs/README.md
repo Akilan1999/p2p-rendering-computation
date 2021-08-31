@@ -13,5 +13,6 @@
    4. [Config Module](ConfigImplementation.md)
    5. [Cli Module](CliImplementation.md)
    6. [Plugin Module](PluginImplementation.md)
-5. [Problems](Problems.md)   
+   7. [Generate Module](GenerateImplementation.md)
+5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)   
 
