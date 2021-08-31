@@ -11,7 +11,7 @@ to have a go compiler present in his computer. Due to the introduction of this m
 ## How does this work ?
 
 ### [Struct information](https://github.com/Akilan1999/p2p-rendering-computation/blob/9d69aed8ce0fe5273aaff2828f7d51c3d5ac2ce4/generate/generate.go#L19)
-- ###```Generate.go```: 
+- ### ```Generate.go```: 
 This file creates a local copy of P2PRC from where the CLI was called from.
 This go file also does various stuff like instruction of file should be ignored when copying and 
 which of should not be. Now let's understand this. Below is a sample code which does the following:
