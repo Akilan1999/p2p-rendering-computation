@@ -13,6 +13,7 @@ var (
 	configType = "json"
 	configFile = "config.json"
 	configPaths []string
+	defaultEnvName = "P2PRC"
 )
 
 type Config struct {
@@ -64,8 +65,18 @@ func Copy(src, dst string) error {
 
 // GetPathP2PRC Getting P2PRC Directory from environment variable
 func GetPathP2PRC()(string,error) {
-	curDir := os.Getenv("P2PRC")
+	curDir := os.Getenv(defaultEnvName)
 	return curDir + "/", nil
+}
+
+// SetEnvName Sets the environment name
+// This is to ensure that the Path of your project is detected from
+// your environment variable
+// This is useful when extending the use case of P2PRC
+func SetEnvName(EnvName string) error {
+	defaultEnvName = EnvName
+	// Handling error to be implemented only if needed
+	return nil
 }
 
 // GetCurrentPath Getting P2PRC Directory from environment variable
