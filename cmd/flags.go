@@ -32,6 +32,7 @@ var (
 	// -- REMOVE ON REGULAR RELEASE --
 	Generate             string
 	Modulename           string
+	PullPlugin           string
 	//--------------------------------
 )
 
@@ -209,4 +210,11 @@ var AppConfigFlags = []cli.Flag{
 		Destination: &Modulename,
 	},
 	//--------------------------------
+	&cli.StringFlag{
+		Name:        "PullPlugin",
+		Aliases: []string{"pp"},
+		Usage:       "Pulls plugin from git repos",
+		EnvVars: []string{"PULLPLUGIN"},
+		Destination: &PullPlugin,
+	},
 }
