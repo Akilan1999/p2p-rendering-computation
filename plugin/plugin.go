@@ -9,7 +9,9 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 	"strconv"
+	"text/template"
 
 	"github.com/apenella/go-ansible/pkg/execute"
 	"github.com/apenella/go-ansible/pkg/options"
@@ -33,6 +35,7 @@ type Plugin struct {
 
 // ExecuteIP IP Address to execute Ansible instruction
 type ExecuteIP struct {
+	ContainerID string
 	IPAddress   string
 	SSHPortNo   string
 	Success      bool
@@ -150,7 +153,11 @@ func (p *Plugin) ExecutePlugin() error {
 		if err != nil {
 			return err
 		}
-
+		// sets the ports to the plugin folder
+		err = p.AutoSetPorts(execute.ContainerID)
+		if err != nil {
+			return err
+		}
 		err = execute.RunAnsible(p)
 		if err != nil {
 			return err
@@ -244,7 +251,7 @@ func ReadHost(filename string) (*Host, error) {
 	return c, nil
 }
 
-// RunPluginContainer Runs ansible plugin based on plugin name and contianer name which
+// RunPluginContainer Runs ansible plugin based on plugin name and container name which
 // is derived from the tracked containers file
 func RunPluginContainer(PluginName string, ContainerID string) error {
 	// Gets container information based on container ID
@@ -269,6 +276,8 @@ func RunPluginContainer(PluginName string, ContainerID string) error {
 	}
 	// IP address of the container 
 	ExecuteIP.IPAddress = ContainerInformation.IpAddress
+	// Set container ID to ExecutorIP
+	ExecuteIP.ContainerID = ContainerInformation.Id
     // Append IP to list of executor IP
 	ExecuteIPs = append(ExecuteIPs, &ExecuteIP)
 	// Run plugin to execute plugin
@@ -332,4 +341,40 @@ func (p *Plugin)CopyToTmpPlugin() error {
 	p.FolderName = id.String() + "_" + p.FolderName
 
     return nil
+}
+
+// AutoSetPorts Automatically maps free ports to site.yml file
+func (p *Plugin)AutoSetPorts(containerID string) error {
+	container , err := client.GetContainerInformation(containerID)
+	if err != nil {
+		return err
+	}
+	// variable that would have a list of ports
+	// to be allocated to the plugin system
+	var ports []int
+	// setting all external ports available in an array
+	for _, port := range container.Container.Ports.PortSet {
+		if port.InternalPort == port.ExternalPort {
+			ports = append(ports, port.ExternalPort)
+		}
+	}
+    // parses the site.yml file in the tmp directory
+	t, err := template.ParseFiles(p.path + "/" + p.FolderName + "/site.yml")
+	if err != nil {
+		return err
+	}
+    // opens the output file
+	f, err := os.Create(p.path + "/" + p.FolderName + "/site.yml")
+	if err != nil {
+		return err
+	}
+	// sends the ports to the site.yml file to populate them
+	err = t.Execute(f,ports)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+
 }
