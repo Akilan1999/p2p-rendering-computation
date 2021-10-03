@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"strconv"
@@ -14,6 +15,7 @@ import (
 	"github.com/apenella/go-ansible/pkg/options"
 	"github.com/apenella/go-ansible/pkg/playbook"
 	"github.com/apenella/go-ansible/pkg/stdoutcallback/results"
+	"github.com/otiai10/copy"
 )
 
 // Plugins Array of all plugins detected
@@ -25,6 +27,7 @@ type Plugins struct {
 type Plugin struct {
 	FolderName         string
 	PluginDescription  string
+	path               string
 	Execute            []*ExecuteIP
 }
 
@@ -106,12 +109,26 @@ func RunPlugin(pluginName string ,IPAddresses []*ExecuteIP) (*Plugin,error) {
 		if plugin.FolderName == pluginName {
 			plugindetected = plugin
 			plugindetected.Execute = IPAddresses
+			// Get Execute plugin path from config file
+			config, err := config.ConfigInit()
+			if err != nil {
+				return nil, err
+			}
+			plugindetected.path = config.PluginPath
 			break
 		}
 	}
 
 	if plugindetected == nil {
 		return nil, errors.New("Plugin not detected")
+	}
+	
+	
+	// Create copy of the plugin the tmp directory
+	// To ensure we execute the plugin from there
+	err = plugindetected.CopyToTmpPlugin()
+	if err != nil {
+		return nil, err
 	}
 
 	// Executing the plugin
@@ -125,21 +142,16 @@ func RunPlugin(pluginName string ,IPAddresses []*ExecuteIP) (*Plugin,error) {
 
 // ExecutePlugin Function to execute plugins that are called
 func (p *Plugin) ExecutePlugin() error {
-	// Get Execute plugin path from config file
-	config, err:= config.ConfigInit()
-	if err != nil {
-		return err
-	}
 
 	// Run ip address to execute ansible inside
 	for _,execute := range p.Execute {
 		// Modify ansible hosts before executing
-		err = execute.ModifyHost(p,config.PluginPath)
+		err := execute.ModifyHost(p)
 		if err != nil {
 			return err
 		}
 
-		err = execute.RunAnsible(p,config.PluginPath)
+		err = execute.RunAnsible(p)
 		if err != nil {
 			return err
 		}
@@ -150,13 +162,13 @@ func (p *Plugin) ExecutePlugin() error {
 }
 
 // RunAnsible Executes based on credentials on the struct
-func (e *ExecuteIP)RunAnsible(p *Plugin,path string) error {
+func (e *ExecuteIP)RunAnsible(p *Plugin) error {
 	ansiblePlaybookConnectionOptions := &options.AnsibleConnectionOptions{
 		User: "master",
 	}
 
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
-		Inventory: path + "/" + p.FolderName + "/hosts",
+		Inventory: p.path + "/" + p.FolderName + "/hosts",
 		ExtraVars: map[string]interface{}{"host_key_checking":"false"},
 	}
 
@@ -165,7 +177,7 @@ func (e *ExecuteIP)RunAnsible(p *Plugin,path string) error {
 	}
 
 	playbook := &playbook.AnsiblePlaybookCmd{
-		Playbooks:                  []string{path + "/" + p.FolderName + "/site.yml"},
+		Playbooks:                  []string{p.path + "/" + p.FolderName + "/site.yml"},
 		ConnectionOptions:          ansiblePlaybookConnectionOptions,
 		PrivilegeEscalationOptions: ansiblePlaybookPrivilegeEscalationOptions,
 		Options:                    ansiblePlaybookOptions,
@@ -185,8 +197,8 @@ func (e *ExecuteIP)RunAnsible(p *Plugin,path string) error {
 }
 
 // ModifyHost adds IP address , port no to the config file
-func (e *ExecuteIP)ModifyHost(p *Plugin, path string) error {
-    host,err := ReadHost(path + "/" + p.FolderName + "/hosts")
+func (e *ExecuteIP)ModifyHost(p *Plugin) error {
+    host,err := ReadHost(p.path + "/" + p.FolderName + "/hosts")
     if err != nil {
     	return err
 	}
@@ -209,7 +221,7 @@ func (e *ExecuteIP)ModifyHost(p *Plugin, path string) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path + "/" + p.FolderName + "/hosts",data,0777)
+	err = ioutil.WriteFile(p.path + "/" + p.FolderName + "/hosts",data,0777)
 	if err != nil {
 		return err
 	}
@@ -300,4 +312,24 @@ func CheckRunPlugin(PluginName string, ID string) error {
 	}
 
 	return nil
+}
+
+// CopyToTmpPlugin This function would ensure that we create a copy of the
+// plugin in the tmp directory, and it would be executed
+// from there. This due to the reason of automating port allocation
+// when running plugins
+func (p *Plugin)CopyToTmpPlugin() error {
+	// generate rand to UUID this is debug the ansible file if needed
+	id := uuid.New()
+	// copies the plugin to the tmp directory
+	err := copy.Copy(p.path+"/"+p.FolderName, "/tmp/"+ id.String() + "_" + p.FolderName)
+	if err != nil {
+		return err
+	}
+
+	// Set the plugin execution to the tmp location
+	p.path = "/tmp"
+	p.FolderName = id.String() + "_" + p.FolderName
+
+    return nil
 }
