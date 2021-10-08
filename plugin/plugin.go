@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
@@ -31,6 +32,7 @@ type Plugin struct {
 	PluginDescription  string
 	path               string
 	Execute            []*ExecuteIP
+	NumOfPorts              int
 }
 
 // ExecuteIP IP Address to execute Ansible instruction
@@ -91,8 +93,15 @@ func DetectPlugins()(*Plugins,error){
 
 				// Get Description from description.txt
 				plugin.PluginDescription = string(Description)
+				// Set plugin path
+				plugin.path = config.PluginPath + "/" + plugin.FolderName
 
 				plugins.PluginsDetected = append(plugins.PluginsDetected, &plugin)
+				// Get the number of ports the plugin needs
+				err = plugin.NumPorts()
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
@@ -375,6 +384,26 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	}
 
 	return nil
+}
 
+// NumPorts Gets the Number the ports the
+// plugin requires
+func (p *Plugin)NumPorts() error {
+	jsonFile, err := os.Open(p.path + "/ports.json")
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		return err
+	}
 
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	// read our opened xmlFile as a byte array.
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	// we unmarshal our byteArray which contains our
+	// jsonFile's content into 'users' which we defined above
+	json.Unmarshal(byteValue, &p)
+
+	return nil
 }
