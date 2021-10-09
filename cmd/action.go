@@ -270,6 +270,24 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 	//--------------------------------
 
+	if PullPlugin != "" {
+		err := plugin.DownloadPlugin(PullPlugin)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Success")
+		}
+	}
+
+	if RemovePlugin != "" {
+		err := plugin.DeletePlugin(RemovePlugin)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Success")
+		}
+	}
+
 
 
 	return nil
