@@ -237,3 +237,10 @@ func TestCheckRunPlugin(t *testing.T) {
 	}
 
 }
+
+func TestDownloadPlugin(t *testing.T) {
+	err := DownloadPlugin("https://github.com/Akilan1999/laplace/")
+	if err != nil {
+
+	}
+}

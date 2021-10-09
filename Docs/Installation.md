@@ -178,7 +178,15 @@ p2prc --gen <project name> --mod <go module name>
 ```
 [read more about the generate module](GenerateImplementation.md)
 
+### Pulling plugin from a remote repo 
+```
+p2prc --pp <repo link>
+```
 
+### Deleting plugin from the plugin directory
+```
+p2prc --rp <plugin name> 
+```
 
 <br>
 
