@@ -9,7 +9,7 @@ import (
 )
 
 // DownloadPlugin This functions downloads package from
-// a git repo
+// a git repo.
 func DownloadPlugin(pluginurl string) error {
 	// paring plugin url
 	u, err := url.Parse(pluginurl)
@@ -42,6 +42,8 @@ func DownloadPlugin(pluginurl string) error {
 	return nil
 }
 
+// DeletePlugin The following function deletes a plugin based on
+// the plugin name provided.
 func DeletePlugin(pluginname string) error {
 	config, err := config.ConfigInit()
 	if err != nil {
