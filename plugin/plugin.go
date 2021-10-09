@@ -363,10 +363,15 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	var ports []int
 	// setting all external ports available in an array
 	for _, port := range container.Container.Ports.PortSet {
-		if port.InternalPort == port.ExternalPort {
+		if port.IsUsed == false {
 			ports = append(ports, port.ExternalPort)
+			// Setting the following port flag to true
+			port.IsUsed = true
 		}
 	}
+
+	client
+
     // parses the site.yml file in the tmp directory
 	t, err := template.ParseFiles(p.path + "/" + p.FolderName + "/site.yml")
 	if err != nil {

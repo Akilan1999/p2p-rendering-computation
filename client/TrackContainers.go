@@ -146,6 +146,8 @@ func ReadTrackContainers(filename string) (*TrackContainers, error) {
 	return c, nil
 }
 
+//func ModifyTrackContainers()
+
 // GetContainerInformation gets information about container based on
 // container ID provided
 func GetContainerInformation(ID string) (*TrackContainer, error) {
@@ -162,6 +164,48 @@ func GetContainerInformation(ID string) (*TrackContainer, error) {
 		}
 	}
 	return nil, errors.New("Container not found. ")
+}
+
+// ModifyContainerInformation Modifies information inside the container
+func (TC *TrackContainer)ModifyContainerInformation() error {
+	// Gets all the information of tracker containers
+	err, t := ViewTrackedContainers()
+	if err != nil {
+		return err
+	}
+	// Find the element where the containers match and
+	// change them
+	for i, container := range t.TrackContainerList {
+		if TC.Id == container.Id {
+			t.TrackContainerList[i] = *TC
+			break
+		}
+	}
+	// Write the modified information to the file
+	// write modified information to the tracked json file
+	err = t.WriteContainers()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// WriteContainers Write information back to the config file
+func (TC *TrackContainers)WriteContainers() error {
+	// Initialize config file
+	config,err := config.ConfigInit()
+	// write modified information to the tracked json file
+	data,err := json.MarshalIndent(TC, "", "\t")
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(config.TrackContainersPath,data,0777)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CheckID Checks if the ID belongs to a group or a single container
