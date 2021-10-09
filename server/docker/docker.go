@@ -127,7 +127,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	for i := range PortsInformation.PortSet {
 		// Setting external ports
 		PortsInformation.PortSet[i].ExternalPort = OpenPorts[i]
-		PortsInformation.PortSet[i].IsUsed = true 
+		PortsInformation.PortSet[i].IsUsed = true
 	}
 	//Length of Ports allocated from thr port file
 	portFileLength := len(PortsInformation.PortSet)
