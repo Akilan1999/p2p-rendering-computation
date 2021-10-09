@@ -80,12 +80,13 @@ func TestExecuteIP_ModifyHost(t *testing.T) {
 	}
 	//Set plugin name
 	plugin.FolderName = "TestAnsible"
+	plugin.path = Config.PluginPath
 
 	//Test IP 1 configuration
 	testip.IPAddress = "0.0.0.0"
 	testip.SSHPortNo = "41289"
 
-	err = testip.ModifyHost(&plugin,Config.PluginPath)
+	err = testip.ModifyHost(&plugin)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -235,4 +236,11 @@ func TestCheckRunPlugin(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+func TestDownloadPlugin(t *testing.T) {
+	err := DownloadPlugin("https://github.com/Akilan1999/laplace/")
+	if err != nil {
+
+	}
 }
