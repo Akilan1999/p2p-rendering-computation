@@ -3,8 +3,8 @@ package plugin
 import (
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"github.com/go-git/go-git/v5"
-	"os"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -39,5 +39,25 @@ func DownloadPlugin(pluginurl string) error {
 	}
 
 
+	return nil
+}
+
+func DeletePlugin(pluginname string) error {
+	config, err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
+	plugin, err := SearchPlugin(pluginname)
+	if err != nil {
+		return err
+	}
+
+	// Delete the directory holding the plugin
+	err = os.RemoveAll(config.PluginPath + "/" + plugin.FolderName)
+	if err != nil {
+		return err
+	}
+	
 	return nil
 }

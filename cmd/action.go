@@ -279,6 +279,15 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 	}
 
+	if RemovePlugin != "" {
+		err := plugin.DeletePlugin(RemovePlugin)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Success")
+		}
+	}
+
 
 
 	return nil
