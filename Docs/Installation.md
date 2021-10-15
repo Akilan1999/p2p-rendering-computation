@@ -32,7 +32,14 @@ into a single binary
 make install
 ```
 
-### Add appropriate paths to .bashrc 
+#### For Windows
+To set up P2PRC on Windows, simply run this batch file.
+**Make sure you are not in admin mode when running this.**
+```
+.\install.bat
+```
+
+### Add appropriate paths to .bashrc
 ```
 export P2PRC=/<PATH>/p2p-rendering-computation
 export PATH=/<PATH>/p2p-rendering-computation:${PATH}
