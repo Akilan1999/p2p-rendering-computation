@@ -18,3 +18,5 @@ client/trackcontainers/
 # Test generated files
 generate/p2prctest
 generate/Test
+#ignore windows exe files
+*.exe
