@@ -178,6 +178,8 @@ Format of the ports.json file
       "PortName": "<Port name>",
       "InternalPort": <internal port>,
       "Type": "<tcp/udp>",
+      "ExternalPort": <external port>,
+      "IsUsed": "<boolean value (i.e true or false)>",
       "Description": "<description about the port>"
     }, ... n
   ]

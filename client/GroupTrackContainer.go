@@ -281,6 +281,8 @@ func (grp *Groups)RemoveContainerGroups(Container *TrackContainer) error {
 	return nil
 }
 
+// ModifyContainerGroups Modifies container information is all groups
+// available
 func (TC *TrackContainer)ModifyContainerGroups() error {
 	group, err := ReadGroup()
 	if err != nil {
