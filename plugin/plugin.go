@@ -262,6 +262,7 @@ func ReadHost(filename string) (*Host, error) {
 
 // RunPluginContainer Runs ansible plugin based on plugin name and container name which
 // is derived from the tracked containers file
+// We pass in the group ID as a parameter because when we modify the ports taken
 func RunPluginContainer(PluginName string, ContainerID string) error {
 	// Gets container information based on container ID
 	ContainerInformation, err := client.GetContainerInformation(ContainerID)
@@ -361,16 +362,23 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	// variable that would have a list of ports
 	// to be allocated to the plugin system
 	var ports []int
+	// Counted that increments when a port is taken
+	PortTaken := 0
 	// setting all external ports available in an array
-	for _, port := range container.Container.Ports.PortSet {
+	for i, port := range container.Container.Ports.PortSet {
 		if port.IsUsed == false {
-			ports = append(ports, port.ExternalPort)
+			// Ensuring we break outside the loop once the ports
+			// are set.
+			if PortTaken >= p.NumOfPorts {
+				break
+			}
 			// Setting the following port flag to true
-			port.IsUsed = true
+			container.Container.Ports.PortSet[i].IsUsed = true
+			// Incrementing the variable PortTaken
+			PortTaken++
+			ports = append(ports, port.ExternalPort)
 		}
 	}
-
-	client
 
     // parses the site.yml file in the tmp directory
 	t, err := template.ParseFiles(p.path + "/" + p.FolderName + "/site.yml")
@@ -384,6 +392,18 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	}
 	// sends the ports to the site.yml file to populate them
 	err = t.Execute(f,ports)
+	if err != nil {
+		return err
+	}
+	// Once the following is done set port to taken
+	// n tracked container list
+	err = container.ModifyContainerInformation()
+	if err != nil {
+		return err
+	}
+	// Once the following is done set port to taken
+	// I(Groups)
+	err = container.ModifyContainerGroups()
 	if err != nil {
 		return err
 	}

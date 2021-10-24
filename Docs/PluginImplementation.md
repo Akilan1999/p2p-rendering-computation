@@ -26,6 +26,7 @@ plugin
        |___<plugin name>
                 |___ site.yml 
                 |___ hosts
+                |___ ports.json
                 |___ description.txt 
               .
               . 
@@ -68,6 +69,16 @@ main:
       ansible_user: master
       ansible_ssh_pass: password
       ansible_sudo_pass: password
+```
+
+## Ports.json 
+The ```ports.json``` file is intended to mention the number of ports required 
+by the plugin.
+
+```
+{
+  "NumOfPorts": <number of ports>
+}
 ```
 
 ## Description file
