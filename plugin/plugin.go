@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
@@ -31,6 +32,7 @@ type Plugin struct {
 	PluginDescription  string
 	path               string
 	Execute            []*ExecuteIP
+	NumOfPorts              int
 }
 
 // ExecuteIP IP Address to execute Ansible instruction
@@ -91,8 +93,15 @@ func DetectPlugins()(*Plugins,error){
 
 				// Get Description from description.txt
 				plugin.PluginDescription = string(Description)
+				// Set plugin path
+				plugin.path = config.PluginPath + "/" + plugin.FolderName
 
 				plugins.PluginsDetected = append(plugins.PluginsDetected, &plugin)
+				// Get the number of ports the plugin needs
+				err = plugin.NumPorts()
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
@@ -271,6 +280,7 @@ func ReadHost(filename string) (*Host, error) {
 
 // RunPluginContainer Runs ansible plugin based on plugin name and container name which
 // is derived from the tracked containers file
+// We pass in the group ID as a parameter because when we modify the ports taken
 func RunPluginContainer(PluginName string, ContainerID string) error {
 	// Gets container information based on container ID
 	ContainerInformation, err := client.GetContainerInformation(ContainerID)
@@ -370,12 +380,24 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	// variable that would have a list of ports
 	// to be allocated to the plugin system
 	var ports []int
+	// Counted that increments when a port is taken
+	PortTaken := 0
 	// setting all external ports available in an array
-	for _, port := range container.Container.Ports.PortSet {
-		if port.InternalPort == port.ExternalPort {
+	for i, port := range container.Container.Ports.PortSet {
+		if port.IsUsed == false {
+			// Ensuring we break outside the loop once the ports
+			// are set.
+			if PortTaken >= p.NumOfPorts {
+				break
+			}
+			// Setting the following port flag to true
+			container.Container.Ports.PortSet[i].IsUsed = true
+			// Incrementing the variable PortTaken
+			PortTaken++
 			ports = append(ports, port.ExternalPort)
 		}
 	}
+
     // parses the site.yml file in the tmp directory
 	t, err := template.ParseFiles(p.path + "/" + p.FolderName + "/site.yml")
 	if err != nil {
@@ -391,8 +413,40 @@ func (p *Plugin)AutoSetPorts(containerID string) error {
 	if err != nil {
 		return err
 	}
+	// Once the following is done set port to taken
+	// n tracked container list
+	err = container.ModifyContainerInformation()
+	if err != nil {
+		return err
+	}
+	// Once the following is done set port to taken
+	// I(Groups)
+	err = container.ModifyContainerGroups()
+	if err != nil {
+		return err
+	}
 
 	return nil
+}
 
+// NumPorts Gets the Number the ports the
+// plugin requires
+func (p *Plugin)NumPorts() error {
+	jsonFile, err := os.Open(p.path + "/ports.json")
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		return err
+	}
 
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	// read our opened xmlFile as a byte array.
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	// we unmarshal our byteArray which contains our
+	// jsonFile's content into 'users' which we defined above
+	json.Unmarshal(byteValue, &p)
+
+	return nil
 }

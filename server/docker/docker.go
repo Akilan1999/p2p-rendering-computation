@@ -48,6 +48,7 @@ type Port struct {
 	InternalPort int `json:"InternalPort"`
     Type string `json:"Type"`
 	ExternalPort int `json:"ExternalPort"`
+	IsUsed       bool `json:"IsUsed"`
 	Description  string `json:"Description"`
 }
 
@@ -124,7 +125,9 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	}
 	// Allocate external ports to ports available in the ports.json file
 	for i := range PortsInformation.PortSet {
+		// Setting external ports
 		PortsInformation.PortSet[i].ExternalPort = OpenPorts[i]
+		PortsInformation.PortSet[i].IsUsed = true
 	}
 	//Length of Ports allocated from thr port file
 	portFileLength := len(PortsInformation.PortSet)
@@ -136,6 +139,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 		TempPort.InternalPort = OpenPorts[portFileLength + i]
 		TempPort.ExternalPort = OpenPorts[portFileLength + i]
 		TempPort.Description = "Auto generated TCP port"
+		TempPort.IsUsed = false
 		//Append temp port to port information
 		PortsInformation.PortSet = append(PortsInformation.PortSet, TempPort)
 	}
