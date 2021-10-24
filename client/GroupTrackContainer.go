@@ -280,3 +280,32 @@ func (grp *Groups)RemoveContainerGroups(Container *TrackContainer) error {
 	}
 	return nil
 }
+
+// ModifyContainerGroups Modifies container information is all groups
+// available
+func (TC *TrackContainer)ModifyContainerGroups() error {
+	group, err := ReadGroup()
+	if err != nil {
+		return err
+	}
+	// Iterate though all groups and modify the container
+	// information in groups where the modified container
+	// ID matches
+	for i, _ := range group.GroupList {
+		// Checking in each group if the modified container ID exists
+		for j, _:= range group.GroupList[i].TrackContainerList {
+			// If there is match then change them
+			if group.GroupList[i].TrackContainerList[j].Id == TC.Id {
+				group.GroupList[i].TrackContainerList[j] = TC
+			}
+		}
+	}
+
+	// Write modified result to the Groups track container JSON file
+	err = group.WriteGroup()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
