@@ -144,3 +144,12 @@ After the port is automatically it's ready to run !
 
 ### Sample plugins implemented: 
 - [VSCode Plugin](https://github.com/Akilan1999/p2prc-vscode-browser)
+
+## Pull Plugins
+The following allows us to pull plugins from a remote git repository and store them
+in the default plugins directory. The implementation uses a Go git library to pull the
+git repo and automatically save it as a folder in the plugin path.
+
+## Delete Plugins
+We delete the plugin folder based on the plugin name provided as an argument on the cli command.
+Once the folder is deleted, the plugin manager automatically knows that the plugin does not exist anymore.

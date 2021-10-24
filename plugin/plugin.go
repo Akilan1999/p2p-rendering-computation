@@ -108,6 +108,24 @@ func DetectPlugins()(*Plugins,error){
 	return plugins,nil
 }
 
+// SearchPlugin Detects plugin information based on the
+// name provided on the parameter
+func SearchPlugin(pluginname string) (*Plugin,error) {
+	plugins, err := DetectPlugins()
+	if err != nil {
+		return nil, err
+	}
+
+	// loop ot find the plugin name that matches
+	for _, plugin := range plugins.PluginsDetected {
+		if pluginname == plugin.FolderName {
+			return plugin, nil
+		}
+	}
+
+	return nil, errors.New("plugin not detected")
+}
+
 // RunPlugin Executes plugins based on the plugin name provided
 func RunPlugin(pluginName string ,IPAddresses []*ExecuteIP) (*Plugin,error) {
 	plugins, err := DetectPlugins()
