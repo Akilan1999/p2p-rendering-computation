@@ -20,3 +20,4 @@ generate/p2prctest
 generate/Test
 #ignore windows exe files
 *.exe
+dist/
