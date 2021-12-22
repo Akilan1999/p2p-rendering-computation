@@ -8,24 +8,25 @@ span#discordJoin {
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
+    /* General Page Changing */
     body {
-        background: #121212;
-        color: #FFFFFF;
+        background: #121212; /* Background Color */
+        color: #FFFFFF; /* Text Color */
     }
 
-    a:link{
+    a:link{ /* Unvisited Link */
         color: #03DAC5;
     }
 
-    a:visited {
+    a:visited { /* Visited Link */
         color: #BB86FC;
     }
 
-    a:hover {
+    a:hover { /* Mouse over Link */
         color: #018786;
     }
 
-    span#discordJoin {
+    span#discordJoin { /* Text Color Change */
         color: #cc0227;
     }
 }
