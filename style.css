@@ -1,0 +1,31 @@
+body {
+    font-family: sans-serif;
+}
+
+span#discordJoin {
+    color: red;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #121212;
+        color: #FFFFFF;
+    }
+
+    a:link{
+        color: #03DAC5;
+    }
+
+    a:visited {
+        color: #BB86FC;
+    }
+
+    a:hover {
+        color: #018786;
+    }
+
+    span#discordJoin {
+        color: #cc0227;
+    }
+}
