@@ -98,4 +98,4 @@ As we are working on the open source project p2prc (i.e  p2p network designed fo
 or just providing feedback on new features to build  or even just curious about new features added to the project. We have decided to create a discord group.                 
 [![Support Server](https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2)](https://discord.gg/b4nRGTjYqy)
 
-
+[![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
