@@ -6,11 +6,12 @@
 
 <!-- seperator -->
 
-
-[![GPLv2 license](https://img.shields.io/badge/License-GPLv2-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Akilan1999/p2p-rendering-computation/graphs/commit-activity)
-[![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
-[![GoDoc reference example](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation)
+<div style="display:flex;flex-wrap:wrap;">
+  <a href="http://perso.crans.org/besson/LICENSE.html"><img alt="GPLv2 license" src="https://img.shields.io/badge/License-GPLv2-blue.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="https://GitHub.com/Akilan1999/p2p-rendering-computation/graphs/commit-activity"><img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="http://golang.org"><img alt="made-with-Go" src="https://img.shields.io/badge/Made%20with-Go-1f425f.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation"><img alt="GoDoc reference example" src="https://img.shields.io/badge/godoc-reference-blue.svg" style="padding:5px;margin:5px;" /></a>
+</div>
 
 The main aim of this project was to create a custom peer to peer network. The user acting as the
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
