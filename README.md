@@ -6,11 +6,12 @@
 
 <!-- seperator -->
 
-
-[![GPLv2 license](https://img.shields.io/badge/License-GPLv2-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Akilan1999/p2p-rendering-computation/graphs/commit-activity)
-[![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
-[![GoDoc reference example](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation)
+<div style="display:flex;flex-wrap:wrap;">
+  <a href="http://perso.crans.org/besson/LICENSE.html"><img alt="GPLv2 license" src="https://img.shields.io/badge/License-GPLv2-blue.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="https://GitHub.com/Akilan1999/p2p-rendering-computation/graphs/commit-activity"><img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="http://golang.org"><img alt="made-with-Go" src="https://img.shields.io/badge/Made%20with-Go-1f425f.svg" style="padding:5px;margin:5px;" /></a>
+  <a href="https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation"><img alt="GoDoc reference example" src="https://img.shields.io/badge/godoc-reference-blue.svg" style="padding:5px;margin:5px;" /></a>
+</div>
 
 The main aim of this project was to create a custom peer to peer network. The user acting as the
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
@@ -61,11 +62,11 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
    make install 
    ```
 - If you look closely you will get outputs such as:
-
-      // Add them to your .bashrc file      
-      export P2PRC=/<path>/p2p-rendering-computation
-      export PATH=/<path>/p2p-rendering-computation:${PATH}
-
+   ```
+   // Add them to your .bashrc file      
+   export P2PRC=/<path>/p2p-rendering-computation
+   export PATH=/<path>/p2p-rendering-computation:${PATH}
+   ```
 
 5. Test if it works 
    ```
@@ -98,4 +99,4 @@ As we are working on the open source project p2prc (i.e  p2p network designed fo
 or just providing feedback on new features to build  or even just curious about new features added to the project. We have decided to create a discord group.                 
 [![Support Server](https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2)](https://discord.gg/b4nRGTjYqy)
 
-
+[![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
