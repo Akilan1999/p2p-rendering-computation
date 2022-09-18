@@ -62,11 +62,11 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
    make install 
    ```
 - If you look closely you will get outputs such as:
-
-      // Add them to your .bashrc file      
-      export P2PRC=/<path>/p2p-rendering-computation
-      export PATH=/<path>/p2p-rendering-computation:${PATH}
-
+   ```
+   // Add them to your .bashrc file      
+   export P2PRC=/<path>/p2p-rendering-computation
+   export PATH=/<path>/p2p-rendering-computation:${PATH}
+   ```
 
 5. Test if it works 
    ```
