@@ -1,10 +1,10 @@
 package server
 
 import (
-	"github.com/shirou/gopsutil/cpu"
-    "github.com/shirou/gopsutil/disk"
-    "github.com/shirou/gopsutil/host"
-	"github.com/shirou/gopsutil/mem"
+    "github.com/shirou/gopsutil/v3/cpu"
+    "github.com/shirou/gopsutil/v3/disk"
+    "github.com/shirou/gopsutil/v3/host"
+    "github.com/shirou/gopsutil/v3/mem"
 )
 
 // SysInfo saves the basic system information
@@ -14,22 +14,22 @@ type SysInfo struct {
     CPU      string `bson:cpu`
     RAM      uint64 `bson:ram`
     Disk     uint64 `bson:disk`
-    GPU      *Query  `xml: GpuInfo`
+    GPU      *Query `xml: GpuInfo`
 }
 
-func ServerInfo() interface{}{
+func ServerInfo() interface{} {
     hostStat, _ := host.Info()
     cpuStat, _ := cpu.Info()
-	vmStat, _ := mem.VirtualMemory()
+    vmStat, _ := mem.VirtualMemory()
 
-	info := new(SysInfo)
-	
-	filesystem := "/"
-	
-	// If the server is running windows
-	if info.Hostname == "windows"{
-		filesystem = "\\"
-	}
+    info := new(SysInfo)
+
+    filesystem := "/"
+
+    // If the server is running windows
+    if info.Hostname == "windows" {
+        filesystem = "\\"
+    }
 
     diskStat, _ := disk.Usage(filesystem) // If you're in Unix change this "\\" for "/"
 
@@ -39,13 +39,12 @@ func ServerInfo() interface{}{
     info.RAM = vmStat.Total / 1024 / 1024
     info.Disk = diskStat.Total / 1024 / 1024
 
-	gpu, err := GPUInfo()
+    gpu, err := GPUInfo()
 
-	if err == nil {
-		info.GPU = gpu
-	}
+    if err == nil {
+        info.GPU = gpu
+    }
 
     return info
 
 }
-
