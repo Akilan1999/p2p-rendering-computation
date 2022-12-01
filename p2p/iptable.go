@@ -138,8 +138,10 @@ func (table *IpAddresses) RemoveDuplicates() error {
         Exists := false
         for k := range NoDuplicates.IpAddress {
             if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4) || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
-                Exists = true
-                break
+                if NoDuplicates.IpAddress[k].ProxyPort == "0" {
+                    Exists = true
+                    break
+                }
             }
         }
         if Exists {
