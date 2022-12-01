@@ -1,6 +1,7 @@
+
 <h1 align="center">
   <br>
-  <a href=""><img src="https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png" alt="p2prc" width="400"></a>
+  <a href=""><img src="artwork/embed.svg" alt="p2prc" width="600"></a>
   <br>
 </h1>
 
@@ -100,3 +101,4 @@ or just providing feedback on new features to build  or even just curious about 
 [![Support Server](https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2)](https://discord.gg/b4nRGTjYqy)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
+
