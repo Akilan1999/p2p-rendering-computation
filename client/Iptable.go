@@ -1,135 +1,138 @@
 package client
 
 import (
-	"encoding/json"
-	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
-	"io"
-	"io/ioutil"
-	"mime/multipart"
-	"net/http"
-	"os"
+    "encoding/json"
+    "fmt"
+    "git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+    "git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
+    "io"
+    "io/ioutil"
+    "mime/multipart"
+    "net/http"
+    "os"
 )
 
 // UpdateIpTable Does the following to update it's IP table
 func UpdateIpTable(IpAddress string, serverPort string) error {
 
-	config, err := config.ConfigInit()
-	if err != nil {
-		return err
-	}
+    config, err := config.ConfigInit()
+    if err != nil {
+        return err
+    }
 
-	client := http.Client{}
+    client := http.Client{}
 
+    var resp []byte
 
-	var resp []byte
+    version := p2p.Ip4or6(IpAddress)
+    if version == "version 6" {
+        resp, err = UploadMultipartFile(client, "http://["+IpAddress+"]:"+serverPort+"/IpTable", "json", config.IPTable)
+        if err != nil {
+            return err
+        }
+    } else {
+        resp, err = UploadMultipartFile(client, "http://"+IpAddress+":"+serverPort+"/IpTable", "json", config.IPTable)
+        if err != nil {
+            return err
+        }
+    }
 
-	version := p2p.Ip4or6(IpAddress)
-	if version == "version 6" {
-	  resp, err = UploadMultipartFile(client,"http://[" + IpAddress + "]:" + serverPort + "/IpTable","json",config.IPTable)
-	  if err != nil {
-		return err
-	  }
-	} else {
-		resp, err = UploadMultipartFile(client,"http://" + IpAddress + ":" + serverPort + "/IpTable","json",config.IPTable)
-		if err != nil {
-			return err
-		}
-	}
+    if resp == nil {
+        return nil
+    }
 
-	if resp == nil {
-		return nil
-	}
+    //resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
+    //	config.IPTable,
+    //	"json")
+    //
+    //if err != nil {
+    //	return err
+    //}
 
-	//resp, err := SendPostRequest("http://"+IpAddress+":8088/IpTable",
-	//	config.IPTable,
-	//	"json")
-	//
-	//if err != nil {
-	//	return err
-	//}
+    var ipStruct p2p.IpAddresses
+    json.Unmarshal(resp, &ipStruct)
 
-	var ipStruct p2p.IpAddresses
-	json.Unmarshal(resp, &ipStruct)
+    // Updates IP table based on information provided
+    // by the server
+    if len(ipStruct.IpAddress) > 0 {
+        err = ipStruct.SpeedTestUpdatedIPTable()
+        if err != nil {
+            return err
+        }
+    }
 
-	// Updates IP table based on information provided
-	// by the server
-	if len(ipStruct.IpAddress) > 0 {
-		err = ipStruct.SpeedTestUpdatedIPTable()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+    return nil
 }
-
 
 // UpdateIpTableListClient updates IP tables (Default 3 hops) based on server information available
 //on the ip tables
 func UpdateIpTableListClient() error {
 
-	// Ensure that the IP Table has Node pingable
-	err := p2p.LocalSpeedTestIpTable()
-	if err != nil {
-		return err
-	}
+    // Ensure that the IP Table has Node pingable
+    err := p2p.LocalSpeedTestIpTable()
+    if err != nil {
+        return err
+    }
 
-	// IP addresses to not append to struct due to
-	// duplication
+    // IP addresses to not append to struct due to
+    // duplication
 
-	Addresses, err := p2p.ReadIpTable()
-	//var DoNotRead p2p.IpAddresses
+    Addresses, err := p2p.ReadIpTable()
+    //var DoNotRead p2p.IpAddresses
 
-	// Run loop 3 times
-	for i := 0; i < 3; i++ {
-		// Gets information from IP table
-		//Addresses, err = p2p.ReadIpTable()
-		//if err != nil {
-		//	return err
-		//}
-		//
-		//DoNotRead.IpAddress = append(DoNotRead.IpAddress, PublicIP)
+    currentIPV4, err := p2p.CurrentPublicIP()
+    if err != nil {
+        return err
+    }
 
-		// Updates IP table based on server IP table
-		for j := range Addresses.IpAddress {
+    // Run loop 1 times
+    for i := 0; i < 1; i++ {
+        // Gets information from IP table
+        //Addresses, err = p2p.ReadIpTable()
+        //if err != nil {
+        //	return err
+        //}
+        //
+        //DoNotRead.IpAddress = append(DoNotRead.IpAddress, PublicIP)
 
-			//Exists := false
-			//
-			//if PublicIP.Ipv4 == Addresses.IpAddress[j].Ipv4 || (PublicIP.Ipv6 != "" &&  Addresses.IpAddress[j].Ipv6 == PublicIP.Ipv6){
-			//	Exists = true
-			//}
-			//
-			//// Check if IP addresses is there in the struct DoNotRead
-			//for k := range DoNotRead.IpAddress {
-			//	if DoNotRead.IpAddress[k].Ipv4 == Addresses.IpAddress[j].Ipv4 || (DoNotRead.IpAddress[k].Ipv6 != "" &&  Addresses.IpAddress[j].Ipv6 == DoNotRead.IpAddress[k].Ipv6) {
-			//		Exists = true
-			//		break
-			//	}
-			//}
-			//
-			//// If the struct exists then continues
-			//if Exists {
-			//	continue
-			//}
+        // Updates IP table based on server IP table
+        for j := range Addresses.IpAddress {
 
-			if Addresses.IpAddress[j].Ipv6 != "" {
-				err = UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort)
-			} else {
-				err = UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort)
-			}
+            //Exists := false
+            //
+            //if PublicIP.Ipv4 == Addresses.IpAddress[j].Ipv4 || (PublicIP.Ipv6 != "" &&  Addresses.IpAddress[j].Ipv6 == PublicIP.Ipv6){
+            //	Exists = true
+            //}
+            //
+            //// Check if IP addresses is there in the struct DoNotRead
+            //for k := range DoNotRead.IpAddress {
+            //	if DoNotRead.IpAddress[k].Ipv4 == Addresses.IpAddress[j].Ipv4 || (DoNotRead.IpAddress[k].Ipv6 != "" &&  Addresses.IpAddress[j].Ipv6 == DoNotRead.IpAddress[k].Ipv6) {
+            //		Exists = true
+            //		break
+            //	}
+            //}
+            //
+            //// If the struct exists then continues
+            //if Exists {
+            //	continue
+            //}
 
-			if err != nil {
-				return err
-			}
+            if Addresses.IpAddress[j].Ipv6 != "" {
+                err = UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort)
+            } else if Addresses.IpAddress[j].Ipv4 != currentIPV4 {
+                err = UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort)
+            }
 
-			//Appends server1 IP address to variable DoNotRead
-			//DoNotRead.IpAddress = append(DoNotRead.IpAddress, Addresses.IpAddress[j])
-		}
-	}
+            if err != nil {
+                return err
+            }
 
-	return nil
+            //Appends server1 IP address to variable DoNotRead
+            //DoNotRead.IpAddress = append(DoNotRead.IpAddress, Addresses.IpAddress[j])
+        }
+    }
+
+    return nil
 }
 
 // SendPostRequest Sends a file as a
@@ -179,59 +182,58 @@ func UpdateIpTableListClient() error {
 //}
 
 func UploadMultipartFile(client http.Client, uri, key, path string) ([]byte, error) {
-	body, writer := io.Pipe()
+    body, writer := io.Pipe()
 
-	req, err := http.NewRequest(http.MethodPost, uri, body)
-	if err != nil {
-		return nil, err
-	}
+    req, err := http.NewRequest(http.MethodPost, uri, body)
+    if err != nil {
+        return nil, err
+    }
 
-	mwriter := multipart.NewWriter(writer)
-	req.Header.Add("Content-Type", mwriter.FormDataContentType())
+    mwriter := multipart.NewWriter(writer)
+    req.Header.Add("Content-Type", mwriter.FormDataContentType())
 
-	errchan := make(chan error)
+    errchan := make(chan error)
 
-	go func() {
-		defer close(errchan)
-		defer writer.Close()
-		defer mwriter.Close()
+    go func() {
+        defer close(errchan)
+        defer writer.Close()
+        defer mwriter.Close()
 
-		w, err := mwriter.CreateFormFile(key, path)
-		if err != nil {
-			errchan <- err
-			return
-		}
+        w, err := mwriter.CreateFormFile(key, path)
+        if err != nil {
+            errchan <- err
+            return
+        }
 
-		in, err := os.Open(path)
-		if err != nil {
-			errchan <- err
-			return
-		}
-		defer in.Close()
+        in, err := os.Open(path)
+        if err != nil {
+            errchan <- err
+            return
+        }
+        defer in.Close()
 
-		if written, err := io.Copy(w, in); err != nil {
-			errchan <- fmt.Errorf("error copying %s (%d bytes written): %v", path, written, err)
-			return
-		}
+        if written, err := io.Copy(w, in); err != nil {
+            errchan <- fmt.Errorf("error copying %s (%d bytes written): %v", path, written, err)
+            return
+        }
 
-		if err := mwriter.Close(); err != nil {
-			errchan <- err
-			return
-		}
-	}()
+        if err := mwriter.Close(); err != nil {
+            errchan <- err
+            return
+        }
+    }()
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
+    resp, err := client.Do(req)
+    if err != nil {
+        return nil, err
+    }
 
-	content, err := ioutil.ReadAll(resp.Body)
+    content, err := ioutil.ReadAll(resp.Body)
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        return nil, err
+    }
 
-	return content, nil
+    return content, nil
 
 }
-
