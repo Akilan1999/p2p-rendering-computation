@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href=""><img src="artwork/embed.svg" alt="p2prc" width="600"></a>
+  <a href=""><img src="https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png" alt="p2prc" width="400"></a>
   <br>
 </h1>
 
