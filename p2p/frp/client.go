@@ -4,6 +4,7 @@ import (
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
+	"github.com/phayes/freeport"
 	"math/rand"
 	"strconv"
 )
@@ -50,19 +51,23 @@ func StartFRPClientForServer(ipaddress string, port string, localport string) (s
 	}
 
 	//random port
-	randPort := rangeIn(10000, 99999)
+	//randPort := rangeIn(10000, 99999)
+	OpenPorts, err := freeport.GetFreePorts(1)
+	if err != nil {
+		return "", err
+	}
 	c.ClientMappings = []ClientMapping{
 		{
-			LocalIP:    ipaddress,
+			LocalIP:    "localhost",
 			LocalPort:  portInt,
-			RemotePort: randPort,
+			RemotePort: OpenPorts[0],
 		},
 	}
 
 	// Start client server
 	go c.StartFRPClient()
 
-	return strconv.Itoa(randPort), nil
+	return strconv.Itoa(OpenPorts[0]), nil
 
 }
 
@@ -88,6 +93,7 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 		// Set client mapping
 		var clientMapping ClientMapping
 		portMap := docker.Ports.PortSet[i].ExternalPort
+		clientMapping.LocalIP = "localhost"
 		clientMapping.LocalPort = portMap
 		clientMapping.RemotePort = portMap
 		// Append to array
