@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"bytes"
+	"errors"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"io"
 	"io/ioutil"
@@ -12,8 +13,8 @@ import (
 	"time"
 )
 
-//var dlSizes = [...]int{350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000}
-//var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
+// var dlSizes = [...]int{350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000}
+// var ulSizes = [...]int{100, 300, 500, 800, 1000, 1500, 2500, 3000, 3500, 4000} //kB
 var httpclient = http.Client{}
 
 // DownloadTest executes the test to measure download speed
@@ -78,7 +79,7 @@ var httpclient = http.Client{}
 //}
 
 // Download Speed
-func (s *IpAddress)DownloadSpeed() error {
+func (s *IpAddress) DownloadSpeed() error {
 	start := time.Now()
 	resp, err := httpclient.Get("http://" + s.Ipv4 + ":8088/50")
 	if err != nil {
@@ -89,11 +90,11 @@ func (s *IpAddress)DownloadSpeed() error {
 	t := time.Since(start)
 	//fmt.Println(s.Seconds())
 	// size * time (seconds)
-	s.Download = (50/t.Seconds())*8
-    return nil
+	s.Download = (50 / t.Seconds()) * 8
+	return nil
 }
 
-func (s *IpAddress)UploadSpeed() error {
+func (s *IpAddress) UploadSpeed() error {
 	start := time.Now()
 
 	// Get upload file path from config file
@@ -103,9 +104,9 @@ func (s *IpAddress)UploadSpeed() error {
 		return err
 	}
 
-	b, w := createMultipartFormData("file",config.SpeedTestFile)
+	b, w := createMultipartFormData("file", config.SpeedTestFile)
 
-	req, err := http.NewRequest("GET", "http://" + s.Ipv4 + ":" + s.ServerPort + "/upload", &b)
+	req, err := http.NewRequest("GET", "http://"+s.Ipv4+":"+s.ServerPort+"/upload", &b)
 	if err != nil {
 		return err
 	}
@@ -116,12 +117,12 @@ func (s *IpAddress)UploadSpeed() error {
 	t := time.Since(start)
 	//fmt.Println(s.Seconds())
 	// size * time (seconds)
-	s.Upload = (50/t.Seconds())*8
+	s.Upload = (50 / t.Seconds()) * 8
 	return nil
 }
 
-//Upload helper function for uploading
-//(https://stackoverflow.com/questions/20205796/post-data-using-the-content-type-multipart-form-data
+// Upload helper function for uploading
+// (https://stackoverflow.com/questions/20205796/post-data-using-the-content-type-multipart-form-data
 func createMultipartFormData(fieldName, fileName string) (bytes.Buffer, *multipart.Writer) {
 	var b bytes.Buffer
 	var err error
@@ -142,7 +143,7 @@ func createMultipartFormData(fieldName, fileName string) (bytes.Buffer, *multipa
 func mustOpen(f string) *os.File {
 	r, err := os.Open(f)
 	if err != nil {
-		log.Fatalf("Error with mustOpen: %v",err)
+		log.Fatalf("Error with mustOpen: %v", err)
 	}
 	return r
 }
@@ -163,8 +164,8 @@ func (s *IpAddress) PingTest() error {
 		sTime := time.Now()
 		resp, err := http.Get(pingURL)
 		fTime := time.Now()
-		if err != nil {
-			return err
+		if err != nil || resp.StatusCode != 200 {
+			return errors.New("Node not found")
 		}
 		if fTime.Sub(sTime) < l {
 			l = fTime.Sub(sTime)
@@ -176,4 +177,3 @@ func (s *IpAddress) PingTest() error {
 
 	return nil
 }
-
