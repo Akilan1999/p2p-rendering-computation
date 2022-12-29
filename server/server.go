@@ -110,15 +110,15 @@ func Server() error {
 		// access container
 		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName)
 
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
 		if ProxyIpAddr.Ipv4 != "" {
 			err := frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, ProxyIpAddr.ProxyPort, resp)
 			if err != nil {
 				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 			}
-		}
-
-		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 
 		c.JSON(http.StatusOK, resp)
