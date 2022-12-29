@@ -183,6 +183,8 @@ func Server() error {
 				return err
 			}
 
+			fmt.Println(proxyPort)
+
 			// updating with the current proxy address
 			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 			ProxyIpAddr.ServerPort = proxyPort
