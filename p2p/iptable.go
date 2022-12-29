@@ -120,12 +120,12 @@ func PrintIpTable() error {
 		return err
 	}
 
-	//for i := 0; i < len(table.IpAddress); i++ {
-	//    fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\n-----------"+
-	//        "-----------------\n", table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
-	//        table.IpAddress[i].Latency, table.IpAddress[i].ServerPort)
-	//}
-	PrettyPrint(table)
+	for i := 0; i < len(table.IpAddress); i++ {
+		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\n-----------"+
+			"-----------------\n", table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
+			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort)
+	}
+	//PrettyPrint(table)
 
 	return nil
 }
@@ -243,13 +243,13 @@ func Ip4or6(s string) string {
 
 }
 
-func PrettyPrint(data interface{}) {
-	var p []byte
-	//    var err := error
-	p, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("%s \n", p)
-}
+//func PrettyPrint(data interface{}) {
+//	var p []byte
+//	//    var err := error
+//	p, err := json.MarshalIndent(data, "", "\t")
+//	if err != nil {
+//		fmt.Println(err)
+//		return
+//	}
+//	fmt.Printf("%s \n", p)
+//}
