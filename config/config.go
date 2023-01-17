@@ -17,6 +17,7 @@ var (
 )
 
 type Config struct {
+	MachineName              string
 	IPTable                  string
 	DockerContainers         string
 	DefaultDockerFile        string
@@ -126,6 +127,13 @@ func SetDefaults() error {
 	defaults["ServerPort"] = "8088"
 	defaults["FRPServerPort"] = "0"
 	defaults["BehindNAT"] = "True"
+	// Random name generator
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	defaults["MachineName"] = hostname
 	//defaults["NetworkInterface"] = "wlp0s20f3"
 	//defaults["NetworkInterfaceIPV6Index"] = "2"
 
