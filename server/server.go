@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func Server() error {
@@ -189,10 +190,12 @@ func Server() error {
 
 		// If there is an identified node
 		if lowestLatency != 10000000 {
-			serverPort, err := frp.GetFRPServerPort("https://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+			serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
 			if err != nil {
 				return err
 			}
+			// Create 1 second delay to allow FRP server to start
+			time.Sleep(1000)
 			// Starts FRP as a client with
 			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
 			if err != nil {

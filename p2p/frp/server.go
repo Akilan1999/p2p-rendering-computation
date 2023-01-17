@@ -1,6 +1,7 @@
 package frp
 
 import (
+	"fmt"
 	"github.com/fatedier/frp/pkg/config"
 	"github.com/fatedier/frp/server"
 	"github.com/phayes/freeport"
@@ -86,6 +87,8 @@ func GetFRPServerPort(host string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	fmt.Println(string(body))
 
 	return string(body), nil
 }
