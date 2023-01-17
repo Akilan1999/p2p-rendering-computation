@@ -189,6 +189,7 @@ func Server() error {
 			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 			ProxyIpAddr.ServerPort = proxyPort
 			ProxyIpAddr.ProxyPort = lowestLatencyIpAddress.ProxyPort
+			ProxyIpAddr.Name = config.MachineName
 
 			// append the following to the ip table
 			table.IpAddress = append(table.IpAddress, ProxyIpAddr)

@@ -18,6 +18,7 @@ type IpAddresses struct {
 }
 
 type IpAddress struct {
+	Name       string        `json:"Name"`
 	Ipv4       string        `json:"ipv4"`
 	Ipv6       string        `json:"ipv6"`
 	Latency    time.Duration `json:"latency"`
@@ -71,6 +72,7 @@ func ReadIpTable() (*IpAddresses, error) {
 	PublicIP.Ipv4 = ip
 	PublicIP.Ipv6 = ipv6
 	PublicIP.ServerPort = config.ServerPort
+	PublicIP.Name = config.MachineName
 	if config.FRPServerPort != "0" {
 		PublicIP.ProxyPort = config.FRPServerPort
 	}
