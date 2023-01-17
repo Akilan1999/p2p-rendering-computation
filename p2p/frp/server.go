@@ -4,6 +4,8 @@ import (
 	"github.com/fatedier/frp/pkg/config"
 	"github.com/fatedier/frp/server"
 	"github.com/phayes/freeport"
+	"io/ioutil"
+	"net/http"
 )
 
 // TODO: Implement a way to
@@ -66,4 +68,24 @@ func (s *Server) StartFRPServer() error {
 
 	service.Run()
 	return nil
+}
+
+// GetFRPServerPort Gets the port no from the FRPServer to establish
+// the FRP connection needed.
+func GetFRPServerPort(host string) (string, error) {
+	resp, err := http.Get(host + "/FRPPort")
+
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
 }
