@@ -194,8 +194,8 @@ func Server() error {
 			if err != nil {
 				return err
 			}
-			// Create 1 second delay to allow FRP server to start
-			time.Sleep(1000)
+			// Create 3 second delay to allow FRP server to start
+			time.Sleep(3000)
 			// Starts FRP as a client with
 			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
 			if err != nil {
