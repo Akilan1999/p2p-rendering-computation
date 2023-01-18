@@ -1,12 +1,14 @@
 package frp
 
 import (
+	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
 	"github.com/phayes/freeport"
 	"math/rand"
 	"strconv"
+	"time"
 )
 
 // Client This struct stores
@@ -88,7 +90,7 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 	c.Server = &s
 
 	// set client mapping
-	var clientMappings []ClientMapping
+	//var clientMappings []ClientMapping
 	for i, _ := range docker.Ports.PortSet {
 		// Set client mapping
 		var clientMapping ClientMapping
@@ -100,13 +102,34 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 			return nil, err
 		}
 		clientMapping.RemotePort = OpenPorts[0]
-		docker.Ports.PortSet[i].ExternalPort = OpenPorts[0]
+
+		serverPort, err := GetFRPServerPort("http://" + ipaddress + ":" + port)
+		if err != nil {
+			return nil, err
+		}
+		// Create 3 second delay to allow FRP server to start
+		time.Sleep(3000)
+		// Starts FRP as a client with
+
+		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap))
+		if err != nil {
+			return nil, err
+		}
+
+		portInt, err := strconv.Atoi(proxyPort)
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println(portInt)
+		docker.Ports.PortSet[i].ExternalPort = portInt
+
 		// Append to array
-		clientMappings = append(clientMappings, clientMapping)
+		//clientMappings = append(clientMappings, clientMapping)
 	}
 
 	// Start client server
-	go c.StartFRPClient()
+	//go c.StartFRPClient()
 
 	return docker, nil
 
