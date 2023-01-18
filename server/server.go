@@ -117,7 +117,7 @@ func Server() error {
 		}
 
 		if ProxyIpAddr.Ipv4 != "" {
-			err := frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, ProxyIpAddr.ProxyPort, resp)
+			resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, ProxyIpAddr.ProxyPort, resp)
 			if err != nil {
 				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 			}
