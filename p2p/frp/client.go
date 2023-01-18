@@ -71,14 +71,14 @@ func StartFRPClientForServer(ipaddress string, port string, localport string) (s
 
 }
 
-func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.DockerVM) error {
+func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.DockerVM) (*docker.DockerVM, error) {
 	// Setup server information
 	var s Server
 	s.address = ipaddress
 	// convert port to int
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	s.port = portInt
 
@@ -95,7 +95,12 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 		portMap := docker.Ports.PortSet[i].ExternalPort
 		clientMapping.LocalIP = "localhost"
 		clientMapping.LocalPort = portMap
-		clientMapping.RemotePort = portMap
+		OpenPorts, err := freeport.GetFreePorts(1)
+		if err != nil {
+			return nil, err
+		}
+		clientMapping.RemotePort = OpenPorts[0]
+		docker.Ports.PortSet[i].ExternalPort = OpenPorts[0]
 		// Append to array
 		clientMappings = append(clientMappings, clientMapping)
 	}
@@ -103,7 +108,7 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 	// Start client server
 	go c.StartFRPClient()
 
-	return nil
+	return docker, nil
 
 }
 
