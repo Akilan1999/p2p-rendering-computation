@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/generate"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
@@ -22,7 +23,7 @@ var CliAction = func(ctx *cli.Context) error {
 
 	//Listing servers and also updates IP tables (Default 3 hops)
 	if UpdateServerList {
-		err := client.UpdateIpTableListClient()
+		err := clientIPTable.UpdateIpTableListClient()
 		if err != nil {
 			fmt.Print(err)
 		}
