@@ -1,6 +1,7 @@
 package frp
 
 import (
+	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
@@ -72,7 +73,13 @@ func StartFRPClientForServer(ipaddress string, port string, localport string) (s
 
 }
 
-func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.DockerVM) (*docker.DockerVM, error) {
+func StartFRPCDockerContainer(ipaddress string, port string, Docker *docker.DockerVM) (*docker.DockerVM, error) {
+	// setting new docker variable
+
+	//var DockerFRP docker.DockerVM
+
+	//DockerFRP = *Docker
+	//DockerFRP.Ports.PortSet = []docker.Port{}
 	// Setup server information
 	var s Server
 	s.address = ipaddress
@@ -90,47 +97,32 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 
 	// set client mapping
 	//var clientMappings []ClientMapping
-	for i, _ := range docker.Ports.PortSet {
-		// Set client mapping
-		var clientMapping ClientMapping
-		portMap := docker.Ports.PortSet[i].ExternalPort
-		clientMapping.LocalIP = "localhost"
-		clientMapping.LocalPort = portMap
-		OpenPorts, err := freeport.GetFreePorts(1)
-		if err != nil {
-			return nil, err
-		}
-		clientMapping.RemotePort = OpenPorts[0]
+	fmt.Println(len(Docker.Ports.PortSet))
+	for i, _ := range Docker.Ports.PortSet {
+		portMap := Docker.Ports.PortSet[i].ExternalPort
 
 		serverPort, err := GetFRPServerPort("http://" + ipaddress + ":" + port)
 		if err != nil {
 			return nil, err
 		}
-		// Create 3 second delay to allow FRP server to start
-		time.Sleep(3000)
-		// Starts FRP as a client with
 
-		_, err = StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap))
+		//delay to allow the FRP server to start
+		time.Sleep(1 * time.Second)
+
+		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap))
 		if err != nil {
 			return nil, err
 		}
 
-		//portInt, err := strconv.Atoi(proxyPort)
-		//if err != nil {
-		//	return nil, err
-		//}
+		portInt, err = strconv.Atoi(proxyPort)
+		if err != nil {
+			return nil, err
+		}
 
-		//PointerDocker := &docker.Ports.PortSet[i]
-		//PointerDocker.ExternalPort = portInt
-
-		// Append to array
-		//clientMappings = append(clientMappings, clientMapping)
+		Docker.Ports.PortSet[i].ExternalPort = portInt
 	}
 
-	// Start client server
-	//go c.StartFRPClient()
-
-	return docker, nil
+	return Docker, nil
 
 }
 
