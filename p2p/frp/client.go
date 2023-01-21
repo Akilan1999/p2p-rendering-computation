@@ -1,7 +1,6 @@
 package frp
 
 import (
-	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
@@ -121,8 +120,8 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 			return nil, err
 		}
 
-		fmt.Println(portInt)
-		docker.Ports.PortSet[i].ExternalPort = portInt
+		PointerDocker := &docker.Ports.PortSet[i]
+		PointerDocker.ExternalPort = portInt
 
 		// Append to array
 		//clientMappings = append(clientMappings, clientMapping)
