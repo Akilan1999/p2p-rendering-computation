@@ -1,4 +1,4 @@
-package client
+package clientIPTable
 
 import (
 	"testing"
@@ -11,4 +11,3 @@ func TestUpdateIpTableListClient(t *testing.T) {
 		t.Error(err)
 	}
 }
-
