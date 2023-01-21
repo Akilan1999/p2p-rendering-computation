@@ -110,18 +110,18 @@ func StartFRPCDockerContainer(ipaddress string, port string, docker *docker.Dock
 		time.Sleep(3000)
 		// Starts FRP as a client with
 
-		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap))
+		_, err = StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap))
 		if err != nil {
 			return nil, err
 		}
 
-		portInt, err := strconv.Atoi(proxyPort)
-		if err != nil {
-			return nil, err
-		}
+		//portInt, err := strconv.Atoi(proxyPort)
+		//if err != nil {
+		//	return nil, err
+		//}
 
-		PointerDocker := &docker.Ports.PortSet[i]
-		PointerDocker.ExternalPort = portInt
+		//PointerDocker := &docker.Ports.PortSet[i]
+		//PointerDocker.ExternalPort = portInt
 
 		// Append to array
 		//clientMappings = append(clientMappings, clientMapping)
