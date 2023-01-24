@@ -1,13 +1,12 @@
 {
  "ip_address": [
   {
-   "ipv4": "64.227.168.102",
-   "ipv6": "",
-   "latency": 0,
-   "download": 0,
-   "upload": 0,
-   "serverport": "8088",
-    "proxyport": "7000"
+   "IPV4": "64.227.168.102",
+   "IPV6": "",
+   "Latency": 0,
+   "ServerPort": "8088",
+    "NAT": "False",
+    "EscapeImplementation": "None"
   }
  ]
 }

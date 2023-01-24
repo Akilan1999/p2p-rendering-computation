@@ -36,7 +36,6 @@ func (ip *IpAddresses) SpeedTest() error {
 		//Set value to the list
 
 		ActiveIP.IpAddress = append(ActiveIP.IpAddress, value)
-
 	}
 
 	ip.IpAddress = ActiveIP.IpAddress
@@ -67,7 +66,7 @@ func (ip *IpAddresses) SpeedTestUpdatedIPTable() error {
 		for k := range ip.IpAddress {
 			// Checks if both the IPV4 addresses are the same or the IPV6 address is not
 			// an empty string and IPV6 address are the same
-			if (ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 && targets.IpAddress[i].ProxyPort == "0") || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6 && targets.IpAddress[i].ProxyPort == "0") {
+			if (ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 && targets.IpAddress[i].NAT == "True") || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}

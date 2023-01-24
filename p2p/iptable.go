@@ -18,14 +18,15 @@ type IpAddresses struct {
 }
 
 type IpAddress struct {
-	Name       string        `json:"Name"`
-	Ipv4       string        `json:"ipv4"`
-	Ipv6       string        `json:"ipv6"`
-	Latency    time.Duration `json:"latency"`
-	Download   float64       `json:"download"`
-	Upload     float64       `json:"upload"`
-	ServerPort string        `json:"serverport"`
-	ProxyPort  string        `json:"proxyport"`
+	Name                 string        `json:"Name"`
+	Ipv4                 string        `json:"IPV4"`
+	Ipv6                 string        `json:"IPV6"`
+	Latency              time.Duration `json:"Latency"`
+	Download             float64       `json:"Download"`
+	Upload               float64       `json:"Upload"`
+	ServerPort           string        `json:"ServerPort"`
+	NAT                  string        `json:"NAT"`
+	EscapeImplementation string        `json:"EscapeImplementation"`
 }
 
 type IP struct {
@@ -73,9 +74,8 @@ func ReadIpTable() (*IpAddresses, error) {
 	PublicIP.Ipv6 = ipv6
 	PublicIP.ServerPort = config.ServerPort
 	PublicIP.Name = config.MachineName
-	if config.FRPServerPort != "0" {
-		PublicIP.ProxyPort = config.FRPServerPort
-	}
+	PublicIP.NAT = config.BehindNAT
+	PublicIP.EscapeImplementation = "None"
 
 	// Updates current machine IP address to the IP table
 	ipAddresses.IpAddress = append(ipAddresses.IpAddress, PublicIP)
@@ -123,9 +123,9 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\n-----------"+
+		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\nbehindNAT: %s\nEscapeImplementation: %s\n-----------"+
 			"-----------------\n", table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
-			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort)
+			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort, table.IpAddress[i].NAT, table.IpAddress[i].EscapeImplementation)
 	}
 	//PrettyPrint(table)
 
@@ -140,11 +140,16 @@ func (table *IpAddresses) RemoveDuplicates() error {
 	for i, _ := range table.IpAddress {
 		Exists := false
 		for k := range NoDuplicates.IpAddress {
-			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4) || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
-				if NoDuplicates.IpAddress[k].ProxyPort == "0" {
-					Exists = true
-					break
-				}
+			// Statements checked for
+			// - duplicate IPV4 addresses [<IPV4>:<Port No>]
+			// - duplicate IPV6 addresses [<IPV6>]
+			// - Node is behind NAT and no escape implementation provided
+			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 &&
+				NoDuplicates.IpAddress[k].ServerPort == table.IpAddress[i].ServerPort) ||
+				(NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) ||
+				(NoDuplicates.IpAddress[k].NAT == "True" && NoDuplicates.IpAddress[i].EscapeImplementation == "None") {
+				Exists = true
+				break
 			}
 		}
 		if Exists {
