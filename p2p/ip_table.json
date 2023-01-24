@@ -1,6 +1,7 @@
 {
  "ip_address": [
   {
+   "Name": "Node1",
    "IPV4": "64.227.168.102",
    "IPV6": "",
    "Latency": 0,

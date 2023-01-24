@@ -123,8 +123,8 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\nbehindNAT: %s\nEscapeImplementation: %s\n-----------"+
-			"-----------------\n", table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
+		fmt.Printf("\nMachine Name: %s\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\nbehindNAT: %s\nEscapeImplementation: %s\n-----------"+
+			"-----------------\n", table.IpAddress[i].Name, table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
 			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort, table.IpAddress[i].NAT, table.IpAddress[i].EscapeImplementation)
 	}
 	//PrettyPrint(table)
@@ -146,11 +146,14 @@ func (table *IpAddresses) RemoveDuplicates() error {
 			// - Node is behind NAT and no escape implementation provided
 			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 &&
 				NoDuplicates.IpAddress[k].ServerPort == table.IpAddress[i].ServerPort) ||
-				(NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) ||
-				(NoDuplicates.IpAddress[k].NAT == "True" && NoDuplicates.IpAddress[i].EscapeImplementation == "None") {
+				(NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}
+		}
+
+		if table.IpAddress[i].NAT == "True" && table.IpAddress[i].EscapeImplementation == "None" {
+			Exists = true
 		}
 		if Exists {
 			continue
