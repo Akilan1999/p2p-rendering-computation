@@ -166,9 +166,9 @@ func Server() error {
 
 	// If there is a proxy port specified
 	// then starts the FRP server
-	if config.FRPServerPort != "0" {
-		go frp.StartFRPProxyFromRandom()
-	}
+	//if config.FRPServerPort != "0" {
+	//	go frp.StartFRPProxyFromRandom()
+	//}
 
 	// TODO check if IPV6 or Proxy port is specified
 	// if not update current entry as proxy address
@@ -210,6 +210,7 @@ func Server() error {
 			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 			ProxyIpAddr.ServerPort = proxyPort
 			ProxyIpAddr.Name = config.MachineName
+			ProxyIpAddr.NAT = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
 			// append the following to the ip table
