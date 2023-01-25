@@ -18,6 +18,12 @@ import (
 func Server() error {
 	r := gin.Default()
 
+	//Get Server port based on the config file
+	config, err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
 	// update IPTable with new port and ip address and update ip table
 	var ProxyIpAddr p2p.IpAddress
 	var lowestLatencyIpAddress p2p.IpAddress
@@ -30,10 +36,6 @@ func Server() error {
 	// Speed test with 50 mbps
 	r.GET("/50", func(c *gin.Context) {
 		// Get Path from config
-		config, err := config.ConfigInit()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
 		c.File(config.SpeedTestFile)
 	})
 
@@ -119,7 +121,7 @@ func Server() error {
 		}
 
 		// Ensures that FRP is triggered only if a proxy address is provided
-		if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:8088" && c.Request.Host != "0.0.0.0:8088" {
+		if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
 			resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
 			if err != nil {
 				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
@@ -157,12 +159,6 @@ func Server() error {
 
 		c.String(http.StatusOK, strconv.Itoa(port))
 	})
-
-	//Get Server port based on the config file
-	config, err := config.ConfigInit()
-	if err != nil {
-		return err
-	}
 
 	// If there is a proxy port specified
 	// then starts the FRP server
