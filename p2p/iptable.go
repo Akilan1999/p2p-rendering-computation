@@ -155,6 +155,7 @@ func (table *IpAddresses) RemoveDuplicates() error {
 		if table.IpAddress[i].NAT == "True" && table.IpAddress[i].EscapeImplementation == "None" {
 			Exists = true
 		}
+
 		if Exists {
 			continue
 		}
