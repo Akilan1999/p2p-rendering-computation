@@ -18,12 +18,15 @@ type IpAddresses struct {
 }
 
 type IpAddress struct {
-	Ipv4   string `json:"ipv4"`
-	Ipv6   string `json:"ipv6"`
-	Latency  time.Duration `json:"latency"`
-	Download float64    `json:"download"`
-	Upload float64 `json:"upload"`
-	ServerPort string `json:"serverport"`
+	Name                 string        `json:"Name"`
+	Ipv4                 string        `json:"IPV4"`
+	Ipv6                 string        `json:"IPV6"`
+	Latency              time.Duration `json:"Latency"`
+	Download             float64       `json:"Download"`
+	Upload               float64       `json:"Upload"`
+	ServerPort           string        `json:"ServerPort"`
+	NAT                  string        `json:"NAT"`
+	EscapeImplementation string        `json:"EscapeImplementation"`
 }
 
 type IP struct {
@@ -31,18 +34,17 @@ type IP struct {
 }
 
 // ReadIpTable Read data from Ip tables from json file
-func ReadIpTable()(*IpAddresses ,error){
-    // Get Path from config
+func ReadIpTable() (*IpAddresses, error) {
+	// Get Path from config
 	config, err := config.ConfigInit()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	jsonFile, err := os.Open(config.IPTable)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-
 
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
@@ -71,6 +73,9 @@ func ReadIpTable()(*IpAddresses ,error){
 	PublicIP.Ipv4 = ip
 	PublicIP.Ipv6 = ipv6
 	PublicIP.ServerPort = config.ServerPort
+	PublicIP.Name = config.MachineName
+	PublicIP.NAT = config.BehindNAT
+	PublicIP.EscapeImplementation = "None"
 
 	// Updates current machine IP address to the IP table
 	ipAddresses.IpAddress = append(ipAddresses.IpAddress, PublicIP)
@@ -80,7 +85,7 @@ func ReadIpTable()(*IpAddresses ,error){
 		return nil, err
 	}
 
-    return &ipAddresses, nil
+	return &ipAddresses, nil
 }
 
 // WriteIpTable Write to IP table json file
@@ -118,26 +123,37 @@ func PrintIpTable() error {
 	}
 
 	for i := 0; i < len(table.IpAddress); i++ {
-		fmt.Printf("\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\n-----------" +
-			"-----------------\n",table.IpAddress[i].Ipv4,table.IpAddress[i].Ipv6,
-			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort)
+		fmt.Printf("\nMachine Name: %s\nIP Address: %s\nIPV6: %s\nLatency: %s\nServerPort: %s\nbehindNAT: %s\nEscapeImplementation: %s\n-----------"+
+			"-----------------\n", table.IpAddress[i].Name, table.IpAddress[i].Ipv4, table.IpAddress[i].Ipv6,
+			table.IpAddress[i].Latency, table.IpAddress[i].ServerPort, table.IpAddress[i].NAT, table.IpAddress[i].EscapeImplementation)
 	}
+	//PrettyPrint(table)
 
 	return nil
 }
 
 // RemoveDuplicates This is a temporary fix current functions failing to remove
 // Duplicate IP addresses from local IP table
-func (table *IpAddresses)RemoveDuplicates() error {
+func (table *IpAddresses) RemoveDuplicates() error {
 
 	var NoDuplicates IpAddresses
-	for i, _:= range table.IpAddress {
+	for i, _ := range table.IpAddress {
 		Exists := false
 		for k := range NoDuplicates.IpAddress {
-			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4) || (NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
+			// Statements checked for
+			// - duplicate IPV4 addresses [<IPV4>:<Port No>]
+			// - duplicate IPV6 addresses [<IPV6>]
+			// - Node is behind NAT and no escape implementation provided
+			if (NoDuplicates.IpAddress[k].Ipv4 != "" && NoDuplicates.IpAddress[k].Ipv4 == table.IpAddress[i].Ipv4 &&
+				NoDuplicates.IpAddress[k].ServerPort == table.IpAddress[i].ServerPort) ||
+				(NoDuplicates.IpAddress[k].Ipv6 != "" && NoDuplicates.IpAddress[k].Ipv6 == table.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}
+		}
+
+		if table.IpAddress[i].NAT == "True" && table.IpAddress[i].EscapeImplementation == "None" {
+			Exists = true
 		}
 		if Exists {
 			continue
@@ -151,16 +167,16 @@ func (table *IpAddresses)RemoveDuplicates() error {
 }
 
 // CurrentPublicIP Get Current Public IP address
-func CurrentPublicIP() (string,error) {
+func CurrentPublicIP() (string, error) {
 	req, err := http.Get("http://ip-api.com/json/")
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	defer req.Body.Close()
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
 	var ip IP
@@ -171,10 +187,10 @@ func CurrentPublicIP() (string,error) {
 
 // GetCurrentIPV6 gets the current IPV6	address based on the interface
 // specified in the config file
-func GetCurrentIPV6()(string,error){
+func GetCurrentIPV6() (string, error) {
 	Config, err := config.ConfigInit()
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
 	// Fix in future release
@@ -223,7 +239,7 @@ func ViewNetworkInterface() error {
 }
 
 // Ip4or6 Helper function to check if the IP address is IPV4 or
-//IPV6 (https://socketloop.com/tutorials/golang-check-if-ip-address-is-version-4-or-6)
+// IPV6 (https://socketloop.com/tutorials/golang-check-if-ip-address-is-version-4-or-6)
 func Ip4or6(s string) string {
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
@@ -236,3 +252,14 @@ func Ip4or6(s string) string {
 	return "version 6"
 
 }
+
+//func PrettyPrint(data interface{}) {
+//	var p []byte
+//	//    var err := error
+//	p, err := json.MarshalIndent(data, "", "\t")
+//	if err != nil {
+//		fmt.Println(err)
+//		return
+//	}
+//	fmt.Printf("%s \n", p)
+//}

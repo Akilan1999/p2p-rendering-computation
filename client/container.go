@@ -12,39 +12,39 @@ import (
 
 var (
 	serverPort = "8088"
-	client = http.Client{}
+	client     = http.Client{}
 )
 
 // StartContainer Start container using REST api Implementation
 // From the selected server IP address
 // TODO: Test cases for this function
-//Calls URL ex: http://0.0.0.0:8088/startcontainer?ports=0&GPU=false&ContainerName=docker-ubuntu-sshd
-func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*docker.DockerVM ,error) {
+// Calls URL ex: http://0.0.0.0:8088/startcontainer?ports=0&GPU=false&ContainerName=docker-ubuntu-sshd
+func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*docker.DockerVM, error) {
 	// Passes URL with number of TCP ports to allocated and to give GPU access to the docker container
 	var URL string
-	version := p2p.Ip4or6(IP)
+	//version := p2p.Ip4or6(IP)
+	//
+	////Get port number of the server
+	//serverPort, err := GetServerPort(IP)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	//Get port number of the server
-	serverPort, err := GetServerPort(IP)
-	if err != nil {
-		return nil, err
-	}
-
-	if version == "version 6" {
-		URL = "http://[" + IP + "]:" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
-	} else {
-		URL = "http://" + IP + ":" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
-	}
+	//if version == "version 6" {
+	//	URL = "http://[" + IP + "]:" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
+	//} else {
+	URL = "http://" + IP + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
+	//}
 
 	resp, err := http.Get(URL)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Convert response to byte value
 	byteValue, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Create variable for result response type
@@ -53,7 +53,7 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 	// Adds byte value to docker.DockerVM struct
 	json.Unmarshal(byteValue, &dockerResult)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Adds the container to the tracked list
@@ -66,21 +66,21 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string) (*d
 }
 
 // RemoveContianer Stops and removes container from the server
-func RemoveContianer(IP string,ID string) error {
+func RemoveContianer(IP string, ID string) error {
 	var URL string
-	version := p2p.Ip4or6(IP)
+	//version := p2p.Ip4or6(IP)
+	//
+	////Get port number of the server
+	//serverPort, err := GetServerPort(IP)
+	//if err != nil {
+	//	return err
+	//}
 
-	//Get port number of the server
-	serverPort, err := GetServerPort(IP)
-	if err != nil {
-		return err
-	}
-
-	if version == "version 6" {
-		URL = "http://[" + IP + "]:" + serverPort + "/RemoveContainer?id=" + ID
-	} else {
-		URL = "http://" + IP + ":" + serverPort + "/RemoveContainer?id=" + ID
-	}
+	//if version == "version 6" {
+	//	URL = "http://[" + IP + "]:" + serverPort + "/RemoveContainer?id=" + ID
+	//} else {
+	URL = "http://" + IP + "/RemoveContainer?id=" + ID
+	//}
 	resp, err := http.Get(URL)
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func RemoveContianer(IP string,ID string) error {
 	if err != nil {
 		return err
 	}
-    // Remove container created from the tracked list
+	// Remove container created from the tracked list
 	err = RemoveTrackedContainer(ID)
 	if err != nil {
 		return err
@@ -112,31 +112,31 @@ func RemoveContianer(IP string,ID string) error {
 }
 
 // ViewContainers This function displays all containers available on server side
-func ViewContainers(IP string)(*docker.DockerContainers, error){
+func ViewContainers(IP string) (*docker.DockerContainers, error) {
 	// Passes URL with route /ShowImages
 	var URL string
-	version := p2p.Ip4or6(IP)
+	//version := p2p.Ip4or6(IP)
+	//
+	////Get port number of the server
+	//serverPort, err := GetServerPort(IP)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	//Get port number of the server
-	serverPort, err := GetServerPort(IP)
-	if err != nil {
-		return nil, err
-	}
-
-	if version == "version 6" {
-		URL = "http://[" + IP + "]:" + serverPort + "/ShowImages"
-	} else {
-		URL = "http://" + IP + ":" + serverPort + "/ShowImages"
-	}
+	//if version == "version 6" {
+	//	URL = "http://[" + IP + "]:" + serverPort + "/ShowImages"
+	//} else {
+	URL = "http://" + IP + "/ShowImages"
+	//}
 	resp, err := http.Get(URL)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Convert response to byte value
 	byteValue, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Create variable for result response type
@@ -145,18 +145,18 @@ func ViewContainers(IP string)(*docker.DockerContainers, error){
 	// Adds byte value to docker.DockerContainers struct
 	json.Unmarshal(byteValue, &Result)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	return &Result, nil
 }
 
 // GetServerPort Helper function to do find out server port information
-func GetServerPort(IpAddress string) (string,error) {
+func GetServerPort(IpAddress string) (string, error) {
 	// Getting information from the clients ip table
 	ipTable, err := p2p.ReadIpTable()
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
 	// Iterate thorough ip table struct and find
@@ -170,7 +170,7 @@ func GetServerPort(IpAddress string) (string,error) {
 	}
 
 	// We return default port
-	return "8088",nil
+	return "8088", nil
 }
 
 // PrintStartContainer Prints results Generated container
@@ -186,7 +186,6 @@ func GetServerPort(IpAddress string) (string,error) {
 //		fmt.Println(d.Ports[i])
 //	}
 //}
-
 
 // TODO implementation using RPC calls
 //func StartContainer(Ip string) (*docker.DockerVM,error){

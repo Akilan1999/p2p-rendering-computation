@@ -7,25 +7,28 @@ import (
 )
 
 var (
-	defaultPath string
-	defaults = map[string]interface{}{}
-	configName = "config"
-	configType = "json"
-	configFile = "config.json"
-	configPaths []string
+	defaultPath    string
+	defaults       = map[string]interface{}{}
+	configName     = "config"
+	configType     = "json"
+	configFile     = "config.json"
+	configPaths    []string
 	defaultEnvName = "P2PRC"
 )
 
 type Config struct {
-	IPTable             	 string
-	DockerContainers    	 string
-	DefaultDockerFile   	 string
-	SpeedTestFile       	 string
-	IPV6Address         	 string
-	PluginPath          	 string
-	TrackContainersPath 	 string
-	ServerPort          	 string
+	MachineName              string
+	IPTable                  string
+	DockerContainers         string
+	DefaultDockerFile        string
+	SpeedTestFile            string
+	IPV6Address              string
+	PluginPath               string
+	TrackContainersPath      string
+	ServerPort               string
 	GroupTrackContainersPath string
+	FRPServerPort            string
+	BehindNAT                string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }
@@ -64,7 +67,7 @@ func Copy(src, dst string) error {
 }
 
 // GetPathP2PRC Getting P2PRC Directory from environment variable
-func GetPathP2PRC()(string,error) {
+func GetPathP2PRC() (string, error) {
 	curDir := os.Getenv(defaultEnvName)
 	return curDir + "/", nil
 }
@@ -80,39 +83,37 @@ func SetEnvName(EnvName string) error {
 }
 
 // GetCurrentPath Getting P2PRC Directory from environment variable
-func GetCurrentPath()(string,error) {
+func GetCurrentPath() (string, error) {
 	curDir := os.Getenv("PWD")
 	return curDir + "/", nil
 }
-
 
 // SetDefaults This function to be called only during a
 // make install
 func SetDefaults() error {
 	//Setting current directory to default path
 	defaultPath, err := GetPathP2PRC()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	//Creates ip_table.json in the json directory
-	err = Copy("p2p/ip_table.json","p2p/iptable/ip_table.json")
+	err = Copy("p2p/ip_table.json", "p2p/iptable/ip_table.json")
 	if err != nil {
 		return err
 	}
 
 	//Creates a copy of trackcontainers.json in the appropriate directory
-	err = Copy("client/trackcontainers.json","client/trackcontainers/trackcontainers.json")
+	err = Copy("client/trackcontainers.json", "client/trackcontainers/trackcontainers.json")
 	if err != nil {
 		return err
 	}
 
 	//Creates a copy of trackcontainers.json in the appropriate directory
-	err = Copy("client/grouptrackcontainers.json","client/trackcontainers/grouptrackcontainers.json")
+	err = Copy("client/grouptrackcontainers.json", "client/trackcontainers/grouptrackcontainers.json")
 	if err != nil {
 		return err
 	}
-
 
 	//Setting default paths for the config file
 	defaults["IPTable"] = defaultPath + "p2p/iptable/ip_table.json"
@@ -124,6 +125,15 @@ func SetDefaults() error {
 	defaults["TrackContainersPath"] = defaultPath + "client/trackcontainers/trackcontainers.json"
 	defaults["GroupTrackContainersPath"] = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
 	defaults["ServerPort"] = "8088"
+	defaults["FRPServerPort"] = "0"
+	defaults["BehindNAT"] = "True"
+	// Random name generator
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	defaults["MachineName"] = hostname
 	//defaults["NetworkInterface"] = "wlp0s20f3"
 	//defaults["NetworkInterfaceIPV6Index"] = "2"
 
@@ -145,18 +155,18 @@ func SetDefaults() error {
 	return nil
 }
 
-func ConfigInit()(*Config,error) {
+func ConfigInit() (*Config, error) {
 
 	//Setting current directory to default path
 	defaultPath, err := GetPathP2PRC()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	//Paths to search for config file
 	configPaths = append(configPaths, defaultPath)
 
 	//Add all possible configurations paths
-	for _,v := range configPaths {
+	for _, v := range configPaths {
 		viper.AddConfigPath(v)
 	}
 
@@ -164,23 +174,23 @@ func ConfigInit()(*Config,error) {
 	if err := viper.ReadInConfig(); err != nil {
 		// If the error thrown is config file not found
 		//Sets default configuration to viper
-		for k,v := range defaults {
-			viper.SetDefault(k,v)
+		for k, v := range defaults {
+			viper.SetDefault(k, v)
 		}
 		viper.SetConfigName(configName)
 		viper.SetConfigFile(configFile)
 		viper.SetConfigType(configType)
 
 		if err = viper.WriteConfig(); err != nil {
-			return nil,err
+			return nil, err
 		}
 	}
 
 	// Adds configuration to the struct
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return &config,nil
+	return &config, nil
 }

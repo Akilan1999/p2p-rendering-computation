@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/generate"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
@@ -13,14 +14,16 @@ import (
 
 var CliAction = func(ctx *cli.Context) error {
 	if Server {
-		// TODO: with RPC calls
-		server.Server()
+		err := server.Server()
+		if err != nil {
+			fmt.Print(err)
+		}
 		//server.Rpc()
 	}
 
 	//Listing servers and also updates IP tables (Default 3 hops)
 	if UpdateServerList {
-		err := client.UpdateIpTableListClient()
+		err := clientIPTable.UpdateIpTableListClient()
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -77,7 +80,6 @@ var CliAction = func(ctx *cli.Context) error {
 		// Adds the new server IP to the iptable
 		res.WriteIpTable()
 
-
 	}
 
 	// Displays all images available on the server side
@@ -91,8 +93,8 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 
 	// Function called to stop and remove server from Docker
-	if RemoveVM != ""  && ID != "" {
-		err := client.RemoveContianer(RemoveVM,ID)
+	if RemoveVM != "" && ID != "" {
+		err := client.RemoveContianer(RemoveVM, ID)
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -109,7 +111,7 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 
 		// Calls function to do Api call to start the container on the server side
-		imageRes, err := client.StartContainer(CreateVM,PortsInt,GPU,ContainerName)
+		imageRes, err := client.StartContainer(CreateVM, PortsInt, GPU, ContainerName)
 
 		if err != nil {
 			fmt.Print(err)
@@ -146,9 +148,9 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 
 	// If the view plugin flag is called then display all
-	// plugins available 
+	// plugins available
 	if ViewPlugin {
-		plugins ,err := plugin.DetectPlugins()
+		plugins, err := plugin.DetectPlugins()
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -205,9 +207,9 @@ var CliAction = func(ctx *cli.Context) error {
 			} else {
 				client.PrettyPrint(group)
 			}
-		} else if  ID != "" { // Add container to group based on group ID provided
+		} else if ID != "" { // Add container to group based on group ID provided
 			// --id <Container ID>
-			group, err := client.AddContainerToGroup(ID,Group)
+			group, err := client.AddContainerToGroup(ID, Group)
 			if err != nil {
 				fmt.Println(err)
 			} else {
@@ -244,6 +246,16 @@ var CliAction = func(ctx *cli.Context) error {
 			client.PrettyPrint(groups)
 		}
 	}
+
+	// Starts server as a reverse proxy so that
+	// nodes can connect to each other behind NAT
+	//if FRPProxy {
+	//    err := frp.StartFRPProxyFromRandom()
+	//    if err != nil {
+	//        fmt.Println(err)
+	//    }
+	//}
+
 	// -- REMOVE ON REGULAR RELEASE --
 	// when flag --gen is called an extension
 	// of the project is created to repurpose
@@ -252,9 +264,9 @@ var CliAction = func(ctx *cli.Context) error {
 		var err error
 		// If the module name is provided
 		if Modulename != "" {
-			err = generate.GenerateNewProject(Generate,Modulename)
+			err = generate.GenerateNewProject(Generate, Modulename)
 		} else {
-			err = generate.GenerateNewProject(Generate,Generate)
+			err = generate.GenerateNewProject(Generate, Generate)
 		}
 		if err != nil {
 			fmt.Println(err)
@@ -287,8 +299,6 @@ var CliAction = func(ctx *cli.Context) error {
 			fmt.Println("Success")
 		}
 	}
-
-
 
 	return nil
 }
