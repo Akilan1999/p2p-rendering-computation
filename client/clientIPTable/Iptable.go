@@ -61,6 +61,11 @@ func UpdateIpTable(IpAddress string, serverPort string) error {
 		}
 	}
 
+	err = ipStruct.WriteIpTable()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
