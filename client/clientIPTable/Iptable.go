@@ -10,10 +10,13 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"sync"
 )
 
+var mu sync.Mutex
+
 // UpdateIpTable Does the following to update it's IP table
-func UpdateIpTable(IpAddress string, serverPort string) error {
+func UpdateIpTable(IpAddress string, serverPort string, wg *sync.WaitGroup) error {
 
 	config, err := config.ConfigInit()
 	if err != nil {
@@ -66,6 +69,8 @@ func UpdateIpTable(IpAddress string, serverPort string) error {
 		return err
 	}
 
+	wg.Done()
+
 	return nil
 }
 
@@ -94,6 +99,8 @@ func UpdateIpTableListClient() error {
 	if err != nil {
 		return err
 	}
+
+	var w sync.WaitGroup
 
 	// Run loop 2 times
 	for i := 0; i < 2; i++ {
@@ -127,11 +134,13 @@ func UpdateIpTableListClient() error {
 				continue
 			}
 
+			w.Add(1)
 			if Addresses.IpAddress[j].Ipv6 != "" {
-				go UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort)
+				go UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort, &w)
 			} else if Addresses.IpAddress[j].Ipv4 != currentIPV4 {
-				go UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort)
+				go UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort, &w)
 			}
+			w.Wait()
 
 			//Appends server1 IP address to variable DoNotRead
 			DoNotRead.IpAddress = append(DoNotRead.IpAddress, Addresses.IpAddress[j])
