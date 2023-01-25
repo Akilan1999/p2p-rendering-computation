@@ -3,16 +3,30 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
+	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p/frp"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"time"
 )
 
-func Server() error{
+func Server() error {
 	r := gin.Default()
+
+	//Get Server port based on the config file
+	config, err := config.ConfigInit()
+	if err != nil {
+		return err
+	}
+
+	// update IPTable with new port and ip address and update ip table
+	var ProxyIpAddr p2p.IpAddress
+	var lowestLatencyIpAddress p2p.IpAddress
 
 	// Gets default information of the server
 	r.GET("/server_info", func(c *gin.Context) {
@@ -20,12 +34,8 @@ func Server() error{
 	})
 
 	// Speed test with 50 mbps
-	r.GET("/50", func(c *gin.Context){
+	r.GET("/50", func(c *gin.Context) {
 		// Get Path from config
-		config, err := config.ConfigInit()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
 		c.File(config.SpeedTestFile)
 	})
 
@@ -71,7 +81,7 @@ func Server() error{
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}
 
-		json.Unmarshal(file,&IPTable)
+		json.Unmarshal(file, &IPTable)
 
 		//Add Client IP address to IPTable struct
 		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
@@ -83,7 +93,7 @@ func Server() error{
 		}
 
 		// Reads IP addresses from ip table
-		IpAddresses,err := p2p.ReadIpTable()
+		IpAddresses, err := p2p.ReadIpTable()
 		if err != nil {
 			c.String(http.StatusOK, fmt.Sprint(err))
 		}
@@ -91,23 +101,32 @@ func Server() error{
 		c.JSON(http.StatusOK, IpAddresses)
 	})
 
-    // Starts docker container in server
+	// Starts docker container in server
 	r.GET("/startcontainer", func(c *gin.Context) {
 		// Get Number of ports to open and whether to use GPU or not
-		Ports := c.DefaultQuery("ports","0")
-		GPU := c.DefaultQuery("GPU","false")
-		ContainerName := c.DefaultQuery("ContainerName","")
-        var PortsInt int
+		Ports := c.DefaultQuery("ports", "0")
+		GPU := c.DefaultQuery("GPU", "false")
+		ContainerName := c.DefaultQuery("ContainerName", "")
+		var PortsInt int
 
 		// Convert Get Request value to int
 		fmt.Sscanf(Ports, "%d", &PortsInt)
 
 		// Creates container and returns-back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt,GPU,ContainerName)
+		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName)
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
+		// Ensures that FRP is triggered only if a proxy address is provided
+		if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
+			resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
+			if err != nil {
+				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+			}
+			fmt.Println(resp)
 		}
 
 		c.JSON(http.StatusOK, resp)
@@ -115,7 +134,7 @@ func Server() error{
 
 	//Remove container
 	r.GET("/RemoveContainer", func(c *gin.Context) {
-		ID := c.DefaultQuery("id","0")
+		ID := c.DefaultQuery("id", "0")
 		if err := docker.StopAndRemoveContainer(ID); err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
@@ -131,10 +150,73 @@ func Server() error{
 		c.JSON(http.StatusOK, resp)
 	})
 
-	//Get Server port based on the config file
-	config, err := config.ConfigInit()
-	if err != nil {
-		return err
+	// Request for port no from Server with address
+	r.GET("/FRPPort", func(c *gin.Context) {
+		port, err := frp.StartFRPProxyFromRandom()
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
+		c.String(http.StatusOK, strconv.Itoa(port))
+	})
+
+	// If there is a proxy port specified
+	// then starts the FRP server
+	//if config.FRPServerPort != "0" {
+	//	go frp.StartFRPProxyFromRandom()
+	//}
+
+	// TODO check if IPV6 or Proxy port is specified
+	// if not update current entry as proxy address
+	// with appropriate port on IP Table
+	if config.BehindNAT == "True" {
+		table, err := p2p.ReadIpTable()
+		if err != nil {
+			return err
+		}
+
+		var lowestLatency int64
+		// random large number
+		lowestLatency = 10000000
+
+		for i, _ := range table.IpAddress {
+			// Checks if the ping is the lowest and if the following node is acting as a proxy
+			//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
+			if table.IpAddress[i].Latency.Milliseconds() < lowestLatency {
+				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
+				lowestLatencyIpAddress = table.IpAddress[i]
+			}
+		}
+
+		// If there is an identified node
+		if lowestLatency != 10000000 {
+			serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+			if err != nil {
+				return err
+			}
+			// Create 3 second delay to allow FRP server to start
+			time.Sleep(1 * time.Second)
+			// Starts FRP as a client with
+			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
+			if err != nil {
+				return err
+			}
+
+			// updating with the current proxy address
+			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
+			ProxyIpAddr.ServerPort = proxyPort
+			ProxyIpAddr.Name = config.MachineName
+			ProxyIpAddr.NAT = "False"
+			ProxyIpAddr.EscapeImplementation = "FRP"
+
+			// append the following to the ip table
+			table.IpAddress = append(table.IpAddress, ProxyIpAddr)
+			// write information back to the IP Table
+			table.WriteIpTable()
+			// update ip table
+			go clientIPTable.UpdateIpTableListClient()
+		}
+
 	}
 
 	// Run gin server on the specified port

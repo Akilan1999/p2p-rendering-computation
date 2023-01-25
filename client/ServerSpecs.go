@@ -3,7 +3,6 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
 	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
 	"io/ioutil"
 	"net/http"
@@ -12,30 +11,30 @@ import (
 // GetSpecs Gets Specs from the server such CPU, GPU usage
 // and other basic information which helps set a
 // cluster of computer
-func GetSpecs(IP string)(*server.SysInfo,error) {
+func GetSpecs(IP string) (*server.SysInfo, error) {
 	var URL string
-	version := p2p.Ip4or6(IP)
+	//version := p2p.Ip4or6(IP)
 
 	//Get port number of the server
-	serverPort, err := GetServerPort(IP)
-	if err != nil {
-		return nil, err
-	}
+	//serverPort, err := GetServerPort(IP)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	if version == "version 6" {
-		URL = "http://[" + IP + "]:" + serverPort + "/server_info"
-	} else {
-		URL = "http://" + IP + ":" + serverPort + "/server_info"
-	}
+	//if version == "version 6" {
+	URL = "http://" + IP + "/server_info"
+	//} else {
+	//	URL = "http://" + IP + ":" + serverPort + "/server_info"
+	//}
 	resp, err := http.Get(URL)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Convert response to byte value
 	byteValue, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Create variable for result response type
@@ -44,7 +43,7 @@ func GetSpecs(IP string)(*server.SysInfo,error) {
 	// Adds byte value to docker.DockerVM struct
 	json.Unmarshal(byteValue, &serverSpecsResult)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	return &serverSpecsResult, nil
