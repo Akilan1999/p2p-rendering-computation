@@ -29,6 +29,7 @@ type Config struct {
 	GroupTrackContainersPath string
 	FRPServerPort            string
 	BehindNAT                string
+	AnsibleConfig            string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }
@@ -127,6 +128,7 @@ func SetDefaults() error {
 	defaults["ServerPort"] = "8088"
 	defaults["FRPServerPort"] = "0"
 	defaults["BehindNAT"] = "True"
+	defaults["AnsibleConfig"] = defaultPath + "p2p/ansible/ansible.cfg"
 	// Random name generator
 	hostname, err := os.Hostname()
 	if err != nil {
