@@ -11,17 +11,23 @@ config.json
 
 #ignore generated iptables
 p2p/iptable/
+!p2p/iptable/.gitkeep
 #ignore plugins added
 plugin/deploy/
+!plugin/deploy/.gitkeep
 #ignore track container file
 client/trackcontainers/
+!client/trackcontainers/.gitkeep
 # Test generated files
 generate/p2prctest
+!generate/p2prctest/.gitkeep
 generate/Test
+!generate/Test/.gitkeep
+
 #ignore windows exe files
 *.exe
 dist/
 
 #MACOS .idea file
 .DS_Store
-!.gitkeep
+.gitkeep
