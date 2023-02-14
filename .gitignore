@@ -24,4 +24,4 @@ dist/
 
 #MACOS .idea file
 .DS_Store
-!.gitKeep
+!.gitkeep
