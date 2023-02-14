@@ -2,20 +2,20 @@ package client
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"testing"
 )
 
 // Tests a scenario where the container are getting tracked
 func TestAddTrackContainer(t *testing.T) {
 	// Create docker container and get SSH port
-	container1 ,err := docker.BuildRunContainer(0,"false","")
+	container1, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 	// Testing the AddTrackContainer Function
-	err = AddTrackContainer(container1,"0.0.0.0")
+	err = AddTrackContainer(container1, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
@@ -26,7 +26,7 @@ func TestAddTrackContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Fail()
 	}
-    // Killing docker container created
+	// Killing docker container created
 	err = docker.StopAndRemoveContainer(container1.ID)
 	if err != nil {
 		fmt.Println(err)
@@ -38,20 +38,20 @@ func TestAddTrackContainer(t *testing.T) {
 // NOTE: This test can also be considered as a whole flow on the process of
 // tracked containers
 func TestRemoveTrackedContainer(t *testing.T) {
-	container1 ,err := docker.BuildRunContainer(0,"false","")
+	container1, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 
-	container2 ,err := docker.BuildRunContainer(0,"false","")
+	container2, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 
 	// Testing the AddTrackContainer Function and adding the first container created
-	err = AddTrackContainer(container1,"0.0.0.0")
+	err = AddTrackContainer(container1, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
@@ -70,7 +70,7 @@ func TestRemoveTrackedContainer(t *testing.T) {
 	}
 
 	// Testing the AddTrackContainer Function and the adding the second container created
-	err = AddTrackContainer(container2,"0.0.0.0")
+	err = AddTrackContainer(container2, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container2.ID)
@@ -106,7 +106,7 @@ func TestRemoveTrackedContainer(t *testing.T) {
 // Test function that checks if the ID belongs to
 // a group or container running
 func TestCheckID(t *testing.T) {
-    id := "grp123"
+	id := "grp123"
 	checkID, err := CheckID(id)
 	if err != nil {
 		fmt.Println(err)

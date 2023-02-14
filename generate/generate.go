@@ -4,7 +4,7 @@ package generate
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/otiai10/copy"
 	"go/ast"
 	"go/token"
@@ -17,15 +17,15 @@ import (
 
 // NewProject Struct information required when creating a new project
 type NewProject struct {
-	Name		string
-	Module		string
-	NewDir		string
-	P2PRCPath	string
-	CurrentModule	string
-	Option		*copy.Options
-	Token		*token.FileSet
-	AST		*ast.File
-	FileNameAST	string
+	Name          string
+	Module        string
+	NewDir        string
+	P2PRCPath     string
+	CurrentModule string
+	Option        *copy.Options
+	Token         *token.FileSet
+	AST           *ast.File
+	FileNameAST   string
 }
 
 // GenerateNewProject creates a new copy of the P2PRC

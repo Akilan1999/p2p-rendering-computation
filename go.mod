@@ -1,4 +1,4 @@
-module git.sr.ht/~akilan1999/p2p-rendering-computation
+module github.com/Akilan1999/p2p-rendering-computation
 
 go 1.15
 
