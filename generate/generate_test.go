@@ -2,7 +2,7 @@ package generate
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"testing"
 )
 
@@ -19,7 +19,7 @@ func TestCreateFolder(t *testing.T) {
 // Testing if a new project is created successfully
 func TestGenerateNewProject(t *testing.T) {
 	// Checking if a new project is created successfully
-	err := GenerateNewProject("p2prctest","p2prctest")
+	err := GenerateNewProject("p2prctest", "p2prctest")
 	if err != nil {
 		fmt.Println(err)
 		t.Error(err)
@@ -29,7 +29,7 @@ func TestGenerateNewProject(t *testing.T) {
 // Testing AST function to ensure imports are
 // working as intended
 func TestChangingImportAST(t *testing.T) {
-   // Create a new variable of type NewProject
+	// Create a new variable of type NewProject
 	var np NewProject
 	// Get current directory
 	path, err := config.GetCurrentPath()
@@ -38,7 +38,7 @@ func TestChangingImportAST(t *testing.T) {
 		t.Error(err)
 	}
 	// Create testcase scenario
-	err = config.Copy(path + "testcaseAST.go", path + "/Test/testcaseAST.go")
+	err = config.Copy(path+"testcaseAST.go", path+"/Test/testcaseAST.go")
 	if err != nil {
 		fmt.Println(err)
 		t.Error(err)

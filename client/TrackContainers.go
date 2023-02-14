@@ -4,38 +4,38 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"io/ioutil"
 	"os"
 )
 
 // TrackContainers This struct stores arrays of current containers running
 type TrackContainers struct {
-  	TrackContainerList []TrackContainer `json:"TrackContainer"`
+	TrackContainerList []TrackContainer `json:"TrackContainer"`
 }
 
 // TrackContainer Stores information of current containers
 type TrackContainer struct {
-	Id        string            `json:"ID"`
-	Container *docker.DockerVM  `json:"Container"`
-	IpAddress string            `json:"IpAddress"`
+	Id        string           `json:"ID"`
+	Container *docker.DockerVM `json:"Container"`
+	IpAddress string           `json:"IpAddress"`
 }
 
 // AddTrackContainer Adds new container which has been added to the track container
-func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
+func AddTrackContainer(d *docker.DockerVM, ipAddress string) error {
 	// Checking if pointer d is null
 	if d == nil {
 		return errors.New("d is nil")
 	}
 	//Get config information to derive paths for track containers json file
-	config,err := config.ConfigInit()
+	config, err := config.ConfigInit()
 	if err != nil {
 		return err
 	}
 
-    // Getting information about the file trackcontainers.json file
-    stat, err := os.Stat(config.TrackContainersPath)
+	// Getting information about the file trackcontainers.json file
+	stat, err := os.Stat(config.TrackContainersPath)
 	if err != nil {
 		return err
 	}
@@ -66,11 +66,11 @@ func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
 	trackContainers.TrackContainerList = append(trackContainers.TrackContainerList, trackContainer)
 
 	// write modified information to the tracked json file
-	data,err := json.MarshalIndent(trackContainers, "", "\t")
+	data, err := json.MarshalIndent(trackContainers, "", "\t")
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(config.TrackContainersPath,data,0777)
+	err = ioutil.WriteFile(config.TrackContainersPath, data, 0777)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func AddTrackContainer(d *docker.DockerVM,ipAddress string) error {
 // RemoveTrackedContainer This function removos tracked container from the trackcontainer JSON file
 func RemoveTrackedContainer(id string) error {
 	//Get config information to derive paths for track containers json file
-	config,err := config.ConfigInit()
+	config, err := config.ConfigInit()
 	if err != nil {
 		return err
 	}
@@ -104,11 +104,11 @@ func RemoveTrackedContainer(id string) error {
 	trackedContainers.TrackContainerList = append(trackedContainers.TrackContainerList[:removeElement], trackedContainers.TrackContainerList[removeElement+1:]...)
 
 	// write modified information to the tracked json file
-	data,err := json.MarshalIndent(trackedContainers, "", "\t")
+	data, err := json.MarshalIndent(trackedContainers, "", "\t")
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(config.TrackContainersPath,data,0777)
+	err = ioutil.WriteFile(config.TrackContainersPath, data, 0777)
 	if err != nil {
 		return err
 	}
@@ -117,17 +117,17 @@ func RemoveTrackedContainer(id string) error {
 }
 
 // ViewTrackedContainers View Containers currently tracked
-func ViewTrackedContainers() (error,*TrackContainers) {
-	config,err := config.ConfigInit()
+func ViewTrackedContainers() (error, *TrackContainers) {
+	config, err := config.ConfigInit()
 	if err != nil {
-		return err,nil
+		return err, nil
 	}
 	trackedContianers, err := ReadTrackContainers(config.TrackContainersPath)
 	if err != nil {
-		return err,nil
+		return err, nil
 	}
 
-	return nil,trackedContianers
+	return nil, trackedContianers
 }
 
 // ReadTrackContainers Reads containers which are currently tracked
@@ -167,7 +167,7 @@ func GetContainerInformation(ID string) (*TrackContainer, error) {
 }
 
 // ModifyContainerInformation Modifies information inside the container
-func (TC *TrackContainer)ModifyContainerInformation() error {
+func (TC *TrackContainer) ModifyContainerInformation() error {
 	// Gets all the information of tracker containers
 	err, t := ViewTrackedContainers()
 	if err != nil {
@@ -192,15 +192,15 @@ func (TC *TrackContainer)ModifyContainerInformation() error {
 }
 
 // WriteContainers Write information back to the config file
-func (TC *TrackContainers)WriteContainers() error {
+func (TC *TrackContainers) WriteContainers() error {
 	// Initialize config file
-	config,err := config.ConfigInit()
+	config, err := config.ConfigInit()
 	// write modified information to the tracked json file
-	data,err := json.MarshalIndent(TC, "", "\t")
+	data, err := json.MarshalIndent(TC, "", "\t")
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(config.TrackContainersPath,data,0777)
+	err = ioutil.WriteFile(config.TrackContainersPath, data, 0777)
 	if err != nil {
 		return err
 	}
@@ -209,12 +209,12 @@ func (TC *TrackContainers)WriteContainers() error {
 }
 
 // CheckID Checks if the ID belongs to a group or a single container
-func CheckID(ID string) (string,error) {
-    // For group checks if the 1st characters is "grp"
+func CheckID(ID string) (string, error) {
+	// For group checks if the 1st characters is "grp"
 	if ID[0:3] == "grp" {
 		return "group", nil
 	} else {
 		return "container", nil
 	}
-	return "",nil
+	return "", nil
 }

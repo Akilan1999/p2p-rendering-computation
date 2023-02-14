@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
@@ -22,21 +22,21 @@ import (
 )
 
 type DockerVM struct {
-	 SSHUsername string `json:"SSHUsername"`
-	 SSHPassword string `json:"SSHPassword"`
-	 ID string `json:"ID"`
-	 TagName string `json:"TagName"`
-	 ImagePath string `json:"ImagePath"`
-	 Ports Ports `json:"Ports"`
-	 GPU string `json:"GPU"`
+	SSHUsername string `json:"SSHUsername"`
+	SSHPassword string `json:"SSHPassword"`
+	ID          string `json:"ID"`
+	TagName     string `json:"TagName"`
+	ImagePath   string `json:"ImagePath"`
+	Ports       Ports  `json:"Ports"`
+	GPU         string `json:"GPU"`
 }
 
 type DockerContainers struct {
-	 DockerContainer []DockerContainer `json:"DockerContainer"`
+	DockerContainer []DockerContainer `json:"DockerContainer"`
 }
 
 type DockerContainer struct {
-	ContainerName string `json:"DockerContainerName"`
+	ContainerName        string `json:"DockerContainerName"`
 	ContainerDescription string `json:"ContainerDescription"`
 }
 
@@ -44,11 +44,11 @@ type Ports struct {
 	PortSet []Port `json:"Port"`
 }
 type Port struct {
-	PortName string `json:"PortName"`
-	InternalPort int `json:"InternalPort"`
-    Type string `json:"Type"`
-	ExternalPort int `json:"ExternalPort"`
-	IsUsed       bool `json:"IsUsed"`
+	PortName     string `json:"PortName"`
+	InternalPort int    `json:"InternalPort"`
+	Type         string `json:"Type"`
+	ExternalPort int    `json:"ExternalPort"`
+	IsUsed       bool   `json:"IsUsed"`
 	Description  string `json:"Description"`
 }
 
@@ -65,7 +65,7 @@ var dockerRegistryUserID = ""
 
 // BuildRunContainer Function is incharge to invoke building and running contianer and also allocating external
 // ports
-func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerVM,error) {
+func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerVM, error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
@@ -86,7 +86,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	// Get Path from config
 	config, err := config.ConfigInit()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	RespDocker.ImagePath = config.DefaultDockerFile
 
@@ -95,7 +95,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	if ContainerName != "" && ContainerName != "docker-ubuntu-sshd" {
 		Containers, err := ViewAllContainers()
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 
 		for _, dockerContainer := range Containers.DockerContainer {
@@ -106,7 +106,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 			}
 		}
 		if RespDocker.ImagePath == config.DefaultDockerFile {
-			return nil, errors.New("Container " + ContainerName  + " does not exist in the server")
+			return nil, errors.New("Container " + ContainerName + " does not exist in the server")
 		}
 	}
 
@@ -121,7 +121,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	// Creates number of ports
 	OpenPorts, err := freeport.GetFreePorts(count)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	// Allocate external ports to ports available in the ports.json file
 	for i := range PortsInformation.PortSet {
@@ -136,8 +136,8 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 		var TempPort Port
 		TempPort.PortName = "AutoGen Port"
 		TempPort.Type = "tcp"
-		TempPort.InternalPort = OpenPorts[portFileLength + i]
-		TempPort.ExternalPort = OpenPorts[portFileLength + i]
+		TempPort.InternalPort = OpenPorts[portFileLength+i]
+		TempPort.ExternalPort = OpenPorts[portFileLength+i]
 		TempPort.Description = "Auto generated TCP port"
 		TempPort.IsUsed = false
 		//Append temp port to port information
@@ -149,29 +149,28 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	// Gets docker information from env variables
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Builds docker image
 	err = RespDocker.imageBuild(cli)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	// Runs docker contianer
 	err = RespDocker.runContainer(cli)
 
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-
-	return RespDocker,nil
+	return RespDocker, nil
 
 }
 
-//Builds docker image (TODO: relative path for Dockerfile deploy)
-func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
+// Builds docker image (TODO: relative path for Dockerfile deploy)
+func (d *DockerVM) imageBuild(dockerClient *client.Client) error {
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
 	//defer cancel()
 
@@ -203,16 +202,15 @@ func (d *DockerVM)imageBuild(dockerClient *client.Client) error {
 // Starts container and assigns port numbers
 // Sample Docker run Command
 // docker run -d=true --name=Test123 --restart=always --gpus all
-//-p 3443:6901 -p 3453:22 -p 3434:3434 -p 3245:3245 -v=/opt/data:/data
-//p2p-ubuntu /start > /dev/null
-func (d *DockerVM)runContainer(dockerClient *client.Client) error{
+// -p 3443:6901 -p 3453:22 -p 3434:3434 -p 3245:3245 -v=/opt/data:/data
+// p2p-ubuntu /start > /dev/null
+func (d *DockerVM) runContainer(dockerClient *client.Client) error {
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2000)
-
 
 	// The first mode runs using the Docker Api. As the API supports using
 	// CPU and uses a shell script for GPU call because till this point of
 	// implementation docker api does not support the flag "--gpu all"
-    if d.GPU != "true" {
+	if d.GPU != "true" {
 		//Exposed ports for docker config file
 		var ExposedPort nat.PortSet
 
@@ -239,7 +237,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 		for i := range d.Ports.PortSet {
 			// Parameters "tcp or udp", external port
-			Port, err := nat.NewPort(d.Ports.PortSet[i].Type,fmt.Sprint(d.Ports.PortSet[i].InternalPort))
+			Port, err := nat.NewPort(d.Ports.PortSet[i].Type, fmt.Sprint(d.Ports.PortSet[i].InternalPort))
 			if err != nil {
 				return err
 			}
@@ -249,7 +247,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 
 			PortForwarding[Port] = []nat.PortBinding{
 				{
-					HostIP: "0.0.0.0",
+					HostIP:   "0.0.0.0",
 					HostPort: fmt.Sprint(d.Ports.PortSet[i].ExternalPort),
 				},
 			}
@@ -286,11 +284,11 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 		d.ID = id
 
 		var cmd bytes.Buffer
-		cmd.WriteString("docker run -d=true --name="+ id +" --restart=always --gpus all ")
+		cmd.WriteString("docker run -d=true --name=" + id + " --restart=always --gpus all ")
 		for i := range d.Ports.PortSet {
 			cmd.WriteString("-p " + fmt.Sprint(d.Ports.PortSet[i].ExternalPort) + ":" + fmt.Sprint(d.Ports.PortSet[i].InternalPort) + " ")
 		}
-		cmd.WriteString("-v=/opt/data:/data "+ d.TagName +" /start > /dev/null")
+		cmd.WriteString("-v=/opt/data:/data " + d.TagName + " /start > /dev/null")
 		//"-v=/opt/data:/data p2p-ubuntu /start > /dev/null"
 		cmdStr := cmd.String()
 		_, err := exec.Command("/bin/sh", "-c", cmdStr).Output()
@@ -301,7 +299,7 @@ func (d *DockerVM)runContainer(dockerClient *client.Client) error{
 	return nil
 }
 
-// StopAndRemoveContainer 
+// StopAndRemoveContainer
 // Stop and remove a container
 // Reference (https://gist.github.com/frikky/e2efcea6c733ea8d8d015b7fe8a91bf6)
 func StopAndRemoveContainer(containername string) error {
@@ -330,11 +328,11 @@ func StopAndRemoveContainer(containername string) error {
 }
 
 // ViewAllContainers returns all containers runnable and which can be built
-func ViewAllContainers() (*DockerContainers, error){
+func ViewAllContainers() (*DockerContainers, error) {
 	// Traverse the deploy path as per given in the config file
 	config, err := config.ConfigInit()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	folders, err := ioutil.ReadDir(config.DockerContainers)
@@ -348,11 +346,11 @@ func ViewAllContainers() (*DockerContainers, error){
 	for _, f := range folders {
 		if f.IsDir() {
 			//Declare variable DockerContainer of type struct
-            var Container DockerContainer
+			var Container DockerContainer
 
-            // Setting container name to deploy name
-            Container.ContainerName = f.Name()
-            // Getting Description from file description.txt
+			// Setting container name to deploy name
+			Container.ContainerName = f.Name()
+			// Getting Description from file description.txt
 			Description, err := ioutil.ReadFile(config.DockerContainers + "/" + Container.ContainerName + "/description.txt")
 			// if we os.Open returns an error then handle it
 			if err != nil {
@@ -366,7 +364,7 @@ func ViewAllContainers() (*DockerContainers, error){
 		}
 	}
 
-	return Containers,nil
+	return Containers, nil
 }
 
 func print(rd io.Reader) error {

@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/go-git/go-git/v5"
 	"net/url"
 	"os"
@@ -29,7 +29,7 @@ func DownloadPlugin(pluginurl string) error {
 		return err
 	}
 	// clones a repo and stores it at the plugin directory
-	_, err = git.PlainClone(config.PluginPath + "/" + folder, false, &git.CloneOptions{
+	_, err = git.PlainClone(config.PluginPath+"/"+folder, false, &git.CloneOptions{
 		URL:      pluginurl,
 		Progress: os.Stdout,
 	})
@@ -37,7 +37,6 @@ func DownloadPlugin(pluginurl string) error {
 	if err != nil {
 		return err
 	}
-
 
 	return nil
 }
@@ -60,6 +59,6 @@ func DeletePlugin(pluginname string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }

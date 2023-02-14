@@ -3,7 +3,7 @@ package p2p
 import (
 	"encoding/json"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"io/ioutil"
 	"net"
 	"net/http"
