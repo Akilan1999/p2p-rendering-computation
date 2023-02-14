@@ -3,8 +3,8 @@ package clientIPTable
 import (
 	"encoding/json"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"io"
 	"io/ioutil"
 	"mime/multipart"

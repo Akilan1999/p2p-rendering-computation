@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"net"
 	"net/rpc"
 )
@@ -18,8 +18,8 @@ type Docker struct {
 }
 
 // Starts container using RPC calls
-func (l *Listener) StartContainer( reply *Docker) error {
-	vm, err := docker.BuildRunContainer(3,"false","")
+func (l *Listener) StartContainer(reply *Docker) error {
+	vm, err := docker.BuildRunContainer(3, "false", "")
 	if err != nil {
 		return err
 	}
@@ -27,8 +27,6 @@ func (l *Listener) StartContainer( reply *Docker) error {
 	*reply = Docker{vm}
 	return nil
 }
-
-
 
 func Rpc() {
 	rpcServer, err := net.ResolveTCPAddr("tcp", "0.0.0.0:"+port)
@@ -43,4 +41,3 @@ func Rpc() {
 	rpc.Register(listener)
 	rpc.Accept(inbound)
 }
-

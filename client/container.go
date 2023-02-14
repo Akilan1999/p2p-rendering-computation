@@ -3,8 +3,8 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"io/ioutil"
 	"net/http"
 	"strconv"

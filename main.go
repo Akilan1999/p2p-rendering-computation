@@ -1,7 +1,7 @@
 package main
 
 import (
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/cmd"
+	"github.com/Akilan1999/p2p-rendering-computation/cmd"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
@@ -12,7 +12,7 @@ var VERSION = "1.5.0"
 var mode string
 
 // Varaibles if mode is client
-var OS, Pull_location ,Run_script string
+var OS, Pull_location, Run_script string
 var List_servers, Ip_table bool
 
 func main() {

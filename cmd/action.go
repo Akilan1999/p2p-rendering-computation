@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/client"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/client/clientIPTable"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/generate"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/p2p"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/plugin"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
+	"github.com/Akilan1999/p2p-rendering-computation/client"
+	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/generate"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/plugin"
+	"github.com/Akilan1999/p2p-rendering-computation/server"
 	"github.com/urfave/cli/v2"
 )
 

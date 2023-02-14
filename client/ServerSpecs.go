@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server"
+	"github.com/Akilan1999/p2p-rendering-computation/server"
 	"io/ioutil"
 	"net/http"
 )

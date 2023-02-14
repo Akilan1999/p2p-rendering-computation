@@ -2,7 +2,7 @@ package client
 
 import (
 	"fmt"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"testing"
 )
 
@@ -46,14 +46,14 @@ func TestAddContainerToGroup(t *testing.T) {
 
 	// Creating and adding the container to the
 	// tracked list
-	container1 ,err := docker.BuildRunContainer(0,"false","")
+	container1, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 
 	// Testing the AddTrackContainer Function and adding the first container created
-	err = AddTrackContainer(container1,"0.0.0.0")
+	err = AddTrackContainer(container1, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
@@ -66,7 +66,7 @@ func TestAddContainerToGroup(t *testing.T) {
 	}
 
 	// Adds container information to the group
-	Group, err := AddContainerToGroup(container1.ID,group.ID)
+	Group, err := AddContainerToGroup(container1.ID, group.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -109,14 +109,14 @@ func TestGroup_RemoveContainerGroup(t *testing.T) {
 
 	// Creating and adding the container to the
 	// tracked list
-	container1 ,err := docker.BuildRunContainer(0,"false","")
+	container1, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 
 	// Testing the AddTrackContainer Function and adding the first container created
-	err = AddTrackContainer(container1,"0.0.0.0")
+	err = AddTrackContainer(container1, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
@@ -129,7 +129,7 @@ func TestGroup_RemoveContainerGroup(t *testing.T) {
 	}
 
 	// Adds container information to the group
-	Group, err := AddContainerToGroup(container1.ID,group.ID)
+	Group, err := AddContainerToGroup(container1.ID, group.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -138,7 +138,7 @@ func TestGroup_RemoveContainerGroup(t *testing.T) {
 	PrettyPrint(Group)
 
 	// Removing docker container from the group
-	Group, err = RemoveContainerGroup(container1.ID,group.ID)
+	Group, err = RemoveContainerGroup(container1.ID, group.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -182,7 +182,7 @@ func TestGroups_RemoveContainerGroups(t *testing.T) {
 		fmt.Println(err)
 		t.Fail()
 	}
-    // Created another group assigned to variable group 1
+	// Created another group assigned to variable group 1
 	group1, err := CreateGroup()
 	if err != nil {
 		fmt.Println(err)
@@ -191,14 +191,14 @@ func TestGroups_RemoveContainerGroups(t *testing.T) {
 
 	// Creating and adding the container to the
 	// tracked list
-	container1 ,err := docker.BuildRunContainer(0,"false","")
+	container1, err := docker.BuildRunContainer(0, "false", "")
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
 	}
 
 	// Testing the AddTrackContainer Function and adding the first container created
-	err = AddTrackContainer(container1,"0.0.0.0")
+	err = AddTrackContainer(container1, "0.0.0.0")
 	if err != nil {
 		// Killing docker container created
 		err = docker.StopAndRemoveContainer(container1.ID)
@@ -211,7 +211,7 @@ func TestGroups_RemoveContainerGroups(t *testing.T) {
 	}
 
 	// Adds container information to the group
-	Group, err := AddContainerToGroup(container1.ID,group.ID)
+	Group, err := AddContainerToGroup(container1.ID, group.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -220,7 +220,7 @@ func TestGroups_RemoveContainerGroups(t *testing.T) {
 	PrettyPrint(Group)
 
 	// Adds container information to the group
-	Group1, err := AddContainerToGroup(container1.ID,group1.ID)
+	Group1, err := AddContainerToGroup(container1.ID, group1.ID)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()

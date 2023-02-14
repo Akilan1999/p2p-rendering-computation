@@ -3,7 +3,7 @@ package p2p
 import (
 	"bytes"
 	"errors"
-	"git.sr.ht/~akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"io"
 	"io/ioutil"
 	"log"
