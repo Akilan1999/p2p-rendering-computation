@@ -21,3 +21,6 @@ generate/Test
 #ignore windows exe files
 *.exe
 dist/
+
+#MACOS .idea file
+.DS_Store
