@@ -45,6 +45,28 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 
 <br>
 
+## Extend your application with P2PRC 
+```go
+package main
+
+import "github.com/Akilan1999/p2p-rendering-computation/abstractions"
+
+func main() {
+    // Initialize with base p2prc config files
+    err := abstractions.Init("TEST")
+    if err != nil {
+        return
+    }
+
+    // start p2prc
+    _, err = abstractions.Start()
+    if err != nil {
+        return
+    }
+}
+```
+[Read more](Docs/Abstractions.md) ...
+
 ## Installation from source
 1. Ensure the Go compiler is installed 
    ```
