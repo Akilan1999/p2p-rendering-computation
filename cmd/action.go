@@ -135,7 +135,7 @@ var CliAction = func(ctx *cli.Context) error {
 
 	//Sets default paths to the config file
 	if SetDefaultConfig {
-		err := generate.SetDefaults("P2PRC")
+		err := generate.SetDefaults("P2PRC", false)
 		if err != nil {
 			fmt.Print(err)
 		}

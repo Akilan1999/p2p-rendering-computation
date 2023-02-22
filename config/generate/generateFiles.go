@@ -2,6 +2,7 @@ package generate
 
 import (
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/go-git/go-git/v5"
 	"os"
 )
 
@@ -100,14 +101,18 @@ func GenerateDockerFiles() (err error) {
 				return err
 			}
 		}
-		//if _, err = os.Stat(path + "server/docker/ip_table.json"); os.IsNotExist(err) {
-		//    _, err = os.Create(path + "p2p/iptable/ip_table.json")
-		//    if err != nil {
-		//        return err
-		//    }
-		//}
 
 	}
+
+	// Clone base docker image
+	_, err = git.PlainClone(path+"server/docker/containers/docker-ubuntu-sshd", false, &git.CloneOptions{
+		URL:      "https://github.com/Akilan1999/docker-ubuntu-sshd",
+		Progress: os.Stdout,
+	})
+	if err != nil {
+		return err
+	}
+
 	return
 }
 
