@@ -99,7 +99,7 @@ func (s *IpAddress) UploadSpeed() error {
 
 	// Get upload file path from config file
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}

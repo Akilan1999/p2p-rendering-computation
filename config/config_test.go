@@ -2,26 +2,27 @@ package config
 
 import (
 	"fmt"
+	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"os"
 	"testing"
 )
 
 func TestConfigInit(t *testing.T) {
-	_,err := ConfigInit()
+	_, err := ConfigInit(nil)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestSetDefaults(t *testing.T) {
-	err := SetDefaults()
+	err := generate.SetDefaults("")
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestGetCurrentPath(t *testing.T) {
-	path, err := GetCurrentPath()
+	path, err := generate.GetCurrentPath()
 	if err != nil {
 		fmt.Println(err)
 		t.Error(err)
@@ -30,7 +31,7 @@ func TestGetCurrentPath(t *testing.T) {
 }
 
 func TestGetPathP2PRC(t *testing.T) {
-	path, err := GetPathP2PRC()
+	path, err := GetPathP2PRC("")
 	if err != nil {
 		fmt.Println(err)
 		t.Error(err)
@@ -54,7 +55,7 @@ func TestSetEnvName(t *testing.T) {
 	}
 
 	// Checks if the output for the default read is "lol"
-	path, err := GetPathP2PRC()
+	path, err := GetPathP2PRC("")
 	if err != nil {
 		fmt.Println(err)
 		t.Error(err)

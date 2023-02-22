@@ -29,7 +29,7 @@ func AddTrackContainer(d *docker.DockerVM, ipAddress string) error {
 		return errors.New("d is nil")
 	}
 	//Get config information to derive paths for track containers json file
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func AddTrackContainer(d *docker.DockerVM, ipAddress string) error {
 // RemoveTrackedContainer This function removos tracked container from the trackcontainer JSON file
 func RemoveTrackedContainer(id string) error {
 	//Get config information to derive paths for track containers json file
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func RemoveTrackedContainer(id string) error {
 
 // ViewTrackedContainers View Containers currently tracked
 func ViewTrackedContainers() (error, *TrackContainers) {
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err, nil
 	}
@@ -194,7 +194,7 @@ func (TC *TrackContainer) ModifyContainerInformation() error {
 // WriteContainers Write information back to the config file
 func (TC *TrackContainers) WriteContainers() error {
 	// Initialize config file
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	// write modified information to the tracked json file
 	data, err := json.MarshalIndent(TC, "", "\t")
 	if err != nil {

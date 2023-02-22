@@ -74,7 +74,7 @@ func TestExecuteIP_ModifyHost(t *testing.T) {
 	var testip ExecuteIP
 
 	// Get plugin path from config file
-	Config, err := config.ConfigInit()
+	Config, err := config.ConfigInit(nil)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
