@@ -1,11 +1,26 @@
 package abstractions
 
 import (
-    "github.com/Akilan1999/p2p-rendering-computation/config/generate"
+	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
+	"github.com/Akilan1999/p2p-rendering-computation/server"
+	"github.com/gin-gonic/gin"
 )
 
-func Init(name string) {
-    // set the config file with default paths
-    generate.SetDefaults(name)
-    
+// Init Initialises p2prc
+func Init(name string) (err error) {
+	// set the config file with default paths
+	err = generate.SetDefaults(name, false)
+	if err != nil {
+		return
+	}
+	return
+}
+
+// Start p2prc in a server mode
+func Start() (*gin.Engine, error) {
+	engine, err := server.Server()
+	if err != nil {
+		return nil, err
+	}
+	return engine, nil
 }
