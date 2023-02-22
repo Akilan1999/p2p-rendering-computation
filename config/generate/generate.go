@@ -37,7 +37,7 @@ func GetCurrentPath() (string, error) {
 
 // SetDefaults This function to be called only during a
 // make install
-func SetDefaults(envName string) error {
+func SetDefaults(envName string, forceDefault bool) error {
 	//Setting current directory to default path
 	defaultPath, err := GetCurrentPath()
 	if err != nil {
@@ -93,7 +93,7 @@ func SetDefaults(envName string) error {
 	//Paths to search for config file
 	configPaths = append(configPaths, defaultPath)
 
-	if fileExists(defaultPath + "config.json") {
+	if fileExists(defaultPath+"config.json") && forceDefault {
 		err := os.Remove(defaultPath + "config.json")
 		if err != nil {
 			return err
