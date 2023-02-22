@@ -18,7 +18,7 @@ var mu sync.Mutex
 // UpdateIpTable Does the following to update it's IP table
 func UpdateIpTable(IpAddress string, serverPort string, wg *sync.WaitGroup) error {
 
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func UpdateIpTable(IpAddress string, serverPort string, wg *sync.WaitGroup) erro
 // on the ip tables
 func UpdateIpTableListClient() error {
 	// Get config information
-	Config, err := config.ConfigInit()
+	Config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
