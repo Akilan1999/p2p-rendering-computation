@@ -67,7 +67,7 @@ type Host struct {
 
 // DetectPlugins Detects all the plugins available
 func DetectPlugins() (*Plugins, error) {
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func RunPlugin(pluginName string, IPAddresses []*ExecuteIP) (*Plugin, error) {
 			plugindetected = plugin
 			plugindetected.Execute = IPAddresses
 			// Get Execute plugin path from config file
-			config, err := config.ConfigInit()
+			config, err := config.ConfigInit(nil)
 			if err != nil {
 				return nil, err
 			}

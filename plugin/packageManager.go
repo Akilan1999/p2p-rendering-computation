@@ -24,7 +24,7 @@ func DownloadPlugin(pluginurl string) error {
 	// Replaces / with _
 	folder := strings.Replace(path, "/", "_", -1)
 	// Reads plugin path from the config path
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func DownloadPlugin(pluginurl string) error {
 // DeletePlugin The following function deletes a plugin based on
 // the plugin name provided.
 func DeletePlugin(pluginname string) error {
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}

@@ -15,13 +15,13 @@ import (
 	"time"
 )
 
-func Server() error {
+func Server() (*gin.Engine, error) {
 	r := gin.Default()
 
 	//Get Server port based on the config file
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// update IPTable with new port and ip address and update ip table
@@ -172,7 +172,7 @@ func Server() error {
 	if config.BehindNAT == "True" {
 		table, err := p2p.ReadIpTable()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		var lowestLatency int64
@@ -192,14 +192,14 @@ func Server() error {
 		if lowestLatency != 10000000 {
 			serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			// Create 3 second delay to allow FRP server to start
 			time.Sleep(1 * time.Second)
 			// Starts FRP as a client with
 			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			// updating with the current proxy address
@@ -220,10 +220,7 @@ func Server() error {
 	}
 
 	// Run gin server on the specified port
-	err = r.Run(":" + config.ServerPort)
-	if err != nil {
-		return err
-	}
+	go r.Run(":" + config.ServerPort)
 
-	return nil
+	return r, nil
 }

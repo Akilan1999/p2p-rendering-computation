@@ -7,7 +7,7 @@ import (
 )
 
 func TestConfigInit(t *testing.T) {
-	_,err := ConfigInit()
+	_, err := ConfigInit(nil)
 	if err != nil {
 		t.Error(err)
 	}
