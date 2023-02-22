@@ -84,7 +84,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string) (*DockerV
 	//Default parameters
 	RespDocker.TagName = "p2p-ubuntu"
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +330,7 @@ func StopAndRemoveContainer(containername string) error {
 // ViewAllContainers returns all containers runnable and which can be built
 func ViewAllContainers() (*DockerContainers, error) {
 	// Traverse the deploy path as per given in the config file
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return nil, err
 	}

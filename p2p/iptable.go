@@ -36,7 +36,7 @@ type IP struct {
 // ReadIpTable Read data from Ip tables from json file
 func ReadIpTable() (*IpAddresses, error) {
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (i *IpAddresses) WriteIpTable() error {
 	}
 
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func CurrentPublicIP() (string, error) {
 // GetCurrentIPV6 gets the current IPV6	address based on the interface
 // specified in the config file
 func GetCurrentIPV6() (string, error) {
-	Config, err := config.ConfigInit()
+	Config, err := config.ConfigInit(nil)
 	if err != nil {
 		return "", err
 	}

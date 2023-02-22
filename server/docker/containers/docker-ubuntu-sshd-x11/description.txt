@@ -1,1 +1,0 @@
-Simple Ubuntu 20.04 image

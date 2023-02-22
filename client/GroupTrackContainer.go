@@ -206,7 +206,7 @@ func (grp *Group) AddGroupToFile() error {
 // result to Groups
 func ReadGroup() (*Groups, error) {
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +234,7 @@ func (grp *Groups) WriteGroup() error {
 		return err
 	}
 	// Get Path from config
-	config, err := config.ConfigInit()
+	config, err := config.ConfigInit(nil)
 	if err != nil {
 		return err
 	}

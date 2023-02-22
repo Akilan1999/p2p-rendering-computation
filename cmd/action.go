@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
-	"github.com/Akilan1999/p2p-rendering-computation/config"
-	"github.com/Akilan1999/p2p-rendering-computation/generate"
+	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
@@ -14,9 +13,13 @@ import (
 
 var CliAction = func(ctx *cli.Context) error {
 	if Server {
-		err := server.Server()
+		_, err := server.Server()
 		if err != nil {
 			fmt.Print(err)
+		}
+
+		for {
+
 		}
 		//server.Rpc()
 	}
@@ -132,7 +135,7 @@ var CliAction = func(ctx *cli.Context) error {
 
 	//Sets default paths to the config file
 	if SetDefaultConfig {
-		err := config.SetDefaults()
+		err := generate.SetDefaults("P2PRC", false)
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -247,39 +250,6 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 	}
 
-	// Starts server as a reverse proxy so that
-	// nodes can connect to each other behind NAT
-	//if FRPProxy {
-	//    err := frp.StartFRPProxyFromRandom()
-	//    if err != nil {
-	//        fmt.Println(err)
-	//    }
-	//}
-
-	// -- REMOVE ON REGULAR RELEASE --
-	// when flag --gen is called an extension
-	// of the project is created to repurpose
-	// the project for custom purpose
-	if Generate != "" {
-		var err error
-		// If the module name is provided
-		if Modulename != "" {
-			err = generate.GenerateNewProject(Generate, Modulename)
-		} else {
-			err = generate.GenerateNewProject(Generate, Generate)
-		}
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Created new folder: " + Generate)
-			fmt.Println("1. Enter inside " + Generate + " directory")
-			fmt.Println("2. git remote add " + Generate + " <PATH to the github repo>")
-			fmt.Println("3. git push " + Generate + " <PATH to the github repo>")
-			fmt.Println("4. go mod tidy")
-			fmt.Println("5. sh install.sh " + Generate)
-			fmt.Println("6. ./" + Generate + " -h (This is to test if the binary is working)")
-		}
-	}
 	//--------------------------------
 
 	if PullPlugin != "" {
