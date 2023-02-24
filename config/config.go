@@ -54,14 +54,14 @@ func SetEnvName(EnvName string) error {
     return nil
 }
 
+func GetEnvName() string {
+    return defaultEnvName
+}
+
 // ConfigInit Pass environment name as an optional parameter
 func ConfigInit(defaultsParameter map[string]interface{}, envNameOptional ...string) (*Config, error) {
     if len(envNameOptional) > 0 {
         defaultEnvName = envNameOptional[0]
-    }
-
-    if defaultsParameter != nil {
-        defaults = defaultsParameter
     }
 
     //Setting current directory to default path
