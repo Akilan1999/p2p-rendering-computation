@@ -1,0 +1,36 @@
+# NAT Traversal
+P2PRC currently supports TURN for NAT traversal. 
+
+## TURN 
+The current TURN implementation used is FRP. The TURN server is also required when 
+a P2PRC node is acting as a Server. The TURN server is determined based on the Node 
+with the least amount of latency based on the Nodes available on the IPTable. 
+Once a TURN server is determined there are 2 actions performed. The first one is 
+```/FRPPort``` to the TURN server to receive a port which is used to generate the external 
+port from the TURN server. The flow below describes the workflow.
+
+### Client mode
+- Call ```/FRPPort```
+```
+http://<turn server ip>:<server port no>/FRPport
+```
+- Call the TURN server in the following manner
+```go
+import (
+    "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
+)
+
+func main() {
+  serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+   if err != nil {
+    return nil, err
+   }
+   // Create 3 second delay to allow FRP server to start
+   time.Sleep(1 * time.Second)
+   // Starts FRP as a client with
+   proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
+   if err != nil {
+     return nil, err
+   }
+}
+```
