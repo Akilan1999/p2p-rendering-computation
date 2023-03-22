@@ -14,23 +14,27 @@ port from the TURN server. The flow below describes the workflow.
 ```
 http://<turn server ip>:<server port no>/FRPport
 ```
-- Call the TURN server in the following manner
+- Call the TURN server in the following manner. The following is a sample code snippet below. 
 ```go
 import (
     "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 )
 
 func main() {
-  serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+  serverPort, err := frp.GetFRPServerPort("http://" + <lowestLatencyIpAddress.Ipv4> + ":" + lowestLatencyIpAddress.ServerPort)
    if err != nil {
     return nil, err
    }
-   // Create 3 second delay to allow FRP server to start
+   // Create 1 second delay to allow FRP server to start
    time.Sleep(1 * time.Second)
    // Starts FRP as a client with
-   proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
+   proxyPort, err := frp.StartFRPClientForServer(<lowestLatencyIpAddress.Ipv4>, serverPort, <the port you want to expose externally>)
    if err != nil {
      return nil, err
    }
 }
 ```
+
+// todo diagram representation of the interaction with 
+nodes spawned in the p2p network.
+
