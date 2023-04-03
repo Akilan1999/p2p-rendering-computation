@@ -148,7 +148,7 @@ var AppConfigFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:    "TrackedContainers",
 		Aliases: []string{"tc"},
-		Usage: "View containers which have " +
+		Usage: "View (currently running) containers which have " +
 			"been created from the client side ",
 		EnvVars:     []string{"TRACKED_CONTAINERS"},
 		Destination: &TrackedContainers,
