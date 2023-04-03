@@ -72,15 +72,14 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 
     if len(ConfigUpdate) == 0 {
         //Setting default paths for the config file
-        Defaults.IPTable = defaultPath + "p2p/ip_table.json"
-        // Defaults.IPTable = defaultPath + "p2p/iptable/ip_table.json"
+        Defaults.IPTable = defaultPath + "p2p/iptable/ip_table.json"
         Defaults.DefaultDockerFile = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
         Defaults.DockerContainers = defaultPath + "server/docker/containers/"
         Defaults.SpeedTestFile = defaultPath + "p2p/50.bin"
         Defaults.IPV6Address = ""
         Defaults.PluginPath = defaultPath + "plugin/deploy"
-        Defaults.TrackContainersPath = defaultPath + "client/trackcontainers.json"
-        Defaults.GroupTrackContainersPath = defaultPath + "client/grouptrackcontainers.json"
+        Defaults.TrackContainersPath = defaultPath + "client/trackcontainers/trackcontainers.json"
+        Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
         Defaults.ServerPort = "8088"
         Defaults.FRPServerPort = "True"
         Defaults.CustomConfig = CustomConfig
