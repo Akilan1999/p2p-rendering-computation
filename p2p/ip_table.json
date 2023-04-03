@@ -4,10 +4,13 @@
    "Name": "Node1",
    "IPV4": "64.227.168.102",
    "IPV6": "",
-   "Latency": 0,
+   "Latency": 145800903,
+   "Download": 0,
+   "Upload": 0,
    "ServerPort": "8088",
-    "NAT": "False",
-    "EscapeImplementation": "None"
+   "NAT": "False",
+   "EscapeImplementation": "None",
+   "CustomInformation": null
   }
  ]
 }

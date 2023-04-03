@@ -72,7 +72,8 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 
     if len(ConfigUpdate) == 0 {
         //Setting default paths for the config file
-        Defaults.IPTable = defaultPath + "p2p/iptable/ip_table.json"
+        Defaults.IPTable = defaultPath + "p2p/ip_table.json"
+        // Defaults.IPTable = defaultPath + "p2p/iptable/ip_table.json"
         Defaults.DefaultDockerFile = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
         Defaults.DockerContainers = defaultPath + "server/docker/containers/"
         Defaults.SpeedTestFile = defaultPath + "p2p/50.bin"
