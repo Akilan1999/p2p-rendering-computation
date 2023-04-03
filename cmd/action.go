@@ -17,10 +17,6 @@ var CliAction = func(ctx *cli.Context) error {
         if err != nil {
             fmt.Print(err)
         }
-
-        for {
-
-        }
         //server.Rpc()
     }
 
