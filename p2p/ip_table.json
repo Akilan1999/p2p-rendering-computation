@@ -6,8 +6,8 @@
    "IPV6": "",
    "Latency": 0,
    "ServerPort": "8088",
-    "NAT": "False",
-    "EscapeImplementation": "None"
+   "NAT": "False",
+   "EscapeImplementation": "None"
   }
  ]
 }
