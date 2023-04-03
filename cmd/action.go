@@ -17,10 +17,6 @@ var CliAction = func(ctx *cli.Context) error {
         if err != nil {
             fmt.Print(err)
         }
-
-        for {
-
-        }
         //server.Rpc()
     }
 
@@ -96,10 +92,14 @@ var CliAction = func(ctx *cli.Context) error {
     }
 
     // Function called to stop and remove server from Docker
-    if RemoveVM != "" && ID != "" {
-        err := client.RemoveContianer(RemoveVM, ID)
-        if err != nil {
-            fmt.Print(err)
+    if RemoveVM != "" {
+        if ID == "" {
+            fmt.Println("provide container ID via --ID or --id")
+        } else {
+            err := client.RemoveContianer(RemoveVM, ID)
+            if err != nil {
+                fmt.Print(err)
+            }
         }
     }
 
@@ -182,7 +182,7 @@ var CliAction = func(ctx *cli.Context) error {
                 fmt.Println("Success")
             }
         } else {
-            fmt.Println("provide container ID")
+            fmt.Println("provide container ID via --ID or --id")
         }
 
     }

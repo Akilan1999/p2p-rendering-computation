@@ -92,7 +92,7 @@ var AppConfigFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:        "RemoveVM",
 		Aliases:     []string{"rm"},
-		Usage:       "Stop and Remove Docker container",
+		Usage:       "Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id",
 		EnvVars:     []string{"REMOVE_VM"},
 		Destination: &RemoveVM,
 	},
@@ -148,7 +148,7 @@ var AppConfigFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:    "TrackedContainers",
 		Aliases: []string{"tc"},
-		Usage: "View containers which have " +
+		Usage: "View (currently running) containers which have " +
 			"been created from the client side ",
 		EnvVars:     []string{"TRACKED_CONTAINERS"},
 		Destination: &TrackedContainers,
