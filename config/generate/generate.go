@@ -79,8 +79,8 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
         Defaults.SpeedTestFile = defaultPath + "p2p/50.bin"
         Defaults.IPV6Address = ""
         Defaults.PluginPath = defaultPath + "plugin/deploy"
-        Defaults.TrackContainersPath = defaultPath + "client/trackcontainers/trackcontainers.json"
-        Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
+        Defaults.TrackContainersPath = defaultPath + "client/trackcontainers.json"
+        Defaults.GroupTrackContainersPath = defaultPath + "client/grouptrackcontainers.json"
         Defaults.ServerPort = "8088"
         Defaults.FRPServerPort = "True"
         Defaults.CustomConfig = CustomConfig
