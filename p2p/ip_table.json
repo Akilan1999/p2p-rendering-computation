@@ -2,7 +2,7 @@
  "ip_address": [
   {
    "Name": "Node1",
-   "IPV4": "64.227.168.102",
+   "IPV4": "164.90.177.167",
    "IPV6": "",
    "Latency": 0,
    "ServerPort": "8088",
