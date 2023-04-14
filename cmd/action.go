@@ -19,7 +19,7 @@ var CliAction = func(ctx *cli.Context) error {
         }
         //server.Rpc()
         for {
-            
+
         }
     }
 
