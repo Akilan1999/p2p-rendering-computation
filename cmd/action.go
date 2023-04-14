@@ -18,6 +18,9 @@ var CliAction = func(ctx *cli.Context) error {
             fmt.Print(err)
         }
         //server.Rpc()
+        for {
+            
+        }
     }
 
     //Listing servers and also updates IP tables (Default 3 hops)
@@ -135,7 +138,7 @@ var CliAction = func(ctx *cli.Context) error {
 
     //Sets default paths to the config file
     if SetDefaultConfig {
-        _, err := generate.SetDefaults("P2PRC", false, nil, true)
+        _, err := generate.SetDefaults("P2PRC", false, nil, false)
         if err != nil {
             fmt.Print(err)
         }
