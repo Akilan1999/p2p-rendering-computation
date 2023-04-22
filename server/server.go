@@ -197,7 +197,7 @@ func Server() (*gin.Engine, error) {
             // Create 3 second delay to allow FRP server to start
             time.Sleep(1 * time.Second)
             // Starts FRP as a client with
-            proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort)
+            proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "")
             if err != nil {
                 return nil, err
             }
