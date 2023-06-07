@@ -17,11 +17,10 @@ var CliAction = func(ctx *cli.Context) error {
         if err != nil {
             fmt.Print(err)
         }
-
+        //server.Rpc()
         for {
 
         }
-        //server.Rpc()
     }
 
     //Listing servers and also updates IP tables (Default 3 hops)
@@ -96,10 +95,14 @@ var CliAction = func(ctx *cli.Context) error {
     }
 
     // Function called to stop and remove server from Docker
-    if RemoveVM != "" && ID != "" {
-        err := client.RemoveContianer(RemoveVM, ID)
-        if err != nil {
-            fmt.Print(err)
+    if RemoveVM != "" {
+        if ID == "" {
+            fmt.Println("provide container ID via --ID or --id")
+        } else {
+            err := client.RemoveContianer(RemoveVM, ID)
+            if err != nil {
+                fmt.Print(err)
+            }
         }
     }
 
@@ -135,7 +138,7 @@ var CliAction = func(ctx *cli.Context) error {
 
     //Sets default paths to the config file
     if SetDefaultConfig {
-        _, err := generate.SetDefaults("P2PRC", false)
+        _, err := generate.SetDefaults("P2PRC", false, nil, false)
         if err != nil {
             fmt.Print(err)
         }
@@ -182,7 +185,7 @@ var CliAction = func(ctx *cli.Context) error {
                 fmt.Println("Success")
             }
         } else {
-            fmt.Println("provide container ID")
+            fmt.Println("provide container ID via --ID or --id")
         }
 
     }

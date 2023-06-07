@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/Akilan1999/p2p-rendering-computation/cmd"
-	"github.com/urfave/cli/v2"
 	"log"
 	"os"
+
+	"github.com/Akilan1999/p2p-rendering-computation/cmd"
+	"github.com/urfave/cli/v2"
 )
 
 // VERSION specifies the version of the platform
