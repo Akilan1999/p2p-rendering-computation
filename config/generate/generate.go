@@ -37,7 +37,7 @@ func GetCurrentPath() (string, error) {
 
 // SetDefaults This function to be called only during a
 // make install
-func SetDefaults(envName string, forceDefault bool, ConfigUpdate ...*config.Config) (*config.Config, error) {
+func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, NoBoilerPlate bool, ConfigUpdate ...*config.Config) (*config.Config, error) {
     //Setting current directory to default path
     defaultPath, err := GetCurrentPath()
     if err != nil {
@@ -68,38 +68,31 @@ func SetDefaults(envName string, forceDefault bool, ConfigUpdate ...*config.Conf
     //    return err
     //}
 
+    var Defaults config.Config
+
     if len(ConfigUpdate) == 0 {
         //Setting default paths for the config file
-        defaults["IPTable"] = defaultPath + "p2p/iptable/ip_table.json"
-        defaults["DefaultDockerFile"] = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
-        defaults["DockerContainers"] = defaultPath + "server/docker/containers/"
-        defaults["SpeedTestFile"] = defaultPath + "p2p/50.bin"
-        defaults["IPV6Address"] = ""
-        defaults["PluginPath"] = defaultPath + "plugin/deploy"
-        defaults["TrackContainersPath"] = defaultPath + "client/trackcontainers/trackcontainers.json"
-        defaults["GroupTrackContainersPath"] = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
-        defaults["ServerPort"] = "8088"
-        defaults["FRPServerPort"] = "0"
-        defaults["BehindNAT"] = "True"
+        Defaults.IPTable = defaultPath + "p2p/iptable/ip_table.json"
+        Defaults.DefaultDockerFile = defaultPath + "server/docker/containers/docker-ubuntu-sshd/"
+        Defaults.DockerContainers = defaultPath + "server/docker/containers/"
+        Defaults.SpeedTestFile = defaultPath + "p2p/50.bin"
+        Defaults.IPV6Address = ""
+        Defaults.PluginPath = defaultPath + "plugin/deploy"
+        Defaults.TrackContainersPath = defaultPath + "client/trackcontainers/trackcontainers.json"
+        Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
+        Defaults.ServerPort = "8088"
+        Defaults.FRPServerPort = "True"
+        Defaults.CustomConfig = CustomConfig
+        Defaults.BehindNAT = "True"
         // Random name generator
         hostname, err := os.Hostname()
         if err != nil {
             return nil, err
         }
 
-        defaults["MachineName"] = hostname
+        Defaults.MachineName = hostname
     } else {
-        defaults["IPTable"] = ConfigUpdate[0].IPTable
-        defaults["DefaultDockerFile"] = ConfigUpdate[0].DefaultDockerFile
-        defaults["DockerContainers"] = ConfigUpdate[0].DockerContainers
-        defaults["SpeedTestFile"] = ConfigUpdate[0].SpeedTestFile
-        defaults["IPV6Address"] = ConfigUpdate[0].IPV6Address
-        defaults["PluginPath"] = ConfigUpdate[0].PluginPath
-        defaults["TrackContainersPath"] = ConfigUpdate[0].TrackContainersPath
-        defaults["GroupTrackContainersPath"] = ConfigUpdate[0].GroupTrackContainersPath
-        defaults["ServerPort"] = ConfigUpdate[0].ServerPort
-        defaults["FRPServerPort"] = ConfigUpdate[0].FRPServerPort
-        defaults["BehindNAT"] = ConfigUpdate[0].BehindNAT
+        Defaults = *ConfigUpdate[0]
     }
 
     //defaults["NetworkInterface"] = "wlp0s20f3"
@@ -108,22 +101,31 @@ func SetDefaults(envName string, forceDefault bool, ConfigUpdate ...*config.Conf
     //Paths to search for config file
     configPaths = append(configPaths, defaultPath)
 
-    if fileExists(defaultPath + "config.json") && forceDefault {
+    if fileExists(defaultPath+"config.json") && forceDefault {
         err := os.Remove(defaultPath + "config.json")
         if err != nil {
             return nil, err
         }
     }
 
-    //Calling configuration file
-    Config, err := config.ConfigInit(defaults, envName)
+    // write defaults to the config file
+    err = Defaults.WriteConfig()
     if err != nil {
         return nil, err
     }
 
-    err = GenerateFiles()
+    //Calling configuration file
+    Config, err := config.ConfigInit(defaults, nil, envName)
     if err != nil {
         return nil, err
     }
+
+    if !NoBoilerPlate {
+        err = GenerateFiles()
+        if err != nil {
+            return nil, err
+        }
+    }
+
     return Config, nil
 }

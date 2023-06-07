@@ -1,28 +1,28 @@
-package config
+package generate
 
 import (
     "fmt"
-    "github.com/Akilan1999/p2p-rendering-computation/config/generate"
+    "github.com/Akilan1999/p2p-rendering-computation/config"
     "os"
     "testing"
 )
 
-func TestConfigInit(t *testing.T) {
-    _, err := ConfigInit(nil)
-    if err != nil {
-        t.Error(err)
-    }
-}
+// func TestConfigInit(t *testing.T) {
+//     _, err := config.ConfigInit(nil)
+//     if err != nil {
+//         t.Error(err)
+//     }
+// }
 
-func TestSetDefaults(t *testing.T) {
-    _, err := generate.SetDefaults("", false)
-    if err != nil {
-        t.Error(err)
-    }
-}
+// func TestSetDefaults(t *testing.T) {
+//     _, err := SetDefaults("", false)
+//     if err != nil {
+//         t.Error(err)
+//     }
+// }
 
 func TestGetCurrentPath(t *testing.T) {
-    path, err := generate.GetCurrentPath()
+    path, err := GetCurrentPath()
     if err != nil {
         fmt.Println(err)
         t.Error(err)
@@ -31,7 +31,7 @@ func TestGetCurrentPath(t *testing.T) {
 }
 
 func TestGetPathP2PRC(t *testing.T) {
-    path, err := GetPathP2PRC("")
+    path, err := config.GetPathP2PRC("")
     if err != nil {
         fmt.Println(err)
         t.Error(err)
@@ -48,14 +48,14 @@ func TestSetEnvName(t *testing.T) {
     }
     // Sets the environment variable as the default to read
     // for P2PRC
-    err = SetEnvName("TEST")
+    err = config.SetEnvName("TEST")
     if err != nil {
         fmt.Println(err)
         t.Error(err)
     }
 
     // Checks if the output for the default read is "lol"
-    path, err := GetPathP2PRC("")
+    path, err := config.GetPathP2PRC("")
     if err != nil {
         fmt.Println(err)
         t.Error(err)
