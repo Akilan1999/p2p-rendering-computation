@@ -35,6 +35,3 @@ func main() {
 }
 ```
 
-// todo diagram representation of the interaction with 
-nodes spawned in the p2p network.
-
