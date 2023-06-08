@@ -4,6 +4,14 @@ This section focuses on an in-depth understanding of the server module implement
 understand the architecture of the server module refer. The server module can be split
 into various sections. Each section will provide information on how a certain feature works.
 
+The server module takes care of setting and removing the virtualization environment (i.e
+containers) for accessing and doing the appropriate computation. It also interacts with the peer to
+peer module to update the IP table on the server side. The server module
+accesses information regarding CPU and GPU specifications of the machine running the server
+module. To do Speed tests the server has routes which allows it to upload and download a 50mb.
+
+![UML diagram of server module](images/servermoduleArch.png)
+
 ## Web framework
 The web framework used for the server module is called Gin. The reason Gin was chosen is due to
 its wide use and strong documentation available on the official github repository. The default
