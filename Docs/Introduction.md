@@ -21,7 +21,7 @@ run these heavy tasks can be really useful. Ethically speaking this is leading t
 computing power similar to what is happening in the web server area. By using peer to peer
 principles it is possible to remove the monopolisation factor and increase the bandwidth between
 the client and server.
-
+<!-- 
 ## Aim
 This project aims to create a peer to peer (p2p) network, where a user can use the p2p network to
 act as a client (i.e sending tasks) or the server (i.e executing the tasks). A prototype application will
@@ -33,4 +33,4 @@ or virtual environments across selected nodes.
 rendering tools and tools to batch any sort of tasks.
 - Creating p2p network
 - Server to create a containerised environment
-- The client node to run tasks on Server containerised node
+- The client node to run tasks on Server containerised node -->
