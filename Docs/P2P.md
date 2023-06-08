@@ -19,10 +19,8 @@ In this repository the P2P module has been designed from sratch at the point of 
 
 
 ## Responsibility 
-- To perform speed test to determine best node to connect 
 - To ensure the IP table has nodes which are pingable 
-- Using techniques such as [UPNP](https://en.wikipedia.org/wiki/Universal_Plug_and_Play). Still under development
-- Port Forwarding (To be introducted in a future release) 
+- Taking to nodes behind NAT. [More about the implementation](NAT-Traversal)...
 
 
 ## Note:

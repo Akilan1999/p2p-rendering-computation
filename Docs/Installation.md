@@ -2,8 +2,8 @@
 
 Over here we will cover the basic steps to get the server and client side running. 
 
-## Alpha release install 
-https://github.com/Akilan1999/p2p-rendering-computation/releases/tag/v1.0.0-alpha
+## Latest release install 
+https://github.com/Akilan1999/p2p-rendering-computation/releases
 
 ## Install from Github master branch 
 
@@ -65,7 +65,7 @@ USAGE:
    p2prc [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.0
+   <version no>
 
 COMMANDS:
    help, h  Shows a list of commands or help for one command
@@ -78,7 +78,7 @@ GLOBAL OPTIONS:
    --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
    --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
    --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
-   --RemoveVM value, --rm value           Stop and Remove Docker container [$REMOVE_VM]
+   --RemoveVM value, --rm value           Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id [$REMOVE_VM]
    --ID value, --id value                 Docker Container ID [$ID]
    --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
    --GPU, --gpu                           Create Docker Containers to access GPU (default: false) [$USE_GPU]
@@ -86,10 +86,20 @@ GLOBAL OPTIONS:
    --SetDefaultConfig, --dc               Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
    --NetworkInterfaces, --ni              Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
    --ViewPlugins, --vp                    Shows plugins available to be executed (default: false) [$VIEW_PLUGIN]
-   --TrackedContainers, --tc              View containers which have been created from the client side  (default: false) [$TRACKED_CONTAINERS]
+   --TrackedContainers, --tc              View (currently running) containers which have been created from the client side  (default: false) [$TRACKED_CONTAINERS]
    --ExecutePlugin value, --plugin value  Plugin which needs to be executed [$EXECUTE_PLUGIN]
+   --CreateGroup, --cgroup                Creates a new group (default: false) [$CREATE_GROUP]
+   --Group value, --group value           group flag with argument group ID [$GROUP]
+   --Groups, --groups                     View all groups (default: false) [$GROUPS]
+   --RemoveContainerGroup, --rmcgroup     Remove specific container in the group (default: false) [$REMOVE_CONTAINER_GROUP]
+   --RemoveGroup value, --rmgroup value   Removes the entire group [$REMOVE_GROUP]
+   --Generate value, --gen value          Generates a new copy of P2PRC which can be modified based on your needs [$GENERATE]
+   --ModuleName value, --mod value        New go project module name [$MODULENAME]
+   --PullPlugin value, --pp value         Pulls plugin from git repos [$PULLPLUGIN]
+   --RemovePlugin value, --rp value       Removes plugin [$REMOVEPLUGIN]
    --help, -h                             show help (default: false)
    --version, -v                          print the version (default: false)
+
 ```
 
 <br>
@@ -209,12 +219,6 @@ This feature is still Under Development:
 - Ansible:
   - Debian/ubuntu: ```sudo apt install ansible```
   - Others: [Installation link](https://ansible-tips-and-tricks.readthedocs.io/en/latest/ansible/install/)
-    
-#### Set ansible host_key_checking to false 
-- On linux
-  - ```sudo nano /etc/ansible/ansible.cfg```: Open the following file. If this file is not found then where
-    ever the file ```ansible.cfg``` is located.
-  -  Add or uncomment ```host_key_checking = False```
   
 #### Run Test Cases 
 - Generate Test Case Ansible file 
