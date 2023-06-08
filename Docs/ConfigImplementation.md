@@ -13,9 +13,19 @@ JSON format.
 
 ```json
 {
-  "dockerfile": "/<path>/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
-  "iptable": "/<path>/p2p-rendering-computation/p2p/ip_table.json",
-  "speedtestfile": "/<path>/p2p-rendering-computation/p2p/50.bin"
+ "MachineName": "pc-74-120.customer.ask4.lan",
+ "IPTable": "/Users/akilan/Documents/p2p-rendering-computation/p2p/iptable/ip_table.json",
+ "DockerContainers": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/",
+ "DefaultDockerFile": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
+ "SpeedTestFile": "/Users/akilan/Documents/p2p-rendering-computation/p2p/50.bin",
+ "IPV6Address": "",
+ "PluginPath": "/Users/akilan/Documents/p2p-rendering-computation/plugin/deploy",
+ "TrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/trackcontainers.json",
+ "ServerPort": "8088",
+ "GroupTrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/grouptrackcontainers.json",
+ "FRPServerPort": "True",
+ "BehindNAT": "True",
+ "CustomConfig": null
 }
 ```
 
