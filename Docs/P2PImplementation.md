@@ -23,27 +23,12 @@ path of the IP table json file is received from the configuration module.
       "latency": "<latency>",
       "download": "<download>",
       "upload": "<upload>"
-      "port no": "<server port no>"
+      "port no": "<server port no>",
     }
   ]
 }
 ```
 
-## Speed Test
-The speed test functions populate the fields which are latency, download, upload speed. Before the
-speed test begins for each server IP address. The p2p module ensures that each server IP address
-is pingable. If the server IP address is not pingable then it removes that IP address from the struct.
-
 ### Latency
 The latency is measured in milliseconds. The route /server_info is called from the
 server and time it takes to provide a json response is recorded.
-
-### Download speed 
-The download speed is measured as (<file size>/<time taken to
-download>)*8. This gives the result in megabits per second. The file downloaded is a 50 mb
-auto generated file.
-
-### Upload speed 
-The upload speed is measured as (<file size>/<time taken to upload>)*8. This
-gives the results in megabits per second. The file uploaded is a 50 mb auto generated file.
-The route /upload is called from the server side to upload the file.
