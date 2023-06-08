@@ -6,7 +6,7 @@ commands as possible. The cli was built using the library called urfave cli v2 .
 major files created named as flags.go and actions.go.
 ### Flags.go
 The flags .go file is responsible to create the appropriate flags for the cli. There are 2 types of flags
-called boolean and string as described in Fig 5.3.1. Each of the flags outputs are assigned to a
+called boolean and string. Each of the flags outputs are assigned to a
 variable to be handled. The flags can also detect environment variables set. This feature is useful
 because if the user wants to call certain flags in a repeated sequence it only has to be initialized
 once.
