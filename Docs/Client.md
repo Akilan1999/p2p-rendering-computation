@@ -1,6 +1,5 @@
 # Client Module 
 This module is incharge of communicating with the server and receiving the appropriate information back from the server. 
-Note: To [read more about the functions](https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation@v0.0.0-20210404191839-6a046babcb02/client)
 
 ## Functions of the Client Module
 - [Interact with the Server Api](#functions-of-the-client-module)
