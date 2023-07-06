@@ -1,5 +1,8 @@
 # Chapter 1: Introduction
 
+| [◀ Back to TOC](README.md) | [Next ▶](Installation.md) |
+|:-----------:|---------|
+
 ## Abstract
 This project focuses on creating a framework on running heavy tasks that a regular computer
 cannot run easily such as graphically demanding video games, rendering 3D animations , protein
@@ -34,3 +37,7 @@ rendering tools and tools to batch any sort of tasks.
 - Creating p2p network
 - Server to create a containerised environment
 - The client node to run tasks on Server containerised node -->
+
+---
+
+### Next Chapter: [Installation](Installation.md)
