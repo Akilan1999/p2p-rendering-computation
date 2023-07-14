@@ -1,13 +1,16 @@
 {
- "ip_address": [
-  {
-   "Name": "Node1",
-   "IPV4": "64.227.168.102",
-   "IPV6": "",
-   "Latency": 0,
-   "ServerPort": "8088",
-   "NAT": "False",
-   "EscapeImplementation": "None"
-  }
- ]
+  "ip_address": [
+    {
+      "Name": "Node1",
+      "IPV4": "139.59.162.154",
+      "IPV6": "",
+      "Latency": 0,
+      "Download": 0,
+      "Upload": 0,
+      "ServerPort": "8078",
+      "NAT": "False",
+      "EscapeImplementation": "",
+      "CustomInformation": null
+    }
+  ]
 }
