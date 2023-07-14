@@ -150,6 +150,15 @@ func UpdateIpTableListClient() error {
     return nil
 }
 
+func RemoveOfflineNodes() error {
+    // Ensure that the IP Table has Node pingable
+    err := p2p.LocalSpeedTestIpTable()
+    if err != nil {
+        return err
+    }
+    return nil
+}
+
 // SendPostRequest Sends a file as a
 //POST request.
 // Reference (https://stackoverflow.com/questions/51234464/upload-a-file-with-post-request-golang)
