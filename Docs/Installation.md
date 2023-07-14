@@ -1,4 +1,7 @@
-# Installation 
+# Installation
+
+| [◀ Previous](Introduction.md) | [Next ▶](Abstractions.md) |
+|:-----------:|---------|
 
 Over here we will cover the basic steps to get the server and client side running. 
 
@@ -39,7 +42,7 @@ To set up P2PRC on Windows, simply run this batch file.
 .\install.bat
 ```
 
-### Add appropriate paths to .bashrc
+### Add appropriate paths to `.bashrc`
 ```
 export P2PRC=/<PATH>/p2p-rendering-computation
 export PATH=/<PATH>/p2p-rendering-computation:${PATH}
@@ -111,7 +114,7 @@ GLOBAL OPTIONS:
 # Using basic commands 
 
 ### Start as a server 
-Do ensure you have docker installed for this 
+Do ensure you have Docker installed for this 
 ```
 p2prc -s 
 ```
@@ -223,14 +226,13 @@ This feature is still Under Development:
 #### Run Test Cases 
 - Generate Test Case Ansible file 
   - ```make testcases```
-- Enter inside plugin directory and run tests. 
-  Note: That docker needs to installed and needs to run without 
-  sudo. Refer the section install Docker. 
+- Enter inside plugin directory and run tests.<br>
+  **Note:** That docker needs to installed and needs to run without 
+  sudo. Refer the section [Install Docker](#install-docker). 
   - ```cd plugin```
   - ```go test .```
-  
 
+---
   
-  
-
+### Next Chapter: [Abstractions](Abstractions.md)
 
