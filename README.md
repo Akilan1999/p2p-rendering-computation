@@ -49,21 +49,33 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 ```go
 package main
 
-import "github.com/Akilan1999/p2p-rendering-computation/abstractions"
+import (
+    "github.com/Akilan1999/p2p-rendering-computation/abstractions"
+    "os"
+)
 
 func main() {
-    // Initialize with base p2prc config files
-    err := abstractions.Init("TEST")
-    if err != nil {
-        return
+    // check if the config file exists
+    if _, err := os.Stat("config.json"); err != nil {
+        // Initialize with base p2prc config files
+        _, err := abstractions.Init("TEST", nil)
+        if err != nil {
+            return
+        }
     }
 
     // start p2prc
-    _, err = abstractions.Start()
+    _, err := abstractions.Start()
     if err != nil {
         return
     }
 }
+```
+
+### Export once this is added export P2PRC as environment paths 
+```
+export P2PRC=<PROJECT PATH>
+export PATH=<PROJECT PATH>:${PATH}
 ```
 [Read more](Docs/Abstractions.md) ...
 
