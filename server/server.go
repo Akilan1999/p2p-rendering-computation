@@ -170,6 +170,9 @@ func Server() (*gin.Engine, error) {
     // if not update current entry as proxy address
     // with appropriate port on IP Table
     if config.BehindNAT == "True" {
+        // Remove nodes currently not pingable
+        clientIPTable.RemoveOfflineNodes()
+
         table, err := p2p.ReadIpTable()
         if err != nil {
             return nil, err
@@ -182,7 +185,7 @@ func Server() (*gin.Engine, error) {
         for i, _ := range table.IpAddress {
             // Checks if the ping is the lowest and if the following node is acting as a proxy
             //if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-            if table.IpAddress[i].Latency.Milliseconds() < lowestLatency {
+            if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
                 lowestLatency = table.IpAddress[i].Latency.Milliseconds()
                 lowestLatencyIpAddress = table.IpAddress[i]
             }
@@ -212,9 +215,19 @@ func Server() (*gin.Engine, error) {
             // append the following to the ip table
             table.IpAddress = append(table.IpAddress, ProxyIpAddr)
             // write information back to the IP Table
-            table.WriteIpTable()
+            err = table.WriteIpTable()
+            if err != nil {
+                return nil, err
+            }
             // update ip table
-            go clientIPTable.UpdateIpTableListClient()
+            go func() error {
+                err := clientIPTable.UpdateIpTableListClient()
+                if err != nil {
+                    fmt.Println(err)
+                    return err
+                }
+                return nil
+            }()
         }
 
     }
