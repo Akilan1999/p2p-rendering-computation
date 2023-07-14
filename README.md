@@ -58,7 +58,7 @@ func main() {
     // check if the config file exists
     if _, err := os.Stat("config.json"); err != nil {
         // Initialize with base p2prc config files
-        _, err := abstractions.Init("TEST", nil)
+        _, err := abstractions.Init(nil)
         if err != nil {
             return
         }
