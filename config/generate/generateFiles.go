@@ -143,16 +143,16 @@ func GenerateClientTrackContainers() (err error) {
         if err = os.Mkdir(path+"client", os.ModePerm); err != nil {
             return err
         }
+        if err = os.Mkdir(path+"client/trackcontainers", os.ModePerm); err != nil {
+            return err
+        }
 
-        if _, err = os.Stat(path + "client/trackcontainers.json"); os.IsNotExist(err) {
-            _, err = os.Create(path + "client/trackcontainers.json")
+        if _, err = os.Stat(path + "client/trackcontainers/trackcontainers.json"); os.IsNotExist(err) {
+            _, err = os.Create(path + "client/trackcontainers/trackcontainers.json")
             if err != nil {
                 return err
             }
-        }
-
-        if _, err = os.Stat(path + "client/grouptrackcontainers.json"); os.IsNotExist(err) {
-            _, err = os.Create(path + "client/grouptrackcontainers.json")
+            _, err = os.Create(path + "client/trackcontainers/grouptrackcontainers.json")
             if err != nil {
                 return err
             }
