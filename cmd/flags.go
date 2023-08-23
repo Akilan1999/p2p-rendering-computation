@@ -10,6 +10,7 @@ var (
 	ViewImages           string
 	CreateVM             string
 	ContainerName        string
+	BaseImage            string
 	Ports                string
 	Server               bool
 	RemoveVM             string
@@ -88,6 +89,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Specifying the container run on the server side",
 		EnvVars:     []string{"CONTAINER_NAME"},
 		Destination: &ContainerName,
+	},
+	&cli.StringFlag{
+		Name:        "BaseImage",
+		Aliases:     []string{"bi"},
+		Usage:       "Specifying the docker base image to template the dockerfile",
+		EnvVars:     []string{"CONTAINER_NAME"},
+		Destination: &BaseImage,
 	},
 	&cli.StringFlag{
 		Name:        "RemoveVM",
