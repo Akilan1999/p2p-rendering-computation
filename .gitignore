@@ -21,6 +21,8 @@ generate/Test
 #ignore windows exe files
 *.exe
 dist/
+# Ignore any sort of logs
+logs/
 
 # ignore docker image files
 server/docker/containers/
