@@ -37,6 +37,7 @@ var (
 	//--------------------------------
 	PullPlugin   string
 	RemovePlugin string
+	AddMetaData  string
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -240,5 +241,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Removes plugin",
 		EnvVars:     []string{"REMOVEPLUGIN"},
 		Destination: &RemovePlugin,
+	},
+	&cli.StringFlag{
+		Name:        "AddMetaData",
+		Aliases:     []string{"amd"},
+		Usage:       "Adds metadata about the current node in the p2p network which is then propagated through the network",
+		EnvVars:     []string{"ADDMETADATA"},
+		Destination: &AddMetaData,
 	},
 }

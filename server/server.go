@@ -212,6 +212,7 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.Name = config.MachineName
 			ProxyIpAddr.NAT = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
+			//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 
 			// append the following to the ip table
 			table.IpAddress = append(table.IpAddress, ProxyIpAddr)

@@ -273,5 +273,14 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 	}
 
+	if AddMetaData != "" {
+		err := clientIPTable.AddCustomInformationToIPTable(AddMetaData)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Success")
+		}
+	}
+
 	return nil
 }
