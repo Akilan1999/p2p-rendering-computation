@@ -208,6 +208,11 @@ p2prc --pp <repo link>
 p2prc --rp <plugin name> 
 ```
 
+### Added custom metadata about the current node
+```
+p2prc --amd "custom metadata"
+```
+
 <br>
 
 --------------

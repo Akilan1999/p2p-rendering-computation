@@ -1,6 +1,8 @@
 package p2p
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/Akilan1999/p2p-rendering-computation/config"
@@ -27,7 +29,8 @@ type IpAddress struct {
 	ServerPort           string        `json:"ServerPort"`
 	NAT                  string        `json:"NAT"`
 	EscapeImplementation string        `json:"EscapeImplementation"`
-	CustomInformation    []byte
+	CustomInformation    string        `json:"CustomInformation"`
+	//CustomInformationKey []byte        `json:"CustomInformationKey"`
 }
 
 type IP struct {
@@ -264,4 +267,27 @@ func PrettyPrint(data interface{}) {
 		return
 	}
 	fmt.Printf("%s \n", p)
+}
+
+func GenerateHashSHA256(text string) []byte {
+	h := sha256.New()
+	h.Write([]byte(text))
+
+	return h.Sum(nil)
+}
+
+// ValidateHashSHA256 CustomInformationKey the text and check if the text and
+// the hash are the same, if they are
+// then return true
+// SHA256 is the current hashing algorthm
+// used.
+func ValidateHashSHA256(text string, Hash []byte) bool {
+	h := sha256.New()
+	h.Write([]byte(text))
+
+	textHash := h.Sum(nil)
+	if bytes.Equal(textHash, Hash) {
+		return true
+	}
+	return false
 }

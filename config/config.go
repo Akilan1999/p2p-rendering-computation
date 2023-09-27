@@ -30,6 +30,7 @@ type Config struct {
 	GroupTrackContainersPath string
 	FRPServerPort            string
 	BehindNAT                string
+	IPTableKey               string
 	CustomConfig             interface{}
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int

@@ -2,7 +2,9 @@ package generate
 
 import (
 	"github.com/Akilan1999/p2p-rendering-computation/config"
+	"math/rand"
 	"os"
+	"time"
 )
 
 var (
@@ -85,13 +87,15 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.CustomConfig = CustomConfig
 		Defaults.BehindNAT = "True"
 		Defaults.DockerRunLogs = "/tmp/"
+		// Generate a random key to be added to IPTable
+		Defaults.IPTableKey = String(12)
 		// Random name generator
 		hostname, err := os.Hostname()
 		if err != nil {
 			return nil, err
 		}
 
-		Defaults.MachineName = hostname
+		Defaults.MachineName = hostname + "-" + String(7)
 	} else {
 		Defaults = *ConfigUpdate[0]
 	}
@@ -129,4 +133,23 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 	}
 
 	return Config, nil
+}
+
+// Generating a random string
+const charset = "abcdefghijklmnopqrstuvwxyz" +
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+var seededRand *rand.Rand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+func StringWithCharset(length int, charset string) string {
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+func String(length int) string {
+	return StringWithCharset(length, charset)
 }
