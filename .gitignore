@@ -26,3 +26,5 @@ logs/
 
 # ignore docker image files
 server/docker/containers/
+*.h
+*.so
