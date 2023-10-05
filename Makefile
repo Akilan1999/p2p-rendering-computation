@@ -9,3 +9,5 @@ testcases:
 run:
 	go run main.go
 
+sharedObjects:
+	sh build-bindings.sh
