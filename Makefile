@@ -11,3 +11,6 @@ run:
 
 sharedObjects:
 	sh build-bindings.sh
+
+python:
+	sh build-python-package.sh
