@@ -28,3 +28,6 @@ logs/
 server/docker/containers/
 *.h
 *.so
+
+# generic folder to ignore
+export/
