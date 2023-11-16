@@ -7,8 +7,10 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
+	"time"
 )
 
 // The Client package where data-types
@@ -19,8 +21,8 @@ import (
 // --------------------------------- Container Control ----------------------------------------
 
 //export StartContainer
-func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string, baseImage string) (output *C.char) {
-	container, err := client.StartContainer(IP, NumPorts, GPU, ContainerName, baseImage)
+func StartContainer(IP string) (output *C.char) {
+	container, err := client.StartContainer(IP, 0, false, "", "")
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -113,6 +115,34 @@ func UpdateIPTable() (output *C.char) {
 		return C.CString(err.Error())
 	}
 	return C.CString("Success")
+}
+
+//export EscapeFirewall
+func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internalPort string) (output *C.char) {
+	// Get free port from P2PRC server node
+	serverPort, err := frp.GetFRPServerPort("http://" + HostOutsideNATIP + ":" + HostOutsideNATPort)
+
+	if err != nil {
+		return C.CString(err.Error())
+	}
+
+	time.Sleep(5 * time.Second)
+
+	ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "")
+	if err != nil {
+		return C.CString(err.Error())
+	}
+
+	return C.CString(ExposedPort)
+}
+
+//export MapPort
+func MapPort(Port string) *C.char {
+	port, err := abstractions.MapPort(Port)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString(port)
 }
 
 // --------------------------------- Controlling Server  ----------------------------------------
