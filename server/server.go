@@ -1,6 +1,7 @@
 package server
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
@@ -108,14 +109,26 @@ func Server() (*gin.Engine, error) {
 		GPU := c.DefaultQuery("GPU", "false")
 		ContainerName := c.DefaultQuery("ContainerName", "")
 		BaseImage := c.DefaultQuery("BaseImage", "")
+		PublicKey := c.DefaultQuery("PublicKey", "")
 		var PortsInt int
+
+		if PublicKey == "" {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", "Publickey not passed"))
+		}
+
+		PublicKeyDecoded, err := b64.StdEncoding.DecodeString(PublicKey)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
 
 		// Convert Get Request value to int
 		fmt.Sscanf(Ports, "%d", &PortsInt)
 
+		fmt.Println(string(PublicKeyDecoded[:]))
+
 		// Creates container and returns-back result to
 		// access container
-		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage)
+		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage, string(PublicKeyDecoded[:]))
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))

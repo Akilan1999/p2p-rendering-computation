@@ -99,10 +99,17 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
         Defaults.PublicKeyFile = defaultPath + "p2prc.publicKey"
         Defaults.PrivateKeyFile = defaultPath + "p2prc.privateKey"
 
-        // Generate SSH keys
-        err = MakeSSHKeyPair(Defaults.PublicKeyFile, Defaults.PrivateKeyFile)
+        PrivateKeyExists, err := FileExists(Defaults.PrivateKeyFile)
         if err != nil {
             return nil, err
+        }
+
+        if !PrivateKeyExists {
+            // Generate SSH keys
+            err = MakeSSHKeyPair(Defaults.PublicKeyFile, Defaults.PrivateKeyFile)
+            if err != nil {
+                return nil, err
+            }
         }
 
         Defaults.MachineName = hostname + "-" + String(7)
