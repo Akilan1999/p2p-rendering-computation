@@ -31,3 +31,10 @@ server/docker/containers/
 
 # generic folder to ignore
 export/
+
+# Any testing file
+test*
+
+# Ignore public and private keys
+p2prc.publicKey
+p2prc.privateKey

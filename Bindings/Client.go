@@ -3,6 +3,8 @@ package main
 import "C"
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
@@ -10,7 +12,6 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
-	"time"
 )
 
 // The Client package where data-types

@@ -31,6 +31,8 @@ type Config struct {
 	FRPServerPort            string
 	BehindNAT                string
 	IPTableKey               string
+	PublicKeyFile            string
+	PrivateKeyFile           string
 	CustomConfig             interface{}
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
