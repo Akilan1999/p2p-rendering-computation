@@ -127,7 +127,6 @@ func Server() (*gin.Engine, error) {
 			if err != nil {
 				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 			}
-			fmt.Println(resp)
 		}
 
 		c.JSON(http.StatusOK, resp)
