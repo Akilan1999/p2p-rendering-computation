@@ -1,4 +1,4 @@
-
+> **_NOTE:_**  Fixing documentation to lastest changes ,If you have any questions setting up P2PRC either create an issue or send me an email (me AT akilan dot io)
 <h1 align="center">
   <br>
   <a href=""><img src="https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png" alt="p2prc" width="400"></a>
