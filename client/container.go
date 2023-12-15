@@ -1,8 +1,10 @@
 package client
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"io/ioutil"
@@ -33,9 +35,22 @@ func StartContainer(IP string, NumPorts int, GPU bool, ContainerName string, bas
 	//if version == "version 6" {
 	//	URL = "http://[" + IP + "]:" + serverPort + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName
 	//} else {
-	URL = "http://" + IP + "/startcontainer?ports=" + fmt.Sprint(NumPorts) + "&GPU=" + strconv.FormatBool(GPU) + "&ContainerName=" + ContainerName + "&BaseImage=" + baseImage
-	//}
+	// Get config information
+	Config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
+	// Get public key
+	PublicKey, err := Config.GetPublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	// Used in URL to pass public key -> b64.StdEncoding.EncodeToString([]byte(PublicKey))
+	URL = `http://` + IP + `/startcontainer?ports=` + fmt.Sprint(NumPorts) + `&GPU=` + strconv.FormatBool(GPU) + `&ContainerName=` + ContainerName + `&BaseImage=` + baseImage + `&PublicKey=` + b64.StdEncoding.EncodeToString([]byte(PublicKey))
+
+	// Encode URL due to public key passed.
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil, err

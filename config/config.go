@@ -158,3 +158,14 @@ func (c *Config) WriteConfig() error {
 	_ = ioutil.WriteFile(defaultPath+"config.json", file, 0644)
 	return nil
 }
+
+// GetPublicKey Gets public key of the current machine
+// based on the path provided on the
+// config file
+func (c *Config) GetPublicKey() (string, error) {
+	publicKey, err := ioutil.ReadFile(c.PublicKeyFile) // just pass the file name
+	if err != nil {
+		return "", err
+	}
+	return string(publicKey), nil
+}

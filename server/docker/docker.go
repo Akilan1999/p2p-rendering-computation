@@ -20,18 +20,17 @@ import (
 )
 
 type DockerVM struct {
-	SSHUsername   string `json:"SSHUsername"`
-	SSHPublcKey   string `json:"SSHPublicKey"`
-	SSHPrivateKey string `json:"SSHPrivateKey"`
-	ID            string `json:"ID"`
-	TagName       string `json:"TagName"`
-	ImagePath     string `json:"ImagePath"`
-	Ports         Ports  `json:"Ports"`
-	GPU           string `json:"GPU"`
-	TempPath      string
-	BaseImage     string
-	LogsPath      string
-	SSHCommand    string `json:"SSHCommand"`
+	SSHUsername string `json:"SSHUsername"`
+	SSHPublcKey string `json:"SSHPublicKey"`
+	ID          string `json:"ID"`
+	TagName     string `json:"TagName"`
+	ImagePath   string `json:"ImagePath"`
+	Ports       Ports  `json:"Ports"`
+	GPU         string `json:"GPU"`
+	TempPath    string
+	BaseImage   string
+	LogsPath    string
+	SSHCommand  string `json:"SSHCommand"`
 }
 
 type DockerContainers struct {
@@ -68,7 +67,7 @@ var dockerRegistryUserID = ""
 
 // BuildRunContainer Function is incharge to invoke building and running contianer and also allocating external
 // ports
-func BuildRunContainer(NumPorts int, GPU string, ContainerName string, baseImage string) (*DockerVM, error) {
+func BuildRunContainer(NumPorts int, GPU string, ContainerName string, baseImage string, publicKey string) (*DockerVM, error) {
 	//Docker Struct Variable
 	var RespDocker *DockerVM = new(DockerVM)
 
@@ -95,8 +94,7 @@ func BuildRunContainer(NumPorts int, GPU string, ContainerName string, baseImage
 	}
 	RespDocker.ImagePath = config.DefaultDockerFile
 	RespDocker.LogsPath = config.DockerRunLogs
-	RespDocker.SSHPublcKey = config.PublicKeyFile
-	RespDocker.SSHPrivateKey = config.PrivateKeyFile
+	RespDocker.SSHPublcKey = publicKey
 
 	// We are checking if the container name is not nil and not equal to the default one used
 	// which is docker-ubuntu-sshd
@@ -198,10 +196,9 @@ func (d *DockerVM) imageBuild(dockerClient *client.Client) error {
 	//defer cancel()
 
 	var cmd bytes.Buffer
-	cmd.WriteString("docker build -t " + d.TagName + " " + d.ImagePath + "/" + d.TagName + ` --build-arg SSH_KEY="$(cat ` + d.SSHPublcKey + `)"`)
+	cmd.WriteString("docker build -t " + d.TagName + " " + d.ImagePath + "/" + d.TagName + ` --build-arg SSH_KEY="` + d.SSHPublcKey + `"`)
 	//"-v=/opt/data:/data p2p-ubuntu /start > /dev/null"
 	cmdStr := cmd.String()
-	fmt.Println(cmdStr)
 	output, err := exec.Command("/bin/sh", "-c", cmdStr).Output()
 	fmt.Printf("%s", output)
 	if err != nil {
