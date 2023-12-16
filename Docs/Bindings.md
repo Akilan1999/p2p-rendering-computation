@@ -22,6 +22,73 @@ ls
 p2prc.h p2prc.so
 ```
 
+## Workings under the hood 
+Below are a sample set of commands to 
+open the bindings implementation.
+```
+# run
+cd Bindings/
+# list files
+ls 
+# search for file
+Client.go
+```
+### In Client go
+There a few things to notice which are different from 
+your standard Go programs: 
+
+1. We import "C" which means [Cgo](https://pkg.go.dev/cmd/cgo) is required. 
+```go
+import "C"
+```
+2. All functions which are required to be called from other programming languages
+have comment such as.
+```go
+//export <function name>
+
+// ------------ Example ----------------
+// The function below allows to externally
+// to call the P2PRC function to start containers
+// in a specific node in the know list of nodes
+// in the p2p network.
+// Note: the comment "//export StartContainer".
+
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+ }
+```
+3. While looking through the file (If 2 files are compared
+it is pretty trivial to notice a common structure).
+```go
+// --------- Example ------------
+
+//export ViewPlugin
+func ViewPlugin() (output *C.char) {
+	plugins, err := plugin.DetectPlugins()
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return ConvertStructToJSONString(plugins)
+}
+
+//export PullPlugin
+func PullPlugin(pluginUrl string) (output *C.char) {
+	err := plugin.DownloadPlugin(pluginUrl)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString("Success")
+}
+```
+
+
+
+
 ## Current languages supported
 - Python
 
