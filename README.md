@@ -25,7 +25,7 @@ flexibility on tracking the container's usages and killing the containers at any
 
 ## Table of contents
 1. [Introduction](#Introduction)
-2. [Installation](#Installation)
+2. [Installation](#extend-your-application-with-p2prc)
 3. [Design Architecture](#Design-Architecture)
 4. [Implementation](#Implementation) 
 5. [Find out more](#Find-out-more)
