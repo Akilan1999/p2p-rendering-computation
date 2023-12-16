@@ -48,6 +48,7 @@ flexibility on tracking the container's usages and killing the containers at any
    4. [Config Module](Docs/ConfigImplementation.md)
    5. [Cli Module](Docs/CliImplementation.md)
    6. [Plugin Module](Docs/PluginImplementation.md)
+   7. [Language Bindings](Docs/Bindings.md)
 <!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
 <br>
