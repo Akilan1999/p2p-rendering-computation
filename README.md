@@ -1,5 +1,5 @@
 > **_NOTE:_**  Fixing documentation to lastest changes ,If you have any questions setting up P2PRC either create an issue or send me an email (me AT akilan dot io).
-> Currently HEAD is alaways intended to stay on a working state. It is recommended to alaways use HEAD in your go.mod file.
+> Currently HEAD is always intended to stay on a working state. It is recommended to always use HEAD in your go.mod file.
 <h1 align="center">
   <br>
   <a href=""><img src="https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png" alt="p2prc" width="400"></a>
@@ -24,12 +24,31 @@ flexibility on tracking the container's usages and killing the containers at any
 
 <br>
 
-## Table of contents
+## Table of contents in the current README 
 1. [Introduction](#Introduction)
 2. [Installation](#extend-your-application-with-p2prc)
 3. [Design Architecture](#Design-Architecture)
 4. [Implementation](#Implementation) 
 5. [Find out more](#Find-out-more)
+
+<br>
+
+# Table of contents in the Docs folder 
+1. [Introduction](Docs/Introduction.md)
+2. [Installation](Docs/Installation.md)
+3. [Abstractions](Docs/Abstractions.md)
+<!-- 3. [Design Architecture](DesignArchtectureIntro.md)
+   1. [Client Module](ClientArchitecture.md)
+   2. [P2P Module](P2PArchitecture.md)
+   3. [Server Module](ServerArchitecture.md) -->
+4. [Implementation](Docs/Implementation.md) 
+   1. [Client Module](Docs/ClientImplementation.md)
+   2. [P2P Module](Docs/P2PImplementation.md)
+   3. [Server Module](Docs/ServerImplementation.md)
+   4. [Config Module](Docs/ConfigImplementation.md)
+   5. [Cli Module](Docs/CliImplementation.md)
+   6. [Plugin Module](Docs/PluginImplementation.md)
+<!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
 <br>
 
