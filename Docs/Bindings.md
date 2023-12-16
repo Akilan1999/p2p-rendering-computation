@@ -4,17 +4,17 @@
 <br> 
 
 ## How to build shared object files 
-The easier way
+#### The easier way
 ```bash
 # Run
 make sharedObjects
 ```
-Or the direct way
+#### Or the direct way
 ```bash
 # Run
 cd Bindings && go build -buildmode=c-shared -o p2prc.so
 ```
-If successfully built:
+#### If successfully built:
 ```bash
 # Enter into the Bindings directory
 cd Bindings
@@ -40,12 +40,11 @@ Client.go
 There a few things to notice which are different from 
 your standard Go programs: 
 
-1. We import "C" which means [Cgo](https://pkg.go.dev/cmd/cgo) is required. 
+#### 1. We import "C" which means [Cgo](https://pkg.go.dev/cmd/cgo) is required. 
 ```go
 import "C"
 ```
-2. All functions which are required to be called from other programming languages
-have comment such as.
+#### 2. All functions which are required to be called from other programming languages have comment such as.
 ```go
 //export <function name>
 
@@ -65,8 +64,7 @@ func StartContainer(IP string) (output *C.char) {
      return ConvertStructToJSONString(container)
  }
 ```
-3. While looking through the file (If 2 files are compared
-it is pretty trivial to notice a common structure).
+#### 3. While looking through the file (If 2 files are compared it is pretty trivial to notice a common structure).
 ```go
 // --------- Example ------------
 
@@ -89,7 +87,7 @@ func ViewPlugin() (output *C.char) {
 }
 
 ```
-It is easy to notice that:
+#### It is easy to notice that:
 - ```ConvertStructToJSONString(<go object>)```: This is a helper function that convert
   a go object to JSON string initially and converts it to ```CString```.
 - ```(output *C.char)```: This is the return type for most of the functions.
