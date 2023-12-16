@@ -1,6 +1,8 @@
 # Language Bindings
 [Language bindings](https://en.wikipedia.org/wiki/Language_binding) refers to wrappers to bridge 2 programming languages. This is used in P2PRC to extend calling P2PRC functions in other programming languages. Currently this is done by generating ```.so``` and ```.h``` from the Go compiler.
 
+<br> 
+
 ## How to build shared object files 
 The easier way
 ```bash
@@ -21,6 +23,7 @@ ls
 # Find files
 p2prc.h p2prc.so
 ```
+<br>
 
 ## Workings under the hood 
 Below are a sample set of commands to 
@@ -67,6 +70,15 @@ it is pretty trivial to notice a common structure).
 ```go
 // --------- Example ------------
 
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+}
+
 //export ViewPlugin
 func ViewPlugin() (output *C.char) {
 	plugins, err := plugin.DetectPlugins()
@@ -76,17 +88,25 @@ func ViewPlugin() (output *C.char) {
 	return ConvertStructToJSONString(plugins)
 }
 
-//export PullPlugin
-func PullPlugin(pluginUrl string) (output *C.char) {
-	err := plugin.DownloadPlugin(pluginUrl)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return C.CString("Success")
+```
+It is easy to notice that:
+- ```ConvertStructToJSONString(<go object>)```: This is a helper function that convert
+  a go object to JSON string initially and converts it to ```CString```.
+- ```(output *C.char)```: This is the return type for most of the functions.
+
+#### A Pseudo code to refer to the common function implementation shape could be represented as:
+```
+func <Function name> (output *C.char) {
+      <response>,<error> := <P2PRC function name>(<parameters if needed>)
+      if <error> != nil {
+          return C.CString(<error>.Error())
+      }
+      return ConvertStructToJSONString(<response>)
 }
 ```
 
 
+<br>
 
 
 ## Current languages supported
