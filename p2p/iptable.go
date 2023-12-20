@@ -27,6 +27,7 @@ type IpAddress struct {
 	Download             float64       `json:"Download"`
 	Upload               float64       `json:"Upload"`
 	ServerPort           string        `json:"ServerPort"`
+	BareMetalSSHPort     string        `json:"BareMetalSSHPort"`
 	NAT                  string        `json:"NAT"`
 	EscapeImplementation string        `json:"EscapeImplementation"`
 	CustomInformation    string        `json:"CustomInformation"`

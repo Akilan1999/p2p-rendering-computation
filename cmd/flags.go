@@ -20,6 +20,7 @@ var (
 	UpdateServerList     bool
 	ServerList           bool
 	SetDefaultConfig     bool
+	BareMetalPublicKey   string
 	NetworkInterface     bool
 	ViewPlugin           bool
 	TrackedContainers    bool
