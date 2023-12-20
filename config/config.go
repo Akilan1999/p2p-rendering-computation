@@ -33,6 +33,7 @@ type Config struct {
 	IPTableKey               string
 	PublicKeyFile            string
 	PrivateKeyFile           string
+	BareMetal                string
 	CustomConfig             interface{}
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int

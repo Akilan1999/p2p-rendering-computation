@@ -224,6 +224,19 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.Name = config.MachineName
 			ProxyIpAddr.NAT = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
+
+			// Sorry Jan it's a string
+			// Yes I could convert it
+			// to a boolean operator
+			// But I am way too tired
+			if config.BareMetal == "True" {
+				_, SSHPort, err := MapPort("22")
+				if err != nil {
+					return nil, err
+				}
+				ProxyIpAddr.BareMetalSSHPort = SSHPort
+			}
+
 			//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 
 			// append the following to the ip table
@@ -252,11 +265,11 @@ func Server() (*gin.Engine, error) {
 	return r, nil
 }
 
-func MapPort(port string) (string, error) {
+func MapPort(port string) (string, string, error) {
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// update IPTable with new port and ip address and update ip table
@@ -267,7 +280,7 @@ func MapPort(port string) (string, error) {
 
 	table, err := p2p.ReadIpTable()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var lowestLatency int64
@@ -287,14 +300,14 @@ func MapPort(port string) (string, error) {
 	if lowestLatency != 10000000 {
 		serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 		// Create 3 second delay to allow FRP server to start
 		time.Sleep(1 * time.Second)
 		// Starts FRP as a client with
 		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "")
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 
 		// updating with the current proxy address
@@ -306,5 +319,5 @@ func MapPort(port string) (string, error) {
 		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 	}
 
-	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, nil
+	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, nil
 }
