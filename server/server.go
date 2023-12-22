@@ -173,6 +173,16 @@ func Server() (*gin.Engine, error) {
 		c.String(http.StatusOK, strconv.Itoa(port))
 	})
 
+	r.GET("/MAPPort", func(c *gin.Context) {
+		Ports := c.DefaultQuery("port", "0")
+		url, _, err := MapPort(Ports)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
+		c.String(http.StatusOK, url)
+	})
+
 	// If there is a proxy port specified
 	// then starts the FRP server
 	//if config.FRPServerPort != "0" {
