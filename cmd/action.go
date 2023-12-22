@@ -282,5 +282,17 @@ var CliAction = func(ctx *cli.Context) error {
 		}
 	}
 
+	if MAPPort != "" {
+		address, err := client.MAPPort(MAPPort)
+		if err != nil {
+			return err
+		}
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(address)
+		}
+	}
+
 	return nil
 }

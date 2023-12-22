@@ -20,7 +20,6 @@ var (
 	UpdateServerList     bool
 	ServerList           bool
 	SetDefaultConfig     bool
-	BareMetalPublicKey   string
 	NetworkInterface     bool
 	ViewPlugin           bool
 	TrackedContainers    bool
@@ -30,6 +29,7 @@ var (
 	Groups               bool
 	RemoveContainerGroup bool
 	RemoveGroup          string
+	MAPPort              string
 	//FRPProxy             bool
 	// Generate only allowed in dev release
 	// -- REMOVE ON REGULAR RELEASE --
@@ -204,6 +204,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Removes the entire group",
 		EnvVars:     []string{"REMOVE_GROUP"},
 		Destination: &RemoveGroup,
+	},
+	&cli.StringFlag{
+		Name:        "MAPPort",
+		Aliases:     []string{"mp"},
+		Usage:       "Maps port for a specific port provided as the parameter",
+		EnvVars:     []string{"MAPPORT"},
+		Destination: &MAPPort,
 	},
 	// Generate only allowed in dev release
 	// -- REMOVE ON REGULAR RELEASE --
