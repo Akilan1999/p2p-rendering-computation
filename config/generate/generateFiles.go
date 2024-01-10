@@ -45,7 +45,7 @@ func GenerateIPTableFile(rootNodes []p2p.IpAddress) (err error) {
 		rootnode.Name = "Node1"
 		rootnode.ServerPort = "8078"
 		rootnode.NAT = "False"
-		rootnode.Ipv4 = "139.59.162.154"
+		rootnode.Ipv4 = "217.76.63.222"
 
 		rootnodes.IpAddress = append(rootnodes.IpAddress, rootnode)
 	} else {
