@@ -39,6 +39,12 @@ type Config struct {
 	//NetworkInterfaceIPV6Index int
 }
 
+// GetCurrentPath Getting P2PRC Directory from environment variable
+func GetCurrentPath() (string, error) {
+	curDir := os.Getenv("PWD")
+	return curDir + "/", nil
+}
+
 // GetPathP2PRC Getting P2PRC Directory from environment variable
 func GetPathP2PRC(Envname string) (string, error) {
 	if Envname != "" {
@@ -49,7 +55,10 @@ func GetPathP2PRC(Envname string) (string, error) {
 	}
 	curDir := os.Getenv(defaultEnvName)
 	if curDir == "" {
-		return curDir, nil
+		// if the OS env path is not found then you use
+		// the current directory path.
+		currentPath, _ := GetCurrentPath()
+		return currentPath, nil
 	}
 	return curDir + "/", nil
 }

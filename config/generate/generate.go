@@ -31,17 +31,11 @@ func SetEnvName(EnvName string) error {
 	return nil
 }
 
-// GetCurrentPath Getting P2PRC Directory from environment variable
-func GetCurrentPath() (string, error) {
-	curDir := os.Getenv("PWD")
-	return curDir + "/", nil
-}
-
 // SetDefaults This function to be called only during a
 // make install
 func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, NoBoilerPlate bool, ConfigUpdate ...*config.Config) (*config.Config, error) {
 	//Setting current directory to default path
-	defaultPath, err := GetCurrentPath()
+	defaultPath, err := config.GetCurrentPath()
 	if err != nil {
 		return nil, err
 	}
