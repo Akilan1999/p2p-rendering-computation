@@ -71,26 +71,30 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 package main
 
 import (
-    "github.com/Akilan1999/p2p-rendering-computation/abstractions"
-    "os"
+	"fmt"
+	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
 )
 
 func main() {
-    // check if the config file exists
-    if _, err := os.Stat("config.json"); err != nil {
-        // Initialize with base p2prc config files
-        _, err := abstractions.Init(nil)
-        if err != nil {
-            return
-        }
-    }
+	_, err := abstractions.Init(nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-    // start p2prc
-    _, err := abstractions.Start()
-    if err != nil {
-        return
-    }
+	// start p2prc
+	_, err = abstractions.Start()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Run server till termination
+	for {
+
+	}
 }
+
 ```
 
 ### Export once this is added export P2PRC as environment paths 
