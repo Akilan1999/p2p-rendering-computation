@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/go-git/go-git/v5"
 	"golang.org/x/crypto/ssh"
@@ -61,7 +62,7 @@ func GenerateIPTableFile(rootNodes []p2p.IpAddress) (err error) {
 
 // CreateIPTableFolderStructure Create folder structure for IPTable
 func CreateIPTableFolderStructure() (err error) {
-	path, err := GetCurrentPath()
+	path, err := config.GetCurrentPath()
 	if err != nil {
 		return err
 	}
@@ -87,7 +88,7 @@ func CreateIPTableFolderStructure() (err error) {
 
 // GenerateDockerFiles Generate default docker files
 func GenerateDockerFiles() (err error) {
-	path, err := GetCurrentPath()
+	path, err := config.GetCurrentPath()
 	if err != nil {
 		return err
 	}
@@ -132,7 +133,7 @@ func GenerateDockerFiles() (err error) {
 
 // GeneratePluginDirectory Generates plugin directory structure
 func GeneratePluginDirectory() (err error) {
-	path, err := GetCurrentPath()
+	path, err := config.GetCurrentPath()
 	if err != nil {
 		return err
 	}
@@ -150,7 +151,7 @@ func GeneratePluginDirectory() (err error) {
 }
 
 func GenerateClientTrackContainers() (err error) {
-	path, err := GetCurrentPath()
+	path, err := config.GetCurrentPath()
 	if err != nil {
 		return err
 	}
