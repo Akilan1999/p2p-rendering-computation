@@ -6,12 +6,7 @@ import (
 	"time"
 
 	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
-	"github.com/Akilan1999/p2p-rendering-computation/client"
-	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
-	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
-	"github.com/Akilan1999/p2p-rendering-computation/plugin"
-	"github.com/Akilan1999/p2p-rendering-computation/server"
 )
 
 // The Client package where data-types
@@ -23,7 +18,7 @@ import (
 
 //export StartContainer
 func StartContainer(IP string) (output *C.char) {
-	container, err := client.StartContainer(IP, 0, false, "", "")
+	container, err := abstractions.StartContainer(IP)
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -32,7 +27,7 @@ func StartContainer(IP string) (output *C.char) {
 
 //export RemoveContainer
 func RemoveContainer(IP string, ID string) (output *C.char) {
-	err := client.RemoveContianer(IP, ID)
+	err := abstractions.RemoveContainer(IP, ID)
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -41,47 +36,48 @@ func RemoveContainer(IP string, ID string) (output *C.char) {
 
 // --------------------------------- Plugin Control ----------------------------------------
 
-//export ViewPlugin
-func ViewPlugin() (output *C.char) {
-	plugins, err := plugin.DetectPlugins()
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return ConvertStructToJSONString(plugins)
-}
-
-//export PullPlugin
-func PullPlugin(pluginUrl string) (output *C.char) {
-	err := plugin.DownloadPlugin(pluginUrl)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return C.CString("Success")
-}
-
-//export DeletePlugin
-func DeletePlugin(pluginName string) (output *C.char) {
-	err := plugin.DeletePlugin(pluginName)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return C.CString("Success")
-}
-
-//export ExecutePlugin
-func ExecutePlugin(pluginname string, ContainerID string) (output *C.char) {
-	err := plugin.RunPluginContainer(pluginname, ContainerID)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return C.CString("Success")
-}
+// DEPRECATED
+////export ViewPlugin
+//func ViewPlugin() (output *C.char) {
+//	plugins, err := plugin.DetectPlugins()
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return ConvertStructToJSONString(plugins)
+//}
+//
+////export PullPlugin
+//func PullPlugin(pluginUrl string) (output *C.char) {
+//	err := plugin.DownloadPlugin(pluginUrl)
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return C.CString("Success")
+//}
+//
+////export DeletePlugin
+//func DeletePlugin(pluginName string) (output *C.char) {
+//	err := plugin.DeletePlugin(pluginName)
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return C.CString("Success")
+//}
+//
+////export ExecutePlugin
+//func ExecutePlugin(pluginname string, ContainerID string) (output *C.char) {
+//	err := plugin.RunPluginContainer(pluginname, ContainerID)
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return C.CString("Success")
+//}
 
 // --------------------------------- Get Specs ----------------------------------------
 
 //export GetSpecs
 func GetSpecs(IP string) (output *C.char) {
-	specs, err := client.GetSpecs(IP)
+	specs, err := abstractions.GetSpecs(IP)
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -102,7 +98,7 @@ func Init(customConfig string) (output *C.char) {
 
 //export ViewIPTable
 func ViewIPTable() (output *C.char) {
-	table, err := p2p.ReadIpTable()
+	table, err := abstractions.ViewIPTable()
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -111,7 +107,7 @@ func ViewIPTable() (output *C.char) {
 
 //export UpdateIPTable
 func UpdateIPTable() (output *C.char) {
-	err := clientIPTable.UpdateIpTableListClient()
+	err := abstractions.UpdateIPTable()
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -139,18 +135,18 @@ func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internal
 
 //export MapPort
 func MapPort(Port string) *C.char {
-	port, err := abstractions.MapPort(Port)
+	entireAddress, _, err := abstractions.MapPort(Port)
 	if err != nil {
 		return C.CString(err.Error())
 	}
-	return C.CString(port)
+	return C.CString(entireAddress)
 }
 
 // --------------------------------- Controlling Server  ----------------------------------------
 
 //export Server
 func Server() (output *C.char) {
-	_, err := server.Server()
+	_, err := abstractions.Start()
 	if err != nil {
 		return C.CString(err.Error())
 	}

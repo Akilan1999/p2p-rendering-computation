@@ -8,6 +8,12 @@ The Abstractions package consists of black-boxed functions for P2PRC.
 ## Functions
 - ```Init(<Project name>)```:  Initializes P2PRC with all the needed configurations. 
 - ```Start()```: Starts p2prc as a server and makes it possible to extend by adding other routes and functionality to P2PRC.
+- ```MapPort(<port no>)```: On the local machine the port you want to export to world. 
+- ```StartContainer(<ip address>)```: The machine on the p2p network where you want to spin up a docker container. 
+- ```RemoveContainer(<ip address>,<container id>)```: Terminate container based on the IP address and container name. 
+- ```GetSpecs(<ip address>)```: Get specs of a machine on the network based on the IP address.
+- ```ViewIPTable()```: View the IP table which about nodes in the network. 
+- ```UpdateIPTable()```: Force update IP table to learn about new nodes faster. 
 
 ---
 

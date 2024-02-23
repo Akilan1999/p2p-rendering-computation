@@ -1,9 +1,14 @@
 package abstractions
 
+import "C"
 import (
+	"github.com/Akilan1999/p2p-rendering-computation/client"
+	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	Config "github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"os"
 )
@@ -46,7 +51,38 @@ func Start() (*gin.Engine, error) {
 	return engine, nil
 }
 
+// MapPort Creates a reverse proxy connection and maps the appropriate port
 func MapPort(port string) (entireAddres string, mapPort string, err error) {
 	entireAddres, mapPort, err = server.MapPort(port)
 	return
+}
+
+// StartContainer Starts docker container on the remote machine
+func StartContainer(IP string) (container *docker.DockerVM, err error) {
+	container, err = client.StartContainer(IP, 0, false, "", "")
+	return
+}
+
+// RemoveContainer Removes docker container based on the IP address and ID
+// provided
+func RemoveContainer(IP string, ID string) error {
+	return client.RemoveContianer(IP, ID)
+}
+
+// GetSpecs Get spec information about the remote server
+func GetSpecs(IP string) (specs *server.SysInfo, err error) {
+	specs, err = client.GetSpecs(IP)
+	return
+}
+
+// ViewIPTable View information of nodes in the network
+func ViewIPTable() (table *p2p.IpAddresses, err error) {
+	table, err = p2p.ReadIpTable()
+	return
+}
+
+// UpdateIPTable Force updates IP tables based on new
+// new nodes discovered in the network
+func UpdateIPTable() (err error) {
+	return clientIPTable.UpdateIpTableListClient()
 }
