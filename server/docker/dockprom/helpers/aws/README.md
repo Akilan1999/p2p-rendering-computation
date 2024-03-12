@@ -14,9 +14,9 @@ To get started on AWS ECS and EC2:
 - Copy prometheus.yml configuration present here to base prometheus configuration to enable EC2 service discovery
 - `docker compose up -d`
 
-**Note**:
-Set query.staleness-delta to 1m make metrics more realtime
+> [!NOTE]  
+> Set query.staleness-delta to 1m make metrics more realtime
 
 
 ### TODO
-- Add alerting rules based on ECS
+- [ ] Add alerting rules based on ECS
