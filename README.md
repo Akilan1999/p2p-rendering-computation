@@ -1,4 +1,5 @@
-> **_NOTE:_**  Fixing documentation to latest changes, If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
+> [!NOTE]
+> Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
 > Currently HEAD is always intended to stay on a working state. It is recommended to always use HEAD in your go.mod file.
 
 <h1 align="center">
@@ -161,4 +162,3 @@ or just providing feedback on new features to build  or even just curious about 
 [![Support Server](https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2)](https://discord.gg/b4nRGTjYqy)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
-

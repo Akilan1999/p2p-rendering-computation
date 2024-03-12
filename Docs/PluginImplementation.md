@@ -54,22 +54,23 @@ nodes to execute Ansible instructions. In this project this file needs to be set
 go code or binary will populate this file automatically with the appropriate information required to connect to local or 
 remote containers. 
 
-#### Note: Add as exactly specified below 
-```
-all:
-  vars:
-    ansible_python_interpreter: /usr/bin/python3 // Path to your python 3 interpreter 
-main:
-  hosts:
-    host1:
-      // Note: These values will be automatically overwritten 
-      // by the Go functions 
-      ansible_host: 0.0.0.0 
-      ansible_port: 39269
-      ansible_user: master
-      ansible_ssh_pass: password
-      ansible_sudo_pass: password
-```
+> [!NOTE]
+> Add as exactly specified below: 
+> ```
+>all:
+>  vars:
+>    ansible_python_interpreter: /usr/bin/python3 // Path to your python 3 interpreter 
+>main:
+>  hosts:
+>    host1:
+>      // Note: These values will be automatically overwritten 
+>      // by the Go functions 
+>      ansible_host: 0.0.0.0 
+>      ansible_port: 39269
+>      ansible_user: master
+>      ansible_ssh_pass: password
+>      ansible_sudo_pass: password
+>```
 
 ## Ports.json 
 The ```ports.json``` file is intended to mention the number of ports required 
