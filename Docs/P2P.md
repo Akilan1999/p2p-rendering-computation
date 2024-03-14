@@ -23,5 +23,5 @@ In this repository the P2P module has been designed from sratch at the point of 
 - Taking to nodes behind NAT. [More about the implementation](NAT-Traversal)...
 
 
-## Note:
-If you are running in server mode it is recommended to use [DMZ](https://routerguide.net/when-and-how-to-setup-dmz-host-for-home-use/) to bypass the [NAT](https://en.wikipedia.org/wiki/Network_address_translation). 
+> [!NOTE]
+> If you are running in server mode it is recommended to use [DMZ](https://routerguide.net/when-and-how-to-setup-dmz-host-for-home-use/) to bypass the [NAT](https://en.wikipedia.org/wiki/Network_address_translation). 

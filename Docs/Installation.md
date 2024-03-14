@@ -232,12 +232,13 @@ This feature is still Under Development:
 - Generate Test Case Ansible file 
   - ```make testcases```
 - Enter inside plugin directory and run tests.<br>
-  **Note:** That docker needs to installed and needs to run without 
-  sudo. Refer the section [Install Docker](#install-docker). 
-  - ```cd plugin```
-  - ```go test .```
+
+> [!NOTE]
+> That docker needs to installed and needs to run without
+> sudo. Refer the section [Install Docker](#install-docker). 
+> - ```cd plugin```
+> - ```go test .```
 
 ---
   
 ### Next Chapter: [Abstractions](Abstractions.md)
-
