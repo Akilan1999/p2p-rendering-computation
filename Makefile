@@ -14,3 +14,7 @@ sharedObjects:
 
 python:
 	sh build-python-package.sh
+
+clean:
+	go clean -modcache
+	rm -fr .go-build vendor result*
