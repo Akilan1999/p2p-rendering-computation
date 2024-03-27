@@ -99,7 +99,8 @@ The Docker Containers Dashboard shows key metrics for monitoring running contain
 * Container network inbound usage graph
 * Container network outbound usage graph
 
-Note that this dashboard doesn't show the containers that are part of the monitoring stack.
+> [!NOTE]
+> This dashboard doesn't show the containers that are part of the monitoring stack.
 
 ***Monitor Services Dashboard***
 
