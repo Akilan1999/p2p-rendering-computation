@@ -17,8 +17,8 @@ import (
 // --------------------------------- Container Control ----------------------------------------
 
 //export StartContainer
-func StartContainer(IP string) (output *C.char) {
-	container, err := abstractions.StartContainer(IP)
+func StartContainer(IP *C.char) (output *C.char) {
+	container, err := abstractions.StartContainer(C.GoString(IP))
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -26,8 +26,8 @@ func StartContainer(IP string) (output *C.char) {
 }
 
 //export RemoveContainer
-func RemoveContainer(IP string, ID string) (output *C.char) {
-	err := abstractions.RemoveContainer(IP, ID)
+func RemoveContainer(IP *C.char, ID *C.char) (output *C.char) {
+	err := abstractions.RemoveContainer(C.GoString(IP), C.GoString(ID))
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -76,8 +76,8 @@ func RemoveContainer(IP string, ID string) (output *C.char) {
 // --------------------------------- Get Specs ----------------------------------------
 
 //export GetSpecs
-func GetSpecs(IP string) (output *C.char) {
-	specs, err := abstractions.GetSpecs(IP)
+func GetSpecs(IP *C.char) (output *C.char) {
+	specs, err := abstractions.GetSpecs(C.GoString(IP))
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -85,13 +85,12 @@ func GetSpecs(IP string) (output *C.char) {
 }
 
 //export Init
-func Init(customConfig string) (output *C.char) {
-	init, err := abstractions.Init(customConfig)
+func Init(customConfig *C.char) (output *C.char) {
+	init, err := abstractions.Init(C.GoString(customConfig))
 	if err != nil {
 		return C.CString(err.Error())
 	}
 	return ConvertStructToJSONString(init)
-
 }
 
 // --------------------------------- P2P Controls -----------------------------------
@@ -115,9 +114,9 @@ func UpdateIPTable() (output *C.char) {
 }
 
 //export EscapeFirewall
-func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internalPort string) (output *C.char) {
+func EscapeFirewall(HostOutsideNATIP *C.char, HostOutsideNATPort *C.char, internalPort *C.char) (output *C.char) {
 	// Get free port from P2PRC server node
-	serverPort, err := frp.GetFRPServerPort("http://" + HostOutsideNATIP + ":" + HostOutsideNATPort)
+	serverPort, err := frp.GetFRPServerPort("http://" + C.GoString(HostOutsideNATIP) + ":" + C.GoString(HostOutsideNATPort))
 
 	if err != nil {
 		return C.CString(err.Error())
@@ -125,7 +124,7 @@ func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internal
 
 	time.Sleep(5 * time.Second)
 
-	ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "")
+	ExposedPort, err := frp.StartFRPClientForServer(C.GoString(HostOutsideNATIP)+":"+C.GoString(HostOutsideNATPort), C.GoString(serverPort), C.GoString(internalPort), "")
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -134,8 +133,8 @@ func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internal
 }
 
 //export MapPort
-func MapPort(Port string) *C.char {
-	entireAddress, _, err := abstractions.MapPort(Port)
+func MapPort(Port *C.char) *C.char {
+	entireAddress, _, err := abstractions.MapPort(C.GoString(Port))
 	if err != nil {
 		return C.CString(err.Error())
 	}
