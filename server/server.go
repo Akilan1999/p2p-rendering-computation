@@ -16,8 +16,23 @@ import (
 	"time"
 )
 
+type ReverseProxy struct {
+	IPAddress string
+	Port      string
+}
+
+// ReverseProxies Reverse to the map such as ReverseProxies[<domain nane>]ReverseProxy type
+var ReverseProxies map[string]ReverseProxy
+
 func Server() (*gin.Engine, error) {
 	r := gin.Default()
+
+	// "The make function allocates and initializes a hash map data
+	//structure and returns a map value that points to it.
+	//The specifics of that data structure are an implementation
+	//detail of the runtime and are not specified by the language itself."
+	// source: https://go.dev/blog/maps
+	ReverseProxies = make(map[string]ReverseProxy)
 
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
@@ -175,12 +190,49 @@ func Server() (*gin.Engine, error) {
 
 	r.GET("/MAPPort", func(c *gin.Context) {
 		Ports := c.DefaultQuery("port", "0")
-		url, _, err := MapPort(Ports)
+		DomainName := c.DefaultQuery("domain_name", "0")
+		url, _, err := MapPort(Ports, DomainName)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 
 		c.String(http.StatusOK, url)
+	})
+
+	r.GET("/AddProxy", func(c *gin.Context) {
+		DomainName := c.DefaultQuery("domain_name", "")
+		ip_address := c.DefaultQuery("ip_address", "")
+		Ports := c.DefaultQuery("port", "")
+
+		if DomainName == "" || ip_address == "" || Ports == "" {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("All get parameters npt provided"+
+				" do ensure domain_name, ip_Address and port no is provided"))
+		}
+
+		SaveRegistration(DomainName, ip_address+":"+Ports)
+
+		//_, ok := ReverseProxies[DomainName]
+		//// To check if the subdomain entry exists
+		//if ok {
+		//	c.String(http.StatusInternalServerError, fmt.Sprintf("The domain entry already exists as a reverse"+
+		//		" proxy entry"))
+		//}
+		//
+		//// added proxy as a map entry
+		//ReverseProxies[DomainName] = ReverseProxy{IPAddress: ip_address, Port: Ports}
+
+	})
+
+	r.GET("/RemoveProxy", func(c *gin.Context) {
+		DomainName := c.DefaultQuery("domain_name", "")
+
+		_, ok := ReverseProxies[DomainName]
+		if !ok {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("Domain name does exist in entries of proxies"))
+		} else {
+			delete(ReverseProxies, DomainName)
+		}
+
 	})
 
 	// If there is a proxy port specified
@@ -233,6 +285,7 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.ServerPort = proxyPort
 			ProxyIpAddr.Name = config.MachineName
 			ProxyIpAddr.NAT = "False"
+			ProxyIpAddr.ProxyServer = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
 			// Sorry Jan it's a string
@@ -240,7 +293,7 @@ func Server() (*gin.Engine, error) {
 			// to a boolean operator
 			// But I am way too tired
 			if config.BareMetal == "True" {
-				_, SSHPort, err := MapPort("22")
+				_, SSHPort, err := MapPort("22", "")
 				if err != nil {
 					return nil, err
 				}
@@ -269,13 +322,17 @@ func Server() (*gin.Engine, error) {
 
 	}
 
+	if config.ProxyPort != "" {
+		go ProxyRun(config.ProxyPort)
+	}
+
 	// Run gin server on the specified port
 	go r.Run(":" + config.ServerPort)
 
 	return r, nil
 }
 
-func MapPort(port string) (string, string, error) {
+func MapPort(port string, domainName string) (string, string, error) {
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
 	if err != nil {
