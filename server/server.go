@@ -210,7 +210,10 @@ func Server() (*gin.Engine, error) {
 				" do ensure domain_name, ip_Address and port no is provided"))
 		}
 
-		SaveRegistration(DomainName, ip_address+":"+Ports)
+		err := SaveRegistration(DomainName, ip_address+":"+Ports)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf(err.Error()))
+		}
 
 		//_, ok := ReverseProxies[DomainName]
 		//// To check if the subdomain entry exists
@@ -221,6 +224,7 @@ func Server() (*gin.Engine, error) {
 		//
 		//// added proxy as a map entry
 		//ReverseProxies[DomainName] = ReverseProxy{IPAddress: ip_address, Port: Ports}
+		c.String(http.StatusOK, "Sucess")
 
 	})
 
@@ -373,12 +377,14 @@ func MapPort(port string, domainName string) (string, string, error) {
 	// random large number
 	lowestLatency = 10000000
 
+	fmt.Println("here --------------------------------")
+
 	for i, _ := range table.IpAddress {
 		// Checks if the ping is the lowest and if the following node is acting as a proxy
 		//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
 		if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
 			// Filter based on nodes with proxy enabled
-			if domainName != "" && table.IpAddress[i].ProxyServer == "Yes" {
+			if domainName != "" && table.IpAddress[i].ProxyServer == "True" {
 				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
 				lowestLatencyIpAddress = table.IpAddress[i]
 				continue
@@ -406,6 +412,8 @@ func MapPort(port string, domainName string) (string, string, error) {
 
 		// Doing the proxy mapping for the domain name
 		if domainName != "" {
+			fmt.Println("called --------------------------------")
+			fmt.Println("http://" + lowestLatencyIpAddress.Ipv4 + ":" + proxyPort + "/AddProxy?port=" + port + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4)
 			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + proxyPort + "/AddProxy?port=" + port + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
 			//} else {
 			//	URL = "http://" + IP + ":" + serverPort + "/server_info"
