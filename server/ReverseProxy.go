@@ -71,6 +71,10 @@ func SaveRegistration(OutsideHost string, InsideHost string) error {
     }
     KnownAddresses[OutsideHost] = InsideHost
 
+    fmt.Println(OutsideHost)
+    fmt.Println(InsideHost)
+    fmt.Println(KnownAddresses[OutsideHost])
+
     return nil
 }
 
