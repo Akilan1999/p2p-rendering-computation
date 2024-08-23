@@ -242,14 +242,15 @@ func Server() (*gin.Engine, error) {
     //	go frp.StartFRPProxyFromRandom()
     //}
 
+    // Remove nodes currently not pingable
+    clientIPTable.RemoveOfflineNodes()
+
+    table, err := p2p.ReadIpTable()
+
     // TODO check if IPV6 or Proxy port is specified
     // if not update current entry as proxy address
     // with appropriate port on IP Table
     if config.BehindNAT == "True" {
-        // Remove nodes currently not pingable
-        clientIPTable.RemoveOfflineNodes()
-
-        table, err := p2p.ReadIpTable()
         if err != nil {
             return nil, err
         }
@@ -289,10 +290,6 @@ func Server() (*gin.Engine, error) {
             ProxyIpAddr.ProxyServer = "False"
             ProxyIpAddr.EscapeImplementation = "FRP"
 
-            // Sorry Jan it's a string
-            // Yes I could convert it
-            // to a boolean operator
-            // But I am way too tired
             if config.BareMetal == "True" {
                 _, SSHPort, err := MapPort("22", "")
                 if err != nil {
@@ -306,22 +303,43 @@ func Server() (*gin.Engine, error) {
             // append the following to the ip table
             table.IpAddress = append(table.IpAddress, ProxyIpAddr)
             // write information back to the IP Table
-            err = table.WriteIpTable()
-            if err != nil {
-                return nil, err
-            }
-            // update ip table
-            go func() error {
-                err := clientIPTable.UpdateIpTableListClient()
-                if err != nil {
-                    fmt.Println(err)
-                    return err
-                }
-                return nil
-            }()
         }
 
+    } else {
+        ProxyIpAddr.Ipv4, err = p2p.CurrentPublicIP()
+        if err != nil {
+            fmt.Println(err)
+        }
+        ProxyIpAddr.ServerPort = config.ServerPort
+        ProxyIpAddr.Name = config.MachineName
+        ProxyIpAddr.NAT = "False"
+        if config.ProxyPort != "" {
+            ProxyIpAddr.ProxyServer = "False"
+        }
+        ProxyIpAddr.EscapeImplementation = ""
+        if config.BareMetal == "True" {
+            ProxyIpAddr.BareMetalSSHPort = "22"
+        }
+
+        table.IpAddress = append(table.IpAddress, ProxyIpAddr)
+
     }
+
+    // Writing results to the IPTable
+    err = table.WriteIpTable()
+    if err != nil {
+        return nil, err
+    }
+
+    // update ip table
+    go func() error {
+        err := clientIPTable.UpdateIpTableListClient()
+        if err != nil {
+            fmt.Println(err)
+            return err
+        }
+        return nil
+    }()
 
     if config.ProxyPort != "" {
         go ProxyRun(config.ProxyPort)
