@@ -34,6 +34,8 @@ type Config struct {
 	IPTableKey               string
 	PublicKeyFile            string
 	PrivateKeyFile           string
+	PemFile                  string
+	KeyFile                  string
 	BareMetal                string
 	CustomConfig             interface{}
 	//NetworkInterface  string
