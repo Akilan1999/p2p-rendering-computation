@@ -97,7 +97,7 @@ func Proxy(c *gin.Context) {
 		return
 	}
 
-	rUrl := fmt.Sprintf("%v://%v%v", scheme, forwardTo, c.Request.URL)
+	rUrl := fmt.Sprintf("%v://%v%v", "http", forwardTo, c.Request.URL)
 
 	remote, err := url.Parse(rUrl)
 

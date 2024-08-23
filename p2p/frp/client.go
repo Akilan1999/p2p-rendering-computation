@@ -1,7 +1,6 @@
 package frp
 
 import (
-    defaultConfig "github.com/Akilan1999/p2p-rendering-computation/config"
     "github.com/Akilan1999/p2p-rendering-computation/server/docker"
     "github.com/fatedier/frp/client"
     "github.com/fatedier/frp/pkg/config"
@@ -145,10 +144,10 @@ func (c *Client) StartFRPClient() error {
 
     cfg := config.GetDefaultClientConf()
 
-    Config, err := defaultConfig.ConfigInit(nil, nil)
-    if err != nil {
-        return err
-    }
+    //Config, err := defaultConfig.ConfigInit(nil, nil)
+    //if err != nil {
+    //	return err
+    //}
 
     var proxyConfs map[string]config.ProxyConf
     var visitorCfgs map[string]config.VisitorConf
@@ -157,9 +156,9 @@ func (c *Client) StartFRPClient() error {
 
     cfg.ServerAddr = c.Server.address
     cfg.ServerPort = c.Server.port
-    cfg.TLSEnable = true
-    cfg.TLSKeyFile = Config.KeyFile
-    cfg.TLSCertFile = Config.PemFile
+    //cfg.TLSEnable = true
+    //cfg.TLSKeyFile = Config.KeyFile
+    //cfg.TLSCertFile = Config.PemFile
 
     for i, _ := range c.ClientMappings {
         var tcpcnf config.TCPProxyConf
