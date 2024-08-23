@@ -413,8 +413,8 @@ func MapPort(port string, domainName string) (string, string, error) {
 		// Doing the proxy mapping for the domain name
 		if domainName != "" {
 			fmt.Println("called --------------------------------")
-			fmt.Println("http://" + lowestLatencyIpAddress.Ipv4 + ":" + proxyPort + "/AddProxy?port=" + port + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4)
-			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + proxyPort + "/AddProxy?port=" + port + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
+			fmt.Println("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4)
+			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
 			//} else {
 			//	URL = "http://" + IP + ":" + serverPort + "/server_info"
 			//}
