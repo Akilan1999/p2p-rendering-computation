@@ -192,6 +192,7 @@ func Server() (*gin.Engine, error) {
     r.GET("/MAPPort", func(c *gin.Context) {
         Ports := c.DefaultQuery("port", "0")
         DomainName := c.DefaultQuery("domain_name", "")
+        fmt.Println("here ------------")
         url, _, err := MapPort(Ports, DomainName)
         if err != nil {
             c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
