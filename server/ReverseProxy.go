@@ -136,7 +136,7 @@ func ProxyRun(port string) {
     // all paths should be handled by Proxy()
     r.Any("/*path", Proxy)
 
-    if err := r.RunTLS(fmt.Sprint("0.0.0.0:", port), Config.KeyFile, Config.PemFile); err != nil {
+    if err := r.RunTLS(fmt.Sprint("0.0.0.0:", port), Config.PemFile, Config.KeyFile); err != nil {
         log.Printf("Error: %v", err)
     }
 }
