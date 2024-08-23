@@ -1,425 +1,429 @@
 package server
 
 import (
-    b64 "encoding/base64"
-    "encoding/json"
-    "errors"
-    "fmt"
-    "github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
-    "github.com/Akilan1999/p2p-rendering-computation/config"
-    "github.com/Akilan1999/p2p-rendering-computation/p2p"
-    "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
-    "github.com/Akilan1999/p2p-rendering-computation/server/docker"
-    "github.com/gin-gonic/gin"
-    "io/ioutil"
-    "net/http"
-    "strconv"
-    "time"
+	b64 "encoding/base64"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
+	"github.com/Akilan1999/p2p-rendering-computation/config"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
+	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
+	"github.com/gin-gonic/gin"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 type ReverseProxy struct {
-    IPAddress string
-    Port      string
+	IPAddress string
+	Port      string
 }
 
 // ReverseProxies Reverse to the map such as ReverseProxies[<domain nane>]ReverseProxy type
 var ReverseProxies map[string]ReverseProxy
 
 func Server() (*gin.Engine, error) {
-    r := gin.Default()
+	r := gin.Default()
 
-    // "The make function allocates and initializes a hash map data
-    //structure and returns a map value that points to it.
-    //The specifics of that data structure are an implementation
-    //detail of the runtime and are not specified by the language itself."
-    // source: https://go.dev/blog/maps
-    ReverseProxies = make(map[string]ReverseProxy)
+	// "The make function allocates and initializes a hash map data
+	//structure and returns a map value that points to it.
+	//The specifics of that data structure are an implementation
+	//detail of the runtime and are not specified by the language itself."
+	// source: https://go.dev/blog/maps
+	ReverseProxies = make(map[string]ReverseProxy)
 
-    //Get Server port based on the config file
-    config, err := config.ConfigInit(nil, nil)
-    if err != nil {
-        return nil, err
-    }
+	//Get Server port based on the config file
+	config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-    // update IPTable with new port and ip address and update ip table
-    var ProxyIpAddr p2p.IpAddress
-    var lowestLatencyIpAddress p2p.IpAddress
+	// update IPTable with new port and ip address and update ip table
+	var ProxyIpAddr p2p.IpAddress
+	var lowestLatencyIpAddress p2p.IpAddress
 
-    // Gets default information of the server
-    r.GET("/server_info", func(c *gin.Context) {
-        c.JSON(http.StatusOK, ServerInfo())
-    })
+	// Gets default information of the server
+	r.GET("/server_info", func(c *gin.Context) {
+		c.JSON(http.StatusOK, ServerInfo())
+	})
 
-    // Speed test with 50 mbps
-    r.GET("/50", func(c *gin.Context) {
-        // Get Path from config
-        c.File(config.SpeedTestFile)
-    })
+	// Speed test with 50 mbps
+	r.GET("/50", func(c *gin.Context) {
+		// Get Path from config
+		c.File(config.SpeedTestFile)
+	})
 
-    // Route build to do a speed test
-    r.GET("/upload", func(c *gin.Context) {
-        file, _ := c.FormFile("file")
+	// Route build to do a speed test
+	r.GET("/upload", func(c *gin.Context) {
+		file, _ := c.FormFile("file")
 
-        // Upload the file to specific dst.
-        // c.SaveUploadedFile(file, dst)
+		// Upload the file to specific dst.
+		// c.SaveUploadedFile(file, dst)
 
-        c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-    })
+		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	})
 
-    //Gets Ip Table from server node
-    r.POST("/IpTable", func(c *gin.Context) {
-        // Getting IPV4 address of client
-        var ClientHost p2p.IpAddress
+	//Gets Ip Table from server node
+	r.POST("/IpTable", func(c *gin.Context) {
+		// Getting IPV4 address of client
+		var ClientHost p2p.IpAddress
 
-        if p2p.Ip4or6(c.ClientIP()) == "version 6" {
-            ClientHost.Ipv6 = c.ClientIP()
-        } else {
-            ClientHost.Ipv4 = c.ClientIP()
-        }
+		if p2p.Ip4or6(c.ClientIP()) == "version 6" {
+			ClientHost.Ipv6 = c.ClientIP()
+		} else {
+			ClientHost.Ipv4 = c.ClientIP()
+		}
 
-        // Variable to store IP table information
-        var IPTable p2p.IpAddresses
+		// Variable to store IP table information
+		var IPTable p2p.IpAddresses
 
-        // Receive file from POST request
-        body, err := c.FormFile("json")
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+		// Receive file from POST request
+		body, err := c.FormFile("json")
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
-        // Open file
-        open, err := body.Open()
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+		// Open file
+		open, err := body.Open()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
-        // Open received file
-        file, err := ioutil.ReadAll(open)
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+		// Open received file
+		file, err := ioutil.ReadAll(open)
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
-        json.Unmarshal(file, &IPTable)
+		json.Unmarshal(file, &IPTable)
 
-        //Add Client IP address to IPTable struct
-        IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
+		//Add Client IP address to IPTable struct
+		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
 
-        // Runs speed test to return only servers in the IP table pingable
-        err = IPTable.SpeedTestUpdatedIPTable()
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+		// Runs speed test to return only servers in the IP table pingable
+		err = IPTable.SpeedTestUpdatedIPTable()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
-        // Reads IP addresses from ip table
-        IpAddresses, err := p2p.ReadIpTable()
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+		// Reads IP addresses from ip table
+		IpAddresses, err := p2p.ReadIpTable()
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprint(err))
+		}
 
-        c.JSON(http.StatusOK, IpAddresses)
-    })
+		c.JSON(http.StatusOK, IpAddresses)
+	})
 
-    // Starts docker container in server
-    r.GET("/startcontainer", func(c *gin.Context) {
-        // Get Number of ports to open and whether to use GPU or not
-        Ports := c.DefaultQuery("ports", "0")
-        GPU := c.DefaultQuery("GPU", "false")
-        ContainerName := c.DefaultQuery("ContainerName", "")
-        BaseImage := c.DefaultQuery("BaseImage", "")
-        PublicKey := c.DefaultQuery("PublicKey", "")
-        var PortsInt int
+	// Starts docker container in server
+	r.GET("/startcontainer", func(c *gin.Context) {
+		// Get Number of ports to open and whether to use GPU or not
+		Ports := c.DefaultQuery("ports", "0")
+		GPU := c.DefaultQuery("GPU", "false")
+		ContainerName := c.DefaultQuery("ContainerName", "")
+		BaseImage := c.DefaultQuery("BaseImage", "")
+		PublicKey := c.DefaultQuery("PublicKey", "")
+		var PortsInt int
 
-        if PublicKey == "" {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", "Publickey not passed"))
-        }
+		if PublicKey == "" {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", "Publickey not passed"))
+		}
 
-        PublicKeyDecoded, err := b64.StdEncoding.DecodeString(PublicKey)
-        if err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
+		PublicKeyDecoded, err := b64.StdEncoding.DecodeString(PublicKey)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
 
-        // Convert Get Request value to int
-        fmt.Sscanf(Ports, "%d", &PortsInt)
+		// Convert Get Request value to int
+		fmt.Sscanf(Ports, "%d", &PortsInt)
 
-        fmt.Println(string(PublicKeyDecoded[:]))
+		fmt.Println(string(PublicKeyDecoded[:]))
 
-        // Creates container and returns-back result to
-        // access container
-        resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage, string(PublicKeyDecoded[:]))
+		// Creates container and returns-back result to
+		// access container
+		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage, string(PublicKeyDecoded[:]))
 
-        if err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
 
-        // Ensures that FRP is triggered only if a proxy address is provided
-        if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
-            resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
-            if err != nil {
-                c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-            }
-        }
+		// Ensures that FRP is triggered only if a proxy address is provided
+		if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
+			resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
+			if err != nil {
+				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+			}
+		}
 
-        c.JSON(http.StatusOK, resp)
-    })
+		c.JSON(http.StatusOK, resp)
+	})
 
-    //Remove container
-    r.GET("/RemoveContainer", func(c *gin.Context) {
-        ID := c.DefaultQuery("id", "0")
-        if err := docker.StopAndRemoveContainer(ID); err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
-        c.String(http.StatusOK, "success")
-    })
+	//Remove container
+	r.GET("/RemoveContainer", func(c *gin.Context) {
+		ID := c.DefaultQuery("id", "0")
+		if err := docker.StopAndRemoveContainer(ID); err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+		c.String(http.StatusOK, "success")
+	})
 
-    //Show images available
-    r.GET("/ShowImages", func(c *gin.Context) {
-        resp, err := docker.ViewAllContainers()
-        if err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
-        c.JSON(http.StatusOK, resp)
-    })
+	//Show images available
+	r.GET("/ShowImages", func(c *gin.Context) {
+		resp, err := docker.ViewAllContainers()
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+		c.JSON(http.StatusOK, resp)
+	})
 
-    // Request for port no from Server with address
-    r.GET("/FRPPort", func(c *gin.Context) {
-        port, err := frp.StartFRPProxyFromRandom()
-        if err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
+	// Request for port no from Server with address
+	r.GET("/FRPPort", func(c *gin.Context) {
+		port, err := frp.StartFRPProxyFromRandom()
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
 
-        c.String(http.StatusOK, strconv.Itoa(port))
-    })
+		c.String(http.StatusOK, strconv.Itoa(port))
+	})
 
-    r.GET("/MAPPort", func(c *gin.Context) {
-        Ports := c.DefaultQuery("port", "0")
-        DomainName := c.DefaultQuery("domain_name", "")
-        fmt.Println("here ------------")
-        url, _, err := MapPort(Ports, DomainName)
-        if err != nil {
-            c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-        }
+	r.GET("/MAPPort", func(c *gin.Context) {
+		Ports := c.DefaultQuery("port", "0")
+		DomainName := c.DefaultQuery("domain_name", "")
+		url, _, err := MapPort(Ports, DomainName)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
 
-        c.String(http.StatusOK, url)
-    })
+		c.String(http.StatusOK, url)
+	})
 
-    //r.GET("/AddProxy", func(c *gin.Context) {
-    //	DomainName := c.DefaultQuery("domain_name", "")
-    //	ip_address := c.DefaultQuery("ip_address", "")
-    //	Ports := c.DefaultQuery("port", "")
-    //
-    //	if DomainName == "" || ip_address == "" || Ports == "" {
-    //		c.String(http.StatusInternalServerError, fmt.Sprintf("All get parameters npt provided"+
-    //			" do ensure domain_name, ip_Address and port no is provided"))
-    //	}
-    //
-    //	SaveRegistration(DomainName, ip_address+":"+Ports)
-    //
-    //	//_, ok := ReverseProxies[DomainName]
-    //	//// To check if the subdomain entry exists
-    //	//if ok {
-    //	//	c.String(http.StatusInternalServerError, fmt.Sprintf("The domain entry already exists as a reverse"+
-    //	//		" proxy entry"))
-    //	//}
-    //	//
-    //	//// added proxy as a map entry
-    //	//ReverseProxies[DomainName] = ReverseProxy{IPAddress: ip_address, Port: Ports}
-    //
-    //})
+	r.GET("/AddProxy", func(c *gin.Context) {
+		DomainName := c.DefaultQuery("domain_name", "")
+		ip_address := c.DefaultQuery("ip_address", "")
+		Ports := c.DefaultQuery("port", "")
 
-    //r.GET("/RemoveProxy", func(c *gin.Context) {
-    //	DomainName := c.DefaultQuery("domain_name", "")
-    //
-    //	_, ok := ReverseProxies[DomainName]
-    //	if !ok {
-    //		c.String(http.StatusInternalServerError, fmt.Sprintf("Domain name does exist in entries of proxies"))
-    //	} else {
-    //		delete(ReverseProxies, DomainName)
-    //	}
-    //
-    //})
+		if DomainName == "" || ip_address == "" || Ports == "" {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("All get parameters npt provided"+
+				" do ensure domain_name, ip_Address and port no is provided"))
+		}
 
-    // If there is a proxy port specified
-    // then starts the FRP server
-    //if config.FRPServerPort != "0" {
-    //	go frp.StartFRPProxyFromRandom()
-    //}
+		SaveRegistration(DomainName, ip_address+":"+Ports)
 
-    // Remove nodes currently not pingable
-    clientIPTable.RemoveOfflineNodes()
+		//_, ok := ReverseProxies[DomainName]
+		//// To check if the subdomain entry exists
+		//if ok {
+		//	c.String(http.StatusInternalServerError, fmt.Sprintf("The domain entry already exists as a reverse"+
+		//		" proxy entry"))
+		//}
+		//
+		//// added proxy as a map entry
+		//ReverseProxies[DomainName] = ReverseProxy{IPAddress: ip_address, Port: Ports}
 
-    table, err := p2p.ReadIpTable()
+	})
 
-    // TODO check if IPV6 or Proxy port is specified
-    // if not update current entry as proxy address
-    // with appropriate port on IP Table
-    if config.BehindNAT == "True" {
-        if err != nil {
-            return nil, err
-        }
+	//r.GET("/RemoveProxy", func(c *gin.Context) {
+	//	DomainName := c.DefaultQuery("domain_name", "")
+	//
+	//	_, ok := ReverseProxies[DomainName]
+	//	if !ok {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("Domain name does exist in entries of proxies"))
+	//	} else {
+	//		delete(ReverseProxies, DomainName)
+	//	}
+	//
+	//})
 
-        var lowestLatency int64
-        // random large number
-        lowestLatency = 10000000
+	// If there is a proxy port specified
+	// then starts the FRP server
+	//if config.FRPServerPort != "0" {
+	//	go frp.StartFRPProxyFromRandom()
+	//}
 
-        for i, _ := range table.IpAddress {
-            // Checks if the ping is the lowest and if the following node is acting as a proxy
-            //if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-            if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
-                lowestLatency = table.IpAddress[i].Latency.Milliseconds()
-                lowestLatencyIpAddress = table.IpAddress[i]
-            }
-        }
+	// Remove nodes currently not pingable
+	clientIPTable.RemoveOfflineNodes()
 
-        // If there is an identified node
-        if lowestLatency != 10000000 {
-            serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
-            if err != nil {
-                return nil, err
-            }
-            // Create 3 second delay to allow FRP server to start
-            time.Sleep(1 * time.Second)
-            // Starts FRP as a client with
-            proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "")
-            if err != nil {
-                return nil, err
-            }
+	table, err := p2p.ReadIpTable()
 
-            // updating with the current proxy address
-            ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
-            ProxyIpAddr.ServerPort = proxyPort
-            ProxyIpAddr.Name = config.MachineName
-            ProxyIpAddr.NAT = "False"
-            ProxyIpAddr.ProxyServer = "False"
-            ProxyIpAddr.EscapeImplementation = "FRP"
+	// TODO check if IPV6 or Proxy port is specified
+	// if not update current entry as proxy address
+	// with appropriate port on IP Table
+	if config.BehindNAT == "True" {
+		if err != nil {
+			return nil, err
+		}
 
-            if config.BareMetal == "True" {
-                _, SSHPort, err := MapPort("22", "")
-                if err != nil {
-                    return nil, err
-                }
-                ProxyIpAddr.BareMetalSSHPort = SSHPort
-            }
+		var lowestLatency int64
+		// random large number
+		lowestLatency = 10000000
 
-            //ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
+		for i, _ := range table.IpAddress {
+			// Checks if the ping is the lowest and if the following node is acting as a proxy
+			//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
+			if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
+				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
+				lowestLatencyIpAddress = table.IpAddress[i]
+			}
+		}
 
-            // append the following to the ip table
-            table.IpAddress = append(table.IpAddress, ProxyIpAddr)
-            // write information back to the IP Table
-        }
+		// If there is an identified node
+		if lowestLatency != 10000000 {
+			serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+			if err != nil {
+				return nil, err
+			}
+			// Create 3 second delay to allow FRP server to start
+			time.Sleep(1 * time.Second)
+			// Starts FRP as a client with
+			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "")
+			if err != nil {
+				return nil, err
+			}
 
-    } else {
-        ProxyIpAddr.Ipv4, err = p2p.CurrentPublicIP()
-        if err != nil {
-            fmt.Println(err)
-        }
-        ProxyIpAddr.ServerPort = config.ServerPort
-        ProxyIpAddr.Name = config.MachineName
-        ProxyIpAddr.NAT = "False"
-        if config.ProxyPort != "" {
-            ProxyIpAddr.ProxyServer = "True"
-        }
-        ProxyIpAddr.EscapeImplementation = ""
-        if config.BareMetal == "True" {
-            ProxyIpAddr.BareMetalSSHPort = "22"
-        }
+			// updating with the current proxy address
+			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
+			ProxyIpAddr.ServerPort = proxyPort
+			ProxyIpAddr.Name = config.MachineName
+			ProxyIpAddr.NAT = "False"
+			ProxyIpAddr.ProxyServer = "False"
+			ProxyIpAddr.EscapeImplementation = "FRP"
 
-        table.IpAddress = append(table.IpAddress, ProxyIpAddr)
+			if config.BareMetal == "True" {
+				_, SSHPort, err := MapPort("22", "")
+				if err != nil {
+					return nil, err
+				}
+				ProxyIpAddr.BareMetalSSHPort = SSHPort
+			}
 
-    }
+			//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 
-    // Writing results to the IPTable
-    err = table.WriteIpTable()
-    if err != nil {
-        return nil, err
-    }
+			// append the following to the ip table
+			table.IpAddress = append(table.IpAddress, ProxyIpAddr)
+			// write information back to the IP Table
+		}
 
-    // update ip table
-    go func() error {
-        err := clientIPTable.UpdateIpTableListClient()
-        if err != nil {
-            fmt.Println(err)
-            return err
-        }
-        return nil
-    }()
+	} else {
+		ProxyIpAddr.Ipv4, err = p2p.CurrentPublicIP()
+		if err != nil {
+			fmt.Println(err)
+		}
+		ProxyIpAddr.ServerPort = config.ServerPort
+		ProxyIpAddr.Name = config.MachineName
+		ProxyIpAddr.NAT = "False"
+		if config.ProxyPort != "" {
+			ProxyIpAddr.ProxyServer = "True"
+		}
+		ProxyIpAddr.EscapeImplementation = ""
+		if config.BareMetal == "True" {
+			ProxyIpAddr.BareMetalSSHPort = "22"
+		}
 
-    if config.ProxyPort != "" {
-        go ProxyRun(config.ProxyPort)
-    }
+		table.IpAddress = append(table.IpAddress, ProxyIpAddr)
 
-    // Run gin server on the specified port
-    go r.Run(":" + config.ServerPort)
+	}
 
-    return r, nil
+	// Writing results to the IPTable
+	err = table.WriteIpTable()
+	if err != nil {
+		return nil, err
+	}
+
+	// update ip table
+	go func() error {
+		err := clientIPTable.UpdateIpTableListClient()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		return nil
+	}()
+
+	if config.ProxyPort != "" {
+		go ProxyRun(config.ProxyPort)
+	}
+
+	// Run gin server on the specified port
+	go r.Run(":" + config.ServerPort)
+
+	return r, nil
 }
 
 func MapPort(port string, domainName string) (string, string, error) {
-    //Get Server port based on the config file
-    config, err := config.ConfigInit(nil, nil)
-    if err != nil {
-        return "", "", err
-    }
+	//Get Server port based on the config file
+	config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return "", "", err
+	}
 
-    // update IPTable with new port and ip address and update ip table
-    var ProxyIpAddr p2p.IpAddress
-    var lowestLatencyIpAddress p2p.IpAddress
+	// update IPTable with new port and ip address and update ip table
+	var ProxyIpAddr p2p.IpAddress
+	var lowestLatencyIpAddress p2p.IpAddress
 
-    clientIPTable.RemoveOfflineNodes()
+	clientIPTable.RemoveOfflineNodes()
 
-    table, err := p2p.ReadIpTable()
-    if err != nil {
-        return "", "", err
-    }
+	table, err := p2p.ReadIpTable()
+	if err != nil {
+		return "", "", err
+	}
 
-    var lowestLatency int64
-    // random large number
-    lowestLatency = 10000000
+	var lowestLatency int64
+	// random large number
+	lowestLatency = 10000000
 
-    for i, _ := range table.IpAddress {
-        // Checks if the ping is the lowest and if the following node is acting as a proxy
-        //if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-        if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
-            // Filter based on nodes with proxy enabled
-            if domainName != "" && table.IpAddress[i].ProxyServer == "Yes" {
-                lowestLatency = table.IpAddress[i].Latency.Milliseconds()
-                lowestLatencyIpAddress = table.IpAddress[i]
-                continue
-            }
-            lowestLatency = table.IpAddress[i].Latency.Milliseconds()
-            lowestLatencyIpAddress = table.IpAddress[i]
-        }
-    }
+	for i, _ := range table.IpAddress {
+		// Checks if the ping is the lowest and if the following node is acting as a proxy
+		//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
+		if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
+			// Filter based on nodes with proxy enabled
+			if domainName != "" && table.IpAddress[i].ProxyServer == "Yes" {
+				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
+				lowestLatencyIpAddress = table.IpAddress[i]
+				continue
+			}
+			lowestLatency = table.IpAddress[i].Latency.Milliseconds()
+			lowestLatencyIpAddress = table.IpAddress[i]
+		}
+	}
 
-    // If there is an identified node
-    if lowestLatency != 10000000 {
-        serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
-        if err != nil {
-            return "", "", err
-        }
-        // Create 3 second delay to allow FRP server to start
-        time.Sleep(1 * time.Second)
-        // Starts FRP as a client with
-        proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "")
-        if err != nil {
-            return "", "", err
-        }
+	// If there is an identified node
+	if lowestLatency != 10000000 {
+		serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+		if err != nil {
+			return "", "", err
+		}
+		// Create 3 second delay to allow FRP server to start
+		time.Sleep(1 * time.Second)
+		// Starts FRP as a client with
+		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "")
+		if err != nil {
+			return "", "", err
+		}
 
-        fmt.Println(domainName)
+		fmt.Println(domainName)
 
-        // Doing the proxy mapping for the domain name
-        if domainName != "" {
-            SaveRegistration(domainName, lowestLatencyIpAddress.Ipv4+":"+proxyPort)
-        }
+		// Doing the proxy mapping for the domain name
+		if domainName != "" {
+			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + proxyPort + "/AddProxy?port=" + port + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
+			//} else {
+			//	URL = "http://" + IP + ":" + serverPort + "/server_info"
+			//}
+			http.Get(URL)
+			//SaveRegistration(domainName, lowestLatencyIpAddress.Ipv4+":"+proxyPort)
+		}
 
-        // updating with the current proxy address
-        ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
-        ProxyIpAddr.ServerPort = proxyPort
-        ProxyIpAddr.Name = config.MachineName
-        ProxyIpAddr.NAT = "False"
-        ProxyIpAddr.EscapeImplementation = "FRP"
-        //ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
-    } else {
-        return "", "", errors.New("proxy IP not found")
-    }
+		// updating with the current proxy address
+		ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
+		ProxyIpAddr.ServerPort = proxyPort
+		ProxyIpAddr.Name = config.MachineName
+		ProxyIpAddr.NAT = "False"
+		ProxyIpAddr.EscapeImplementation = "FRP"
+		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
+	} else {
+		return "", "", errors.New("proxy IP not found")
+	}
 
-    return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, nil
+	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, nil
 }
