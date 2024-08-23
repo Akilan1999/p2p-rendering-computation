@@ -377,8 +377,6 @@ func MapPort(port string, domainName string) (string, string, error) {
 	// random large number
 	lowestLatency = 10000000
 
-	fmt.Println("here --------------------------------")
-
 	for i, _ := range table.IpAddress {
 		// Checks if the ping is the lowest and if the following node is acting as a proxy
 		//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
