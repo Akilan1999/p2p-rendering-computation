@@ -3,6 +3,7 @@ package main
 import "C"
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
@@ -124,7 +125,7 @@ func EscapeFirewall(HostOutsideNATIP *C.char, HostOutsideNATPort *C.char, intern
 
 	time.Sleep(5 * time.Second)
 
-	ExposedPort, err := frp.StartFRPClientForServer(C.GoString(HostOutsideNATIP)+":"+C.GoString(HostOutsideNATPort), C.GoString(serverPort), C.GoString(internalPort), "")
+	ExposedPort, err := frp.StartFRPClientForServer(C.GoString(HostOutsideNATIP)+":"+C.GoString(HostOutsideNATPort), serverPort, C.GoString(internalPort), "")
 	if err != nil {
 		return C.CString(err.Error())
 	}
@@ -134,6 +135,7 @@ func EscapeFirewall(HostOutsideNATIP *C.char, HostOutsideNATPort *C.char, intern
 
 //export MapPort
 func MapPort(Port *C.char) *C.char {
+	fmt.Println(C.GoString(Port))
 	entireAddress, _, err := abstractions.MapPort(C.GoString(Port))
 	if err != nil {
 		return C.CString(err.Error())

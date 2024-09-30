@@ -68,7 +68,7 @@ USAGE:
    p2prc [global options] command [command options] [arguments...]
 
 VERSION:
-   <version no>
+   2.0.0
 
 COMMANDS:
    help, h  Shows a list of commands or help for one command
@@ -81,6 +81,7 @@ GLOBAL OPTIONS:
    --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
    --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
    --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
+   --BaseImage value, --bi value          Specifying the docker base image to template the dockerfile [$CONTAINER_NAME]
    --RemoveVM value, --rm value           Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id [$REMOVE_VM]
    --ID value, --id value                 Docker Container ID [$ID]
    --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
@@ -96,10 +97,13 @@ GLOBAL OPTIONS:
    --Groups, --groups                     View all groups (default: false) [$GROUPS]
    --RemoveContainerGroup, --rmcgroup     Remove specific container in the group (default: false) [$REMOVE_CONTAINER_GROUP]
    --RemoveGroup value, --rmgroup value   Removes the entire group [$REMOVE_GROUP]
+   --MAPPort value, --mp value            Maps port for a specific port provided as the parameter [$MAPPORT]
+   --DomainName value, --dn value         While mapping ports allows to set a domain name to create a mapping in the proxy server [$DOMAINNAME]
    --Generate value, --gen value          Generates a new copy of P2PRC which can be modified based on your needs [$GENERATE]
    --ModuleName value, --mod value        New go project module name [$MODULENAME]
    --PullPlugin value, --pp value         Pulls plugin from git repos [$PULLPLUGIN]
    --RemovePlugin value, --rp value       Removes plugin [$REMOVEPLUGIN]
+   --AddMetaData value, --amd value       Adds metadata about the current node in the p2p network which is then propagated through the network [$ADDMETADATA]
    --help, -h                             show help (default: false)
    --version, -v                          print the version (default: false)
 
@@ -211,6 +215,11 @@ p2prc --rp <plugin name>
 ### Added custom metadata about the current node
 ```
 p2prc --amd "custom metadata"
+```
+
+### Map port
+```
+p2prc --mp <internal port no from your machine> --dn <domain name you want the port linked to>
 ```
 
 <br>
