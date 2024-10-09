@@ -1,16 +1,18 @@
 package abstractions
 
-import "C"
+// import "C"
 import (
+	"os"
+
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	Config "github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
-	"os"
 )
 
 // Init Initialises p2prc
@@ -85,4 +87,8 @@ func ViewIPTable() (table *p2p.IpAddresses, err error) {
 // new nodes discovered in the network
 func UpdateIPTable() (err error) {
 	return clientIPTable.UpdateIpTableListClient()
+}
+
+func ExecutePlugin(PluginName string, ContainerID string) error {
+	return plugin.CheckRunPlugin(PluginName, ContainerID)
 }
