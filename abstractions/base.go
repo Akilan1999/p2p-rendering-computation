@@ -60,8 +60,8 @@ func MapPort(port string) (entireAddres string, mapPort string, err error) {
 }
 
 // StartContainer Starts docker container on the remote machine
-func StartContainer(IP string) (container *docker.DockerVM, err error) {
-	container, err = client.StartContainer(IP, 0, false, "", "")
+func StartContainer(IP string, NumPorts int, ContainerName string, BaseImage string) (container *docker.DockerVM, err error) {
+	container, err = client.StartContainer(IP, NumPorts, false, ContainerName, BaseImage)
 	return
 }
 
@@ -89,6 +89,6 @@ func UpdateIPTable() (err error) {
 	return clientIPTable.UpdateIpTableListClient()
 }
 
-func ExecutePlugin(PluginName string, ContainerID string) error {
-	return plugin.CheckRunPlugin(PluginName, ContainerID)
+func ExecutePlugin(PluginName string, ContainerID string, PluginArgs []string) error {
+	return plugin.CheckRunPlugin(PluginName, ContainerID, PluginArgs)
 }
