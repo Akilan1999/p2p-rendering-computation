@@ -175,28 +175,62 @@ func GeneratePluginDirectory() (err error) {
 func GenerateClientTrackContainers() (err error) {
 	path, err := config.GetCurrentPath()
 	if err != nil {
-		return err
+		return
 	}
-	if _, err = os.Stat(path + "client"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"client", os.ModePerm); err != nil {
-			return err
-		}
-		if err = os.Mkdir(path+"client/trackcontainers", os.ModePerm); err != nil {
-			return err
-		}
 
-		if _, err = os.Stat(path + "client/trackcontainers/trackcontainers.json"); os.IsNotExist(err) {
-			_, err = os.Create(path + "client/trackcontainers/trackcontainers.json")
-			if err != nil {
-				return err
-			}
-			_, err = os.Create(path + "client/trackcontainers/grouptrackcontainers.json")
-			if err != nil {
-				return err
-			}
-		}
+	dirPath := path + "client/trackcontainers/"
 
+	err = os.MkdirAll(dirPath, 0777)
+
+	if err != nil {
+		return
 	}
+
+	fExists, err := FileExists(dirPath + "trackcontainers.json")
+	if err != nil {
+		return
+	}
+
+	if !fExists {
+		_, err = os.Create(dirPath + "trackcontainers.json")
+		if err != nil {
+			return
+		}
+	}
+
+	fExists, err = FileExists(dirPath + "grouptrackcontainers.json")
+	if err != nil {
+		return
+	}
+
+	if !fExists {
+		_, err = os.Create(dirPath + "grouptrackcontainers.json")
+		if err != nil {
+			return
+		}
+	}
+
+	// if _, err = os.Stat(path + "client"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"client", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+
+	// 	if err = os.Mkdir(path+"client/trackcontainers", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+
+	// 	if _, err = os.Stat(path + "client/trackcontainers/trackcontainers.json"); os.IsNotExist(err) {
+	// 		_, err = os.Create(path + "client/trackcontainers/trackcontainers.json")
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		_, err = os.Create(path + "client/trackcontainers/grouptrackcontainers.json")
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 	}
+
+	// }
 	return
 }
 
