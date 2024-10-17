@@ -24,10 +24,10 @@ func GenerateFiles(rootNodes ...p2p.IpAddress) (err error) {
 	if err != nil {
 		return err
 	}
-	err = GeneratePluginDirectory()
-	if err != nil {
-		return err
-	}
+	// err = GeneratePluginDirectory()
+	// if err != nil {
+	// 	return err
+	// }
 	err = GenerateClientTrackContainers()
 	return
 }
