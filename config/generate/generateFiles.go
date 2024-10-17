@@ -5,12 +5,13 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"io/ioutil"
+	"os"
+
 	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/go-git/go-git/v5"
 	"golang.org/x/crypto/ssh"
-	"io/ioutil"
-	"os"
 )
 
 // GenerateFiles Generates all the files needed to setup P2PRC
@@ -92,32 +93,32 @@ func GenerateDockerFiles() (err error) {
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(path + "server"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"server", os.ModePerm); err != nil {
-			return err
-		}
-		if _, err = os.Stat(path + "server/docker"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers/docker-ubuntu-sshd"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers/docker-ubuntu-sshd", os.ModePerm); err != nil {
-				return err
-			}
-		}
+	// if _, err = os.Stat(path + "server"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"server", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers/mrp2p-docker"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path + "server/docker/containers/mrp2p-docker", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
 
-	}
+	// }
 
 	// Clone base docker image
 	_, err = git.PlainClone(path+"server/docker/containers/docker-ubuntu-sshd", false, &git.CloneOptions{
@@ -128,6 +129,11 @@ func GenerateDockerFiles() (err error) {
 		return err
 	}
 
+	_, err = git.PlainClone(path+"server/docker/containers/mrp2p-docker", false, &git.CloneOptions{
+		URL:      "https://github.com/MFMemon/mrp2p-docker",
+		Progress: os.Stdout,
+	})
+
 	return
 }
 
@@ -137,16 +143,32 @@ func GeneratePluginDirectory() (err error) {
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(path + "plugin"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"plugin", os.ModePerm); err != nil {
-			return err
-		}
-		if _, err = os.Stat(path + "plugin/deploy"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"plugin/deploy", os.ModePerm); err != nil {
-				return err
-			}
-		}
+	// if _, err = os.Stat(path + "plugin"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	// if _, err = os.Stat(path + "plugin/deploy"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin/deploy", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	// if _, err = os.Stat(path + "plugin/deploy/mretcd"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin/deploy/mretcd", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	_, err = git.PlainClone(path+"plugin/deploy/mretcd", false, &git.CloneOptions{
+		URL:      "https://github.com/MFMemon/mrp2pmaster.git",
+		Progress: os.Stdout,
+	})
+	if err != nil {
+		return err
 	}
+
 	return
 }
 
