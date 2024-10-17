@@ -69,7 +69,7 @@ func StartFRPClientForServer(ipaddress string, port string, localport string, re
 		//randPort := rangeIn(10000, 99999)
 		// OpenPorts, err = freeport.GetFreePorts(1)
 
-		portStrRemote, err := GetFRPServerRemotePort(ipaddress)
+		portStrRemote, err := GetFRPServerRemotePort("http://" + ipaddress + ":" + port)
 
 		if err != nil {
 			return "", err
