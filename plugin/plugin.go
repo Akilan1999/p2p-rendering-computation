@@ -35,6 +35,7 @@ type Plugin struct {
 	path              string
 	Execute           []*ExecuteIP
 	NumOfPorts        int
+	PluginArgs        []string
 }
 
 // ExecuteIP IP Address to execute Ansible instruction
@@ -183,7 +184,9 @@ func (p *Plugin) ExecutePlugin() error {
 			return err
 		}
 		// sets the ports to the plugin folder
-		err = p.AutoSetPorts(execute.ContainerID)
+		// err = p.AutoSetPorts(execute.ContainerID)
+		err = p.ApplyPluginArgs()
+
 		if err != nil {
 			return err
 		}
@@ -294,7 +297,7 @@ func ReadHost(filename string) (*Host, error) {
 // RunPluginContainer Runs ansible plugin based on plugin name and container name which
 // is derived from the tracked containers file
 // We pass in the group ID as a parameter because when we modify the ports taken
-func RunPluginContainer(PluginName string, ContainerID string) error {
+func RunPluginContainer(PluginName string, ContainerID string, PluginArgs []string) error {
 	// Gets container information based on container ID
 	ContainerInformation, err := client.GetContainerInformation(ContainerID)
 	if err != nil {
@@ -340,7 +343,7 @@ func RunPluginContainer(PluginName string, ContainerID string) error {
 
 // CheckRunPlugin Checks if the ID belongs to the group or container
 // calls the plugin function the appropriate amount of times
-func CheckRunPlugin(PluginName string, ID string) error {
+func CheckRunPlugin(PluginName string, ID string, PluginArgs []string) error {
 	// Check if the ID belongs to the group or container ID
 	id, err := client.CheckID(ID)
 	if err != nil {
@@ -357,13 +360,13 @@ func CheckRunPlugin(PluginName string, ID string) error {
 		// and run the plugin in each of them
 		for _, container := range group.TrackContainerList {
 			// runs plugin for each container
-			err := RunPluginContainer(PluginName, container.Id)
+			err := RunPluginContainer(PluginName, container.Id, PluginArgs)
 			if err != nil {
 				return err
 			}
 		}
 	} else { // This means the following ID is a container ID
-		err := RunPluginContainer(PluginName, ID)
+		err := RunPluginContainer(PluginName, ID, PluginArgs)
 		if err != nil {
 			return err
 		}
@@ -405,7 +408,7 @@ func (p *Plugin) AutoSetPorts(containerID string) error {
 	PortTaken := 0
 	// setting all external ports available in an array
 	for i, port := range container.Container.Ports.PortSet {
-		if port.IsUsed == false {
+		if port.IsUsed {
 			// Ensuring we break outside the loop once the ports
 			// are set.
 			if PortTaken >= p.NumOfPorts {
@@ -451,6 +454,27 @@ func (p *Plugin) AutoSetPorts(containerID string) error {
 		return err
 	}
 
+	return nil
+}
+
+// AutoSetPorts Automatically maps free ports to site.yml file
+func (p *Plugin) ApplyPluginArgs() error {
+
+	// parses the site.yml file in the tmp directory
+	t, err := template.ParseFiles(p.path + "/" + p.FolderName + "/site.yml")
+	if err != nil {
+		return err
+	}
+	// opens the output file
+	f, err := os.Create(p.path + "/" + p.FolderName + "/site.yml")
+	if err != nil {
+		return err
+	}
+	// sends the ports to the site.yml file to populate them
+	err = t.Execute(f, p.PluginArgs)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
