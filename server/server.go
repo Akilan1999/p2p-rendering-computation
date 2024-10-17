@@ -172,7 +172,7 @@ func Server() (*gin.Engine, error) {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 
-		c.String(http.StatusOK, string(openports[0]))
+		c.String(http.StatusOK, strconv.Itoa(openports[0]))
 	})
 
 	// Request for port no from Server with address
