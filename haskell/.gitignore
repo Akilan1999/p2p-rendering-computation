@@ -1,0 +1,9 @@
+CHANGELOG.md
+client
+config.json
+dist-newstyle
+p2p
+p2prc.privateKey
+p2prc.PublicKeyBareMetal
+plugin
+server
