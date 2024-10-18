@@ -131,7 +131,7 @@ func SearchPlugin(pluginname string) (*Plugin, error) {
 }
 
 // RunPlugin Executes plugins based on the plugin name provided
-func RunPlugin(pluginName string, IPAddresses []*ExecuteIP) (*Plugin, error) {
+func RunPlugin(pluginName string, IPAddresses []*ExecuteIP, PluginArgs []string) (*Plugin, error) {
 	plugins, err := DetectPlugins()
 	if err != nil {
 		return nil, err
@@ -156,6 +156,8 @@ func RunPlugin(pluginName string, IPAddresses []*ExecuteIP) (*Plugin, error) {
 	if plugindetected == nil {
 		return nil, errors.New("Plugin not detected")
 	}
+
+	plugindetected.PluginArgs = append(plugindetected.PluginArgs, PluginArgs...)
 
 	// Create copy of the plugin the tmp directory
 	// To ensure we execute the plugin from there
@@ -333,7 +335,7 @@ func RunPluginContainer(PluginName string, ContainerID string, PluginArgs []stri
 	// Append IP to list of executor IP
 	ExecuteIPs = append(ExecuteIPs, &ExecuteIP)
 	// Run plugin to execute plugin
-	_, err = RunPlugin(PluginName, ExecuteIPs)
+	_, err = RunPlugin(PluginName, ExecuteIPs, PluginArgs)
 	if err != nil {
 		return err
 	}
