@@ -36,5 +36,5 @@ export/
 test*
 
 # Ignore public and private keys
-p2prc.publicKey
+p2prc.PublicKeyBareMetal
 p2prc.privateKey
