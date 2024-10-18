@@ -3,9 +3,8 @@
 module Main where
 
 
-import Data.Aeson
 
-import Data.List
+import Data.Aeson
 
 import System.Process (readProcess, terminateProcess, ProcessHandle, spawnProcess)
 
@@ -13,16 +12,24 @@ import Control.Monad (MonadPlus(mzero))
 
 import Control.Concurrent (threadDelay)
 
-import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Char8 as LBC8
 
 
-import qualified Data.Text as T
+-- TODO: Use it
+-- import qualified Data.Text as T
 
+
+
+-- TODO: create library to abstract shell and go-level logic
 
 main :: IO ()
 main = do
 
+  -- TODO: add IO arguments; flag to cleanup environment
+
+  -- TODO create record with all functions needed
+
+  -- TODO: initialise environment; perhaps cleanup state files
   -- outputStr <- execProcP2Prc ["-dc"]
 
   cmdOut <- getP2PrcCmd
@@ -52,6 +59,7 @@ instance FromJSON IPAdressTable where
 
 
 
+-- TODO: refactor this datatype; better definition
 data ServerInfo = MkServerInfo
   { serverInfoName                  :: String
   -- , serverInfoIp4                   :: String
@@ -84,13 +92,14 @@ instance FromJSON ServerInfo where
   parseJSON _ = mzero
 
 
-
 sleepNSecs :: Int -> IO ()
 sleepNSecs i = threadDelay (i * 1000000)
 
 
-
-execProcP2PrcParser :: FromJSON a => [String] -> IO (Either String a)
+execProcP2PrcParser ::
+  FromJSON a =>
+    -- TODO: add error Type
+    [String] -> IO (Either String a)
 execProcP2PrcParser opts = eitherDecode . LBC8.pack <$> execProcP2Prc opts
 
 
@@ -107,5 +116,5 @@ p2prcCmd = "/home/xecarlox/Desktop/p2p-rendering-computation/p2prc" :: String
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
   pwdOut <- readProcess "pwd" [] ""
-  readProcess "sed" ["s/haskell/p2prc/"] pwdOut
+  readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
