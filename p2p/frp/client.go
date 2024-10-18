@@ -8,6 +8,7 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
+	"github.com/phayes/freeport"
 )
 
 // Client This struct stores
@@ -67,21 +68,21 @@ func StartFRPClientForServer(ipaddress string, port string, localport string, re
 	} else {
 		//random port
 		//randPort := rangeIn(10000, 99999)
-		// OpenPorts, err = freeport.GetFreePorts(1)
+		OpenPorts, err = freeport.GetFreePorts(1)
 
-		portStrRemote, err := GetFRPServerRemotePort("http://" + ipaddress + ":" + port)
-
-		if err != nil {
-			return "", err
-		}
-
-		portIntRemote, err := strconv.Atoi(portStrRemote)
+		// portStrRemote, err := GetFRPServerRemotePort("http://" + ipaddress + ":" + port)
 
 		if err != nil {
 			return "", err
 		}
 
-		OpenPorts = append(OpenPorts, portIntRemote)
+		// portIntRemote, err := strconv.Atoi(portStrRemote)
+
+		// if err != nil {
+		// 	return "", err
+		// }
+
+		// OpenPorts = append(OpenPorts, portIntRemote)
 
 	}
 	c.ClientMappings = []ClientMapping{
@@ -134,7 +135,12 @@ func StartFRPCDockerContainer(ipaddress string, port string, Docker *docker.Dock
 		//delay to allow the FRP server to start
 		time.Sleep(1 * time.Second)
 
-		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap), "")
+		remotePort, err := GetFRPServerRemotePort("http://" + ipaddress + ":" + port)
+		if err != nil {
+			return nil, err
+		}
+
+		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap), remotePort)
 		if err != nil {
 			return nil, err
 		}

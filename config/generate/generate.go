@@ -77,7 +77,7 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.PluginPath = defaultPath + "plugin/deploy"
 		Defaults.TrackContainersPath = defaultPath + "client/trackcontainers/trackcontainers.json"
 		Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
-		Defaults.ServerPort = "8088"
+		Defaults.ServerPort = "9999"
 		Defaults.FRPServerPort = "True"
 		Defaults.CustomConfig = CustomConfig
 		Defaults.BehindNAT = "True"
