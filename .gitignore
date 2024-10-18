@@ -38,3 +38,4 @@ test*
 # Ignore public and private keys
 p2prc.publicKey
 p2prc.privateKey
+p2prc.PublicKeyBareMetal
