@@ -37,7 +37,7 @@ main = do
 
   let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
 
-  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable
+  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmptyStdInput :: IOEitherError IPAdressTable
   print outputStr
 
   terminateProcess startProcessHandle
@@ -81,8 +81,8 @@ data ServerInfo = MkServerInfo
   , latency               :: Int
   , download              :: Int
   , upload                :: Int
-  , serverPort            :: Int                      -- TODO: verify if it is Maybe value
-  , bareMetalSSHPort      :: Maybe Int                -- TODO: verify if it is Maybe value
+  , serverPort            :: Int
+  , bareMetalSSHPort      :: Maybe Int
   , nat                   :: Bool
   , escapeImplementation  :: Maybe T.Text
   , customInformation     :: Maybe T.Text
@@ -144,10 +144,12 @@ instance FromJSON ServerInfo where
 
 
 data StdInput
-  = MkEmpty
+  = MkEmptyStdInput
+  | MkStdInputVal String
 
 instance Show StdInput where
-  show MkEmpty = ""
+  show MkEmptyStdInput    = ""
+  show (MkStdInputVal v)  = show v
 
 
 
@@ -175,7 +177,8 @@ execProcP2Prc_ p2prcCmd ops stdi =
 
 
 data CLIOpt
-  = MkOptAtomic String
+  = MkEmptyOpts
+  | MkOptAtomic String
   | MkOptTuple (String, String)
 
 type CLIOptsInput = [String]
@@ -186,7 +189,8 @@ optsToCLI = concatMap _optToCLI
   where
 
   _optToCLI :: CLIOpt -> CLIOptsInput
-  _optToCLI (MkOptAtomic o) = [o]
+  _optToCLI MkEmptyOpts         = []
+  _optToCLI (MkOptAtomic o)     = [o]
   _optToCLI (MkOptTuple (o, v)) = [o, show v]
 
 
@@ -215,7 +219,6 @@ sleepNSecs :: Int -> IO ()
 sleepNSecs i = threadDelay (i * 1000000)
 
 
-
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
 
@@ -228,4 +231,5 @@ getP2PrcCmd = do
 
       -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
       strip <$> readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
 
