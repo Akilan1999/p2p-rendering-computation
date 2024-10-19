@@ -44,6 +44,13 @@ main = do
 
   sleepNSecs 5
 
+  outputStr <- execListServers
+  print outputStr
+
+  -- Mapport - Number
+
+  terminateProcess startProcessHandle
+
   -- Loop (Run replica of haskell program on different $NODES)
   --    - Start server
   --    - wait 4 seconds
@@ -53,12 +60,6 @@ main = do
   --    - Run server
   --    - Use remote machine p2prc cmd to map a port using --mp
   --    - Return back the exposed public IP and port number back to stdout
-
-  outputStr <- execListServers
-  print outputStr
-
-  terminateProcess startProcessHandle
-
 
 
 
