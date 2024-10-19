@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-func MAPPort(port string) (string, error) {
+func MAPPort(port string, domainName string) (string, error) {
 	Config, err := config.ConfigInit(nil, nil)
 	if err != nil {
 		return "", err
 	}
 
 	//if version == "version 6" {
-	URL := "http://0.0.0.0:" + Config.ServerPort + "/MAPPort?port=" + port
+	URL := "http://0.0.0.0:" + Config.ServerPort + "/MAPPort?port=" + port + "&domain_name=" + domainName
 	//} else {
 	//	URL = "http://" + IP + ":" + serverPort + "/server_info"
 	//}
