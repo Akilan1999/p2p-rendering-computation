@@ -21,48 +21,59 @@ main = do
   -- TODO: add IO arguments; flag to optionally cleanup environment
   -- TODO: add GDTA syntax to data types
 
-  -- -- TODO: initialise environment; perhaps cleanup state files
-  -- _ <- execProcP2Prc [MkOptAtomic "-dc"] MkEmpty
+  p2prcAPI <- getP2prcAPI
 
+  let
+    ( MkP2prAPI
+      { startServer     = startServer
+      , execInitConfig  = execInitConfig
+      , execListServers = execListServers
+      }
+      ) = p2prcAPI
+
+  -- TODO: initialise environment; perhaps cleanup state files
+  --
+  -- TODO: make it pure environment by default
+  _ <- execInitConfig
 
   -- TODO: create record with all functions needed
   --
   -- TODO: Add loop to print servers list
 
-  p2prcCmd <- getP2PrcCmd
-
-  startProcessHandle <- spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
+  startProcessHandle <- startServer
 
   sleepNSecs 5
 
-  let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
-
-  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmptyStdInput :: IOEitherError IPAdressTable
+  outputStr <- execListServers
   print outputStr
 
   terminateProcess startProcessHandle
 
 
-{-
-data P2PRCapi =
-  MkP2PRCapi
-    { startServer :: IO ProcessHandle
-    , defineConfiguration :: IO String
-    , getListServers :: IOEitherError IPAdressTable
-    }
 
-getP2PRCapi :: IO P2PRCapi
-getP2PRCapi = do
+
+data P2prAPI = MkP2prAPI
+  { startServer       :: IO ProcessHandle
+  , execInitConfig    :: IO String
+  , execListServers   :: IOEitherError IPAdressTable
+  }
+
+
+getP2prcAPI :: IO P2prAPI
+getP2prcAPI = do
+
   p2prcCmd <- getP2PrcCmd
 
-  startProcessHandle <- spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
-
-  sleepNSecs 5
-
   let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
+  let execProcP2Prc       = execProcP2Prc_ p2prcCmd
 
-  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable
--}
+  return $
+    MkP2prAPI
+      { startServer     = spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
+      , execInitConfig  = execProcP2Prc           [MkOptAtomic "-dc"] MkEmptyStdInput
+      , execListServers = execProcP2PrcParser     [MkOptAtomic "-ls"] MkEmptyStdInput
+      }
+
 
 
 newtype IPAdressTable
@@ -97,32 +108,34 @@ data IPAddress
 
 
 instance FromJSON ServerInfo where
-  parseJSON = withObject "ServerInfo" $ \o -> do
-    name        <- o .: "Name"
-    ip4str      <- o .: "IPV4"
-    ip6str      <- o .: "IPV6"
-    latency     <- o .: "Latency"
-    download    <- o .: "Download"
-    upload      <- o .: "Upload"
-    serverPort  <- o .: "ServerPort"
-    bmSshPort   <- o .: "BareMetalSSHPort"
-    nat         <- o .: "NAT"
-    mEscImpl    <- o .: "EscapeImplementation"
-    custInfo    <- o .: "CustomInformation"
+  parseJSON = withObject "ServerInfo" $
+    \o -> do
 
-    pure $
-      MkServerInfo
-        { name                  = name
-        , ip                    = getIPAddress ip4str ip6str
-        , latency               = latency
-        , download              = download
-        , upload                = upload
-        , serverPort            = getPortUNSAFE serverPort
-        , bareMetalSSHPort      = getBMShhPort bmSshPort
-        , nat                   = getNat nat
-        , escapeImplementation  = mEscImpl
-        , customInformation     = custInfo
-        }
+      name        <- o .: "Name"
+      ip4str      <- o .: "IPV4"
+      ip6str      <- o .: "IPV6"
+      latency     <- o .: "Latency"
+      download    <- o .: "Download"
+      upload      <- o .: "Upload"
+      serverPort  <- o .: "ServerPort"
+      bmSshPort   <- o .: "BareMetalSSHPort"
+      nat         <- o .: "NAT"
+      mEscImpl    <- o .: "EscapeImplementation"
+      custInfo    <- o .: "CustomInformation"
+
+      pure $
+        MkServerInfo
+          { name                  = name
+          , ip                    = getIPAddress ip4str ip6str
+          , latency               = latency
+          , download              = download
+          , upload                = upload
+          , serverPort            = getPortUNSAFE serverPort
+          , bareMetalSSHPort      = getBMShhPort bmSshPort
+          , nat                   = getNat nat
+          , escapeImplementation  = mEscImpl
+          , customInformation     = custInfo
+          }
 
     where
 
@@ -152,7 +165,6 @@ instance Show StdInput where
   show (MkStdInputVal v)  = show v
 
 
-
 type IOEitherError a = IO (Either Error a)
 
 execProcP2PrcParser_ ::
@@ -165,7 +177,11 @@ execProcP2PrcParser_ p2prcCmd opts stdInput
 
   where
 
+  eitherErrDecode ::
+    FromJSON a =>
+      String -> Either Error a
   eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
+
 
 
 execProcP2Prc_ :: CLICmd -> [CLIOpt] -> StdInput -> IO String
@@ -181,8 +197,10 @@ data CLIOpt
   | MkOptAtomic String
   | MkOptTuple (String, String)
 
+
 type CLIOptsInput = [String]
 type CLICmd = String
+
 
 optsToCLI :: [CLIOpt] -> CLIOptsInput
 optsToCLI = concatMap _optToCLI
@@ -215,10 +233,6 @@ assignError = MkError
 -- TODO: add megaparsec to parse Error Messages
 
 
-sleepNSecs :: Int -> IO ()
-sleepNSecs i = threadDelay (i * 1000000)
-
-
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
 
@@ -233,3 +247,6 @@ getP2PrcCmd = do
       strip <$> readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
 
+
+sleepNSecs :: Int -> IO ()
+sleepNSecs i = threadDelay (i * 1000000)
