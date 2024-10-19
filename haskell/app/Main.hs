@@ -44,6 +44,16 @@ main = do
 
   sleepNSecs 5
 
+  -- Loop (Run replica of haskell program on different $NODES)
+  --    - Start server
+  --    - wait 4 seconds
+  --    - Identify new node running p2prc with SSH external port exposed
+  --    - SSH into machine
+  --    - Use simple File transfer to setup files
+  --    - Run server
+  --    - Use remote machine p2prc cmd to map a port using --mp
+  --    - Return back the exposed public IP and port number back to stdout
+
   outputStr <- execListServers
   print outputStr
 
