@@ -30,22 +30,22 @@ main = do
   -- TODO create record with all functions needed
 
   -- TODO: initialise environment; perhaps cleanup state files
-  -- outputStr <- execProcP2Prc ["-dc"]
+  outputStr <- execProcP2Prc [MkOptAtomic "-dc"]
 
   cmdOut <- getP2PrcCmd
+
+  startProcessHandle <- spawnProcP2Prc [MkOptAtomic "-s"]
+
+  sleepNSecs 5
+
+  outputStr <- (execProcP2PrcParser [MkOptAtomic "-ls"] :: IO (Either Error IPAdressTable))
+  print outputStr
+
+  outputStr <- execProcP2Prc [MkOptAtomic "--help"]
+  print outputStr
+
+  terminateProcess startProcessHandle
   putStrLn cmdOut
-
-  -- startProcessHandle <- spawnProcP2Prc ["-s"]
-
-  -- sleepNSecs 5
-
-  -- outputStr <- (execProcP2PrcParser ["-ls"] :: IO (Either String IPAdressTable))
-  -- print outputStr
-
-  -- outputStr <- execProcP2Prc ["--help"]
-  -- print outputStr
-
-  -- terminateProcess startProcessHandle
 
 
 newtype IPAdressTable
@@ -92,29 +92,61 @@ instance FromJSON ServerInfo where
   parseJSON _ = mzero
 
 
-sleepNSecs :: Int -> IO ()
-sleepNSecs i = threadDelay (i * 1000000)
-
-
 execProcP2PrcParser ::
   FromJSON a =>
-    -- TODO: add error Type
-    [String] -> IO (Either String a)
-execProcP2PrcParser opts = eitherDecode . LBC8.pack <$> execProcP2Prc opts
+    [CLIOpt] -> IO (Either Error a)
+execProcP2PrcParser opts =
+  eitherErrorDecode . eitherDecode . LBC8.pack <$> execProcP2Prc opts
 
 
-execProcP2Prc :: [String] -> IO String
-execProcP2Prc opts = readProcess p2prcCmd opts ""
+data CLIOpt
+  = MkOptAtomic String
+  | MkOptTuple (String, String)
 
-spawnProcP2Prc :: [String] -> IO ProcessHandle
-spawnProcP2Prc = spawnProcess p2prcCmd
+type CLIOptsInput = [String]
+
+optsToCLI :: [CLIOpt] -> CLIOptsInput
+optsToCLI = concatMap _optToCLI
+  where
+
+  _optToCLI :: CLIOpt -> CLIOptsInput
+  _optToCLI (MkOptAtomic o) = [o]
+  _optToCLI (MkOptTuple (o, v)) = [o, show v]
+
+
+execProcP2Prc :: [CLIOpt] -> IO String
+execProcP2Prc opts = readProcess p2prcCmd (optsToCLI opts) ""
+
+spawnProcP2Prc :: [CLIOpt] -> IO ProcessHandle
+spawnProcP2Prc opts = spawnProcess p2prcCmd $ optsToCLI opts
 
 
 p2prcCmd = "/home/xecarlox/Desktop/p2p-rendering-computation/p2prc" :: String
 
 
+
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
-  pwdOut <- readProcess "pwd" [] ""
-  readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+  -- assumes the program is ran inside the haskell module in p2prc's repo
+  readProcess "pwd" [] "" >>=
+    \pwdOut ->
+      -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
+      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
+
+eitherErrorDecode ::
+  Either String a -> Either Error a
+eitherErrorDecode esa = case esa of
+  (Left s) -> Left $ assignError s
+  (Right v) -> Right v
+
+data Error = MkError String
+  deriving Show
+
+assignError :: String -> Error
+assignError = MkError
+
+sleepNSecs :: Int -> IO ()
+sleepNSecs i = threadDelay (i * 1000000)
+
 
