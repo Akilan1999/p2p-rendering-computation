@@ -12,7 +12,7 @@ import qualified Data.ByteString.Lazy.Char8 as LBC8
 
 
 -- TODO: Use it
--- import qualified Data.Text as T
+import qualified Data.Text as T
 
 
 -- TODO: create library to abstract shell and go-level logic
@@ -29,18 +29,23 @@ main = do
   --
   -- TODO: Add loop to print servers list
 
-  cmdOut <- getP2PrcCmd
 
-  startProcessHandle <- spawnProcP2Prc [MkOptAtomic "-s"]
+  -- solve this issue
+  p2prcCmd <- getP2PrcCmd
+
+  startProcessHandle <- spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
 
   sleepNSecs 5
 
-  outputStr <- (execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable)
+  let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
+
+  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable
   print outputStr
 
   terminateProcess startProcessHandle
 
-  putStrLn cmdOut
+
+-- getP2PRCapi ::
 
 
 newtype IPAdressTable
@@ -54,7 +59,7 @@ instance FromJSON IPAdressTable where
 
 
 data ServerInfo = MkServerInfo
-  { name                  :: String
+  { name                  :: T.Text
   , ip                    :: IPAddress
   , latency               :: Int
   , download              :: Int
@@ -62,8 +67,8 @@ data ServerInfo = MkServerInfo
   , serverPort            :: Int                      -- TODO: verify if it is Maybe value
   , bareMetalSSHPort      :: Maybe Int                -- TODO: verify if it is Maybe value
   , nat                   :: Bool
-  , escapeImplementation  :: Maybe String
-  , customInformation     :: Maybe String
+  , escapeImplementation  :: Maybe T.Text
+  , customInformation     :: Maybe T.Text
   }
   deriving Show
 
@@ -120,9 +125,6 @@ instance FromJSON ServerInfo where
     getIPAddress ip4  _   = MkIPv4 ip4
 
 
--- TODO: remove this variable
-p2prcCmd = "/home/xecarlox/Desktop/p2p-rendering-computation/p2p-rendering-computation" :: String
-
 
 data StdInput
   = MkEmpty
@@ -134,21 +136,21 @@ instance Show StdInput where
 
 type IOEitherError a = IO (Either Error a)
 
-execProcP2PrcParser ::
+execProcP2PrcParser_ ::
   FromJSON a =>
-    [CLIOpt] -> StdInput -> IOEitherError a
-execProcP2PrcParser opts stdInput
+    CLICmd -> [CLIOpt] -> StdInput -> IOEitherError a
+execProcP2PrcParser_ p2prcCmd opts stdInput
     =
       eitherErrDecode
-        <$> execProcP2Prc opts stdInput
+        <$> execProcP2Prc_ p2prcCmd opts stdInput
 
   where
 
   eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
 
 
-execProcP2Prc :: [CLIOpt] -> StdInput -> IO String
-execProcP2Prc ops stdi =
+execProcP2Prc_ :: CLICmd -> [CLIOpt] -> StdInput -> IO String
+execProcP2Prc_ p2prcCmd ops stdi =
   readProcess
     p2prcCmd
       (optsToCLI ops)
@@ -171,8 +173,8 @@ optsToCLI = concatMap _optToCLI
   _optToCLI (MkOptTuple (o, v)) = [o, show v]
 
 
-spawnProcP2Prc :: [CLIOpt] -> IO ProcessHandle
-spawnProcP2Prc =
+spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO ProcessHandle
+spawnProcP2Prc p2prcCmd =
   spawnProcess p2prcCmd . optsToCLI
 
 
@@ -201,6 +203,11 @@ getP2PrcCmd :: IO String
 getP2PrcCmd = do
   -- assumes the program is ran inside the haskell module in p2prc's repo
   readProcess "pwd" [] "" >>=
-    \pwdOut ->
+    \pwdOut -> do
       -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
+      -- need to strip the newline and return a String again
+      let strip = T.unpack . T.strip . T.pack
+
+      strip <$> readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
