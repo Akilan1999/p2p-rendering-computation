@@ -2,6 +2,8 @@ module github.com/Akilan1999/p2p-rendering-computation
 
 go 1.15
 
+replace github.com/Akilan1999/p2p-rendering-computation => github.com/MFMemon/p2p-rendering-computation v1.1.2-0.20241019185344-b4691113dcbd
+
 require (
 	github.com/Microsoft/go-winio v0.4.17-0.20210211115548-6eac466e5fa3 // indirect
 	github.com/apenella/go-ansible v1.1.0
