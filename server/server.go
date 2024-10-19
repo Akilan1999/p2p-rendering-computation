@@ -3,6 +3,7 @@ package server
 import (
 	b64 "encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config"
@@ -16,8 +17,23 @@ import (
 	"time"
 )
 
+type ReverseProxy struct {
+	IPAddress string
+	Port      string
+}
+
+// ReverseProxies Reverse to the map such as ReverseProxies[<domain nane>]ReverseProxy type
+var ReverseProxies map[string]ReverseProxy
+
 func Server() (*gin.Engine, error) {
 	r := gin.Default()
+
+	// "The make function allocates and initializes a hash map data
+	//structure and returns a map value that points to it.
+	//The specifics of that data structure are an implementation
+	//detail of the runtime and are not specified by the language itself."
+	// source: https://go.dev/blog/maps
+	ReverseProxies = make(map[string]ReverseProxy)
 
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
@@ -175,7 +191,8 @@ func Server() (*gin.Engine, error) {
 
 	r.GET("/MAPPort", func(c *gin.Context) {
 		Ports := c.DefaultQuery("port", "0")
-		url, _, err := MapPort(Ports)
+		DomainName := c.DefaultQuery("domain_name", "")
+		url, _, err := MapPort(Ports, DomainName)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
@@ -183,20 +200,61 @@ func Server() (*gin.Engine, error) {
 		c.String(http.StatusOK, url)
 	})
 
+	r.GET("/AddProxy", func(c *gin.Context) {
+		DomainName := c.DefaultQuery("domain_name", "")
+		ip_address := c.DefaultQuery("ip_address", "")
+		Ports := c.DefaultQuery("port", "")
+
+		if DomainName == "" || ip_address == "" || Ports == "" {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("All get parameters npt provided"+
+				" do ensure domain_name, ip_Address and port no is provided"))
+		}
+
+		err := SaveRegistration(DomainName, ip_address+":"+Ports)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf(err.Error()))
+		}
+
+		//_, ok := ReverseProxies[DomainName]
+		//// To check if the subdomain entry exists
+		//if ok {
+		//	c.String(http.StatusInternalServerError, fmt.Sprintf("The domain entry already exists as a reverse"+
+		//		" proxy entry"))
+		//}
+		//
+		//// added proxy as a map entry
+		//ReverseProxies[DomainName] = ReverseProxy{IPAddress: ip_address, Port: Ports}
+		c.String(http.StatusOK, "Sucess")
+
+	})
+
+	//r.GET("/RemoveProxy", func(c *gin.Context) {
+	//	DomainName := c.DefaultQuery("domain_name", "")
+	//
+	//	_, ok := ReverseProxies[DomainName]
+	//	if !ok {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("Domain name does exist in entries of proxies"))
+	//	} else {
+	//		delete(ReverseProxies, DomainName)
+	//	}
+	//
+	//})
+
 	// If there is a proxy port specified
 	// then starts the FRP server
 	//if config.FRPServerPort != "0" {
 	//	go frp.StartFRPProxyFromRandom()
 	//}
 
+	// Remove nodes currently not pingable
+	clientIPTable.RemoveOfflineNodes()
+
+	table, err := p2p.ReadIpTable()
+
 	// TODO check if IPV6 or Proxy port is specified
 	// if not update current entry as proxy address
 	// with appropriate port on IP Table
 	if config.BehindNAT == "True" {
-		// Remove nodes currently not pingable
-		clientIPTable.RemoveOfflineNodes()
-
-		table, err := p2p.ReadIpTable()
 		if err != nil {
 			return nil, err
 		}
@@ -233,14 +291,11 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.ServerPort = proxyPort
 			ProxyIpAddr.Name = config.MachineName
 			ProxyIpAddr.NAT = "False"
+			ProxyIpAddr.ProxyServer = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
-			// Sorry Jan it's a string
-			// Yes I could convert it
-			// to a boolean operator
-			// But I am way too tired
 			if config.BareMetal == "True" {
-				_, SSHPort, err := MapPort("22")
+				_, SSHPort, err := MapPort("22", "")
 				if err != nil {
 					return nil, err
 				}
@@ -252,21 +307,46 @@ func Server() (*gin.Engine, error) {
 			// append the following to the ip table
 			table.IpAddress = append(table.IpAddress, ProxyIpAddr)
 			// write information back to the IP Table
-			err = table.WriteIpTable()
-			if err != nil {
-				return nil, err
-			}
-			// update ip table
-			go func() error {
-				err := clientIPTable.UpdateIpTableListClient()
-				if err != nil {
-					fmt.Println(err)
-					return err
-				}
-				return nil
-			}()
 		}
 
+	} else {
+		ProxyIpAddr.Ipv4, err = p2p.CurrentPublicIP()
+		if err != nil {
+			fmt.Println(err)
+		}
+		ProxyIpAddr.ServerPort = config.ServerPort
+		ProxyIpAddr.Name = config.MachineName
+		ProxyIpAddr.NAT = "False"
+		if config.ProxyPort != "" {
+			ProxyIpAddr.ProxyServer = "True"
+		}
+		ProxyIpAddr.EscapeImplementation = ""
+		if config.BareMetal == "True" {
+			ProxyIpAddr.BareMetalSSHPort = "22"
+		}
+
+		table.IpAddress = append(table.IpAddress, ProxyIpAddr)
+
+	}
+
+	// Writing results to the IPTable
+	err = table.WriteIpTable()
+	if err != nil {
+		return nil, err
+	}
+
+	// update ip table
+	go func() error {
+		err := clientIPTable.UpdateIpTableListClient()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		return nil
+	}()
+
+	if config.ProxyPort != "" {
+		go ProxyRun(config.ProxyPort)
 	}
 
 	// Run gin server on the specified port
@@ -275,7 +355,7 @@ func Server() (*gin.Engine, error) {
 	return r, nil
 }
 
-func MapPort(port string) (string, string, error) {
+func MapPort(port string, domainName string) (string, string, error) {
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
 	if err != nil {
@@ -301,6 +381,12 @@ func MapPort(port string) (string, string, error) {
 		// Checks if the ping is the lowest and if the following node is acting as a proxy
 		//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
 		if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
+			// Filter based on nodes with proxy enabled
+			if domainName != "" && table.IpAddress[i].ProxyServer == "True" {
+				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
+				lowestLatencyIpAddress = table.IpAddress[i]
+				continue
+			}
 			lowestLatency = table.IpAddress[i].Latency.Milliseconds()
 			lowestLatencyIpAddress = table.IpAddress[i]
 		}
@@ -320,6 +406,20 @@ func MapPort(port string) (string, string, error) {
 			return "", "", err
 		}
 
+		fmt.Println(domainName)
+
+		// Doing the proxy mapping for the domain name
+		if domainName != "" {
+			fmt.Println("called --------------------------------")
+			fmt.Println("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4)
+			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
+			//} else {
+			//	URL = "http://" + IP + ":" + serverPort + "/server_info"
+			//}
+			http.Get(URL)
+			//SaveRegistration(domainName, lowestLatencyIpAddress.Ipv4+":"+proxyPort)
+		}
+
 		// updating with the current proxy address
 		ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 		ProxyIpAddr.ServerPort = proxyPort
@@ -327,6 +427,8 @@ func MapPort(port string) (string, string, error) {
 		ProxyIpAddr.NAT = "False"
 		ProxyIpAddr.EscapeImplementation = "FRP"
 		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
+	} else {
+		return "", "", errors.New("proxy IP not found")
 	}
 
 	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, nil
