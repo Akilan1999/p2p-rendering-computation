@@ -30,7 +30,7 @@ main = do
   -- TODO create record with all functions needed
 
   -- TODO: initialise environment; perhaps cleanup state files
-  outputStr <- execProcP2Prc [MkOptAtomic "-dc"]
+  _ <- execProcP2Prc [MkOptAtomic "-dc"] MkEmpty
 
   cmdOut <- getP2PrcCmd
 
@@ -38,13 +38,11 @@ main = do
 
   sleepNSecs 5
 
-  outputStr <- (execProcP2PrcParser [MkOptAtomic "-ls"] :: IO (Either Error IPAdressTable))
-  print outputStr
-
-  outputStr <- execProcP2Prc [MkOptAtomic "--help"]
+  outputStr <- (execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable)
   print outputStr
 
   terminateProcess startProcessHandle
+
   putStrLn cmdOut
 
 
@@ -92,11 +90,34 @@ instance FromJSON ServerInfo where
   parseJSON _ = mzero
 
 
+data StdInput
+  = MkEmpty
+
+instance Show StdInput where
+  show MkEmpty = ""
+
+
+
+type IOEitherError a = IO (Either Error a)
+
 execProcP2PrcParser ::
   FromJSON a =>
-    [CLIOpt] -> IO (Either Error a)
-execProcP2PrcParser opts =
-  eitherErrorDecode . eitherDecode . LBC8.pack <$> execProcP2Prc opts
+    [CLIOpt] -> StdInput -> IOEitherError a
+execProcP2PrcParser opts stdInput =
+    eitherErrDecode
+      <$> execProcP2Prc opts stdInput
+
+  where
+
+  eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
+
+
+execProcP2Prc :: [CLIOpt] -> StdInput -> IO String
+execProcP2Prc ops stdi =
+  readProcess
+    p2prcCmd
+      (optsToCLI ops)
+      (show stdi)
 
 
 data CLIOpt
@@ -114,14 +135,12 @@ optsToCLI = concatMap _optToCLI
   _optToCLI (MkOptTuple (o, v)) = [o, show v]
 
 
-execProcP2Prc :: [CLIOpt] -> IO String
-execProcP2Prc opts = readProcess p2prcCmd (optsToCLI opts) ""
-
 spawnProcP2Prc :: [CLIOpt] -> IO ProcessHandle
-spawnProcP2Prc opts = spawnProcess p2prcCmd $ optsToCLI opts
+spawnProcP2Prc =
+  spawnProcess p2prcCmd . optsToCLI
 
 
-p2prcCmd = "/home/xecarlox/Desktop/p2p-rendering-computation/p2prc" :: String
+p2prcCmd = "/home/xecarlox/Desktop/p2p-rendering-computation/p2p-rendering-computation" :: String
 
 
 
@@ -134,17 +153,20 @@ getP2PrcCmd = do
       readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
 
-eitherErrorDecode ::
-  Either String a -> Either Error a
-eitherErrorDecode esa = case esa of
-  (Left s) -> Left $ assignError s
-  (Right v) -> Right v
+eitherErrorDecode :: Either String a -> Either Error a
+eitherErrorDecode esa =
+  case esa of
+    (Left s) -> Left $ assignError s
+    (Right v) -> Right v
+
 
 data Error = MkError String
   deriving Show
 
 assignError :: String -> Error
 assignError = MkError
+-- TODO: add megaparsec to parse Error Messages
+
 
 sleepNSecs :: Int -> IO ()
 sleepNSecs i = threadDelay (i * 1000000)
