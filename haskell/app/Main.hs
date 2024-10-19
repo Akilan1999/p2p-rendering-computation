@@ -29,8 +29,6 @@ main = do
   --
   -- TODO: Add loop to print servers list
 
-
-  -- solve this issue
   p2prcCmd <- getP2PrcCmd
 
   startProcessHandle <- spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
@@ -45,7 +43,26 @@ main = do
   terminateProcess startProcessHandle
 
 
--- getP2PRCapi ::
+{-
+data P2PRCapi =
+  MkP2PRCapi
+    { startServer :: IO ProcessHandle
+    , defineConfiguration :: IO String
+    , getListServers :: IOEitherError IPAdressTable
+    }
+
+getP2PRCapi :: IO P2PRCapi
+getP2PRCapi = do
+  p2prcCmd <- getP2PrcCmd
+
+  startProcessHandle <- spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
+
+  sleepNSecs 5
+
+  let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
+
+  outputStr <- execProcP2PrcParser [MkOptAtomic "-ls"] MkEmpty :: IOEitherError IPAdressTable
+-}
 
 
 newtype IPAdressTable
@@ -109,7 +126,7 @@ instance FromJSON ServerInfo where
 
     where
 
-    getNat :: String -> Bool
+    getNat :: String -> Bool                -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
     getNat ('T':_)  = True
     getNat _        = False
 
@@ -201,13 +218,14 @@ sleepNSecs i = threadDelay (i * 1000000)
 
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
+
   -- assumes the program is ran inside the haskell module in p2prc's repo
   readProcess "pwd" [] "" >>=
     \pwdOut -> do
-      -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
 
       -- need to strip the newline and return a String again
       let strip = T.unpack . T.strip . T.pack
 
+      -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
       strip <$> readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
