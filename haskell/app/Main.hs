@@ -243,7 +243,7 @@ optsToCLI = concatMap _optToCLI
   _optToCLI :: CLIOpt -> CLIOptsInput
   _optToCLI MkEmptyOpts         = []
   _optToCLI (MkOptAtomic o)     = [o]
-  _optToCLI (MkOptTuple (o, v)) = [o, show v]
+  _optToCLI (MkOptTuple (o, v)) = [o, v]
 
 
 spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO ProcessHandle
