@@ -15,5 +15,6 @@
    5. [Cli Module](CliImplementation.md)
    6. [Plugin Module](PluginImplementation.md)
    7. [Language bindings](Bindings.md)
+   8. [Domain name mappings](Bindings.md)
 <!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
