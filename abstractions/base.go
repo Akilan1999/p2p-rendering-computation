@@ -92,3 +92,7 @@ func UpdateIPTable() (err error) {
 func ExecutePlugin(PluginName string, ContainerID string, PluginArgs []string) error {
 	return plugin.CheckRunPlugin(PluginName, ContainerID, PluginArgs)
 }
+
+func PullPlugin(url string) error {
+	return plugin.DownloadPlugin(url)
+}
