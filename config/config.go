@@ -27,12 +27,15 @@ type Config struct {
 	PluginPath               string
 	TrackContainersPath      string
 	ServerPort               string
+	ProxyPort                string
 	GroupTrackContainersPath string
 	FRPServerPort            string
 	BehindNAT                string
 	IPTableKey               string
 	PublicKeyFile            string
 	PrivateKeyFile           string
+	PemFile                  string
+	KeyFile                  string
 	BareMetal                string
 	CustomConfig             interface{}
 	//NetworkInterface  string

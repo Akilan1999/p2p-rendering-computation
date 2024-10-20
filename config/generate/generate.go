@@ -77,6 +77,7 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.TrackContainersPath = defaultPath + "client/trackcontainers/trackcontainers.json"
 		Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
 		Defaults.ServerPort = "8088"
+		Defaults.ProxyPort = ""
 		Defaults.FRPServerPort = "True"
 		Defaults.CustomConfig = CustomConfig
 		Defaults.BehindNAT = "True"
@@ -93,6 +94,15 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.PublicKeyFile = defaultPath + "p2prc.PublicKeyBareMetal"
 		Defaults.PrivateKeyFile = defaultPath + "p2prc.privateKey"
 		Defaults.BareMetal = "False"
+
+		// Generate certificate files for SSL
+		err = GenerateCertificate()
+		if err != nil {
+			return nil, err
+		}
+
+		Defaults.PemFile = defaultPath + "cert.pem"
+		Defaults.KeyFile = defaultPath + "key.pem"
 
 		PrivateKeyExists, err := FileExists(Defaults.PrivateKeyFile)
 		if err != nil {
