@@ -260,7 +260,7 @@ var CliAction = func(ctx *cli.Context) error {
 	//--------------------------------
 
 	if PullPlugin != "" {
-		err := plugin.DownloadPlugin(PullPlugin)
+		_, err := plugin.DownloadPlugin(PullPlugin)
 		if err != nil {
 			fmt.Println(err)
 		} else {

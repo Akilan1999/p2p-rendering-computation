@@ -93,6 +93,6 @@ func ExecutePlugin(PluginName string, ContainerID string, PluginArgs []string) e
 	return plugin.CheckRunPlugin(PluginName, ContainerID, PluginArgs)
 }
 
-func PullPlugin(url string) error {
+func PullPlugin(url string) (string, error) {
 	return plugin.DownloadPlugin(url)
 }
