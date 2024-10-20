@@ -30,6 +30,7 @@ var (
 	RemoveContainerGroup bool
 	RemoveGroup          string
 	MAPPort              string
+	DomainName           string
 	//FRPProxy             bool
 	// Generate only allowed in dev release
 	// -- REMOVE ON REGULAR RELEASE --
@@ -211,6 +212,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Maps port for a specific port provided as the parameter",
 		EnvVars:     []string{"MAPPORT"},
 		Destination: &MAPPort,
+	},
+	&cli.StringFlag{
+		Name:        "DomainName",
+		Aliases:     []string{"dn"},
+		Usage:       "While mapping ports allows to set a domain name to create a mapping in the proxy server",
+		EnvVars:     []string{"DOMAINNAME"},
+		Destination: &DomainName,
 	},
 	// Generate only allowed in dev release
 	// -- REMOVE ON REGULAR RELEASE --
