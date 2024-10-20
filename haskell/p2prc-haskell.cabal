@@ -69,7 +69,11 @@ executable p2prc-haskell
     other-extensions: OverloadedStrings
 
     -- Other library packages from which modules are imported.
-    build-depends:    base, text, aeson, process, bytestring
+    build-depends:    base
+                      , text
+                      , aeson
+                      , process
+                      , bytestring
 
     -- Directories containing source files.
     hs-source-dirs:   app
