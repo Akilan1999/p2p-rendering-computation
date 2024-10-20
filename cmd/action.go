@@ -290,7 +290,7 @@ var CliAction = func(ctx *cli.Context) error {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println(address)
+			client.PrettyPrint(address)
 		}
 	}
 
