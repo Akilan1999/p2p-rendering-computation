@@ -10,6 +10,8 @@ import Control.Concurrent (threadDelay)
 
 import qualified Data.ByteString.Lazy.Char8 as LBC8
 
+-- TODO: Change Standard Library
+
 
 -- TODO: Use it
 import qualified Data.Text as T
@@ -28,13 +30,12 @@ main = do
       { startServer     = startServer
       , execInitConfig  = execInitConfig
       , execListServers = execListServers
+      , execMapPort     = execMapPort
       }
       ) = p2prcAPI
 
-  -- TODO: initialise environment; perhaps cleanup state files
-  --
-  -- TODO: make it pure environment by default
-  _ <- execInitConfig
+  confOut <- execInitConfig
+  putStrLn confOut
 
   -- TODO: create record with all functions needed
   --
@@ -47,7 +48,8 @@ main = do
   outputStr <- execListServers
   print outputStr
 
-  -- Mapport - Number
+  mapPortOut <- execMapPort 3333
+  putStrLn mapPortOut
 
   terminateProcess startProcessHandle
 
@@ -67,23 +69,44 @@ data P2prAPI = MkP2prAPI
   { startServer       :: IO ProcessHandle
   , execInitConfig    :: IO String
   , execListServers   :: IOEitherError IPAdressTable
+  , execMapPort       :: Int -> IO String
   }
 
 
 getP2prcAPI :: IO P2prAPI
 getP2prcAPI = do
 
-  p2prcCmd <- getP2PrcCmd
+  p2prcCmd <- cleanEnvAndgetP2PrcCmd
+
 
   let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
   let execProcP2Prc       = execProcP2Prc_ p2prcCmd
 
+  -- TODO: initialise environment; perhaps cleanup state files
+  --
+  -- TODO: make it pure environment by default
+  let execInitConfig = execProcP2Prc [MkOptAtomic "--dc"] MkEmptyStdInput
+  -- TODO: get name of host server from config json
+  -- TODO: change some default config attributes
+  -- TODO: parse config file
+
+
   return $
     MkP2prAPI
-      { startServer     = spawnProcP2Prc p2prcCmd [MkOptAtomic "-s"]
-      , execInitConfig  = execProcP2Prc           [MkOptAtomic "-dc"] MkEmptyStdInput
-      , execListServers = execProcP2PrcParser     [MkOptAtomic "-ls"] MkEmptyStdInput
+      { startServer     = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
+      , execInitConfig  = execInitConfig
+      , execListServers = execProcP2PrcParser     [MkOptAtomic "--ls"] MkEmptyStdInput
+      , execMapPort =
+        \portNumber ->
+          execProcP2Prc
+            [ MkOptTuple
+              ( "--mp"
+              , show portNumber
+              )
+            ]
+            MkEmptyStdInput
       }
+
 
 
 
@@ -150,7 +173,7 @@ instance FromJSON ServerInfo where
 
     where
 
-    getNat :: String -> Bool                -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
+    getNat :: String -> Bool                -- TODO: Change it to normal JSON
     getNat ('T':_)  = True
     getNat _        = False
 
@@ -244,19 +267,41 @@ assignError = MkError
 -- TODO: add megaparsec to parse Error Messages
 
 
-getP2PrcCmd :: IO String
-getP2PrcCmd = do
+cleanEnvAndgetP2PrcCmd :: IO String
+cleanEnvAndgetP2PrcCmd = do
 
   -- assumes the program is ran inside the haskell module in p2prc's repo
   readProcess "pwd" [] "" >>=
-    \pwdOut -> do
+    \pOut -> do
 
       -- need to strip the newline and return a String again
-      let strip = T.unpack . T.strip . T.pack
+      let pwdOut = T.unpack . T.strip . T.pack $ pOut
+
+      putStrLn pOut
+
+      -- cleanEnvironment
 
       -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-      strip <$> readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
+
+cleanEnvironment :: IO ()
+cleanEnvironment = do
+
+  lsOut <- readProcess "ls" [] []
+  putStrLn lsOut
+
+  -- rmOut <- readProcess "rm" ["config.json"] [] -- client/ p2prc.* plugin/ server/"
+  -- putStrLn rmOut
+
+  -- rmOut <- readProcess "rm" [ "config.json" , "-r", "plugin/" , "-r", "client/" ] []
+    -- p2prc.* plugin/ server/"
+  -- putStrLn rmOut
+
+  putStrLn "\n\ncleaning environment..."
+
+  lsOut <- readProcess "ls" [] []
+  putStrLn lsOut
 
 
 sleepNSecs :: Int -> IO ()
