@@ -30,6 +30,7 @@ type IpAddress struct {
 	BareMetalSSHPort     string        `json:"BareMetalSSHPort"`
 	NAT                  string        `json:"NAT"`
 	EscapeImplementation string        `json:"EscapeImplementation"`
+	ProxyServer          string        `json:"ProxyServer"`
 	CustomInformation    string        `json:"CustomInformation"`
 	//CustomInformationKey []byte        `json:"CustomInformationKey"`
 }
