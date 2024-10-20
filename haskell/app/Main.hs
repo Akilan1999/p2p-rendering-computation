@@ -196,7 +196,7 @@ data StdInput
 
 instance Show StdInput where
   show MkEmptyStdInput    = ""
-  show (MkStdInputVal v)  = show v
+  show (MkStdInputVal v)  = v
 
 
 type IOEitherError a = IO (Either Error a)
