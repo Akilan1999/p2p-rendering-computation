@@ -7,3 +7,7 @@ p2prc.privateKey
 p2prc.PublicKeyBareMetal
 plugin
 server
+
+
+key.pem
+cert.pem
