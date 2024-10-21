@@ -2,6 +2,7 @@ package abstractions
 
 // import "C"
 import (
+	"net/http"
 	"os"
 
 	"github.com/Akilan1999/p2p-rendering-computation/client"
@@ -87,6 +88,10 @@ func ViewIPTable() (table *p2p.IpAddresses, err error) {
 // new nodes discovered in the network
 func UpdateIPTable() (err error) {
 	return clientIPTable.UpdateIpTableListClient()
+}
+
+func UploadFile(cli http.Client, uri, key, path string) ([]byte, error) {
+	return clientIPTable.UploadMultipartFile(cli, uri, key, path)
 }
 
 func ExecutePlugin(PluginName string, ContainerID string, PluginArgs []string) error {
