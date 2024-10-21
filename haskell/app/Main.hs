@@ -2,28 +2,44 @@
 
 module Main where
 
-import Data.Aeson
 
-import System.Process (readProcess, terminateProcess, ProcessHandle, spawnProcess)
+import System.Process
+  ( readProcess
+  , terminateProcess
+  , spawnProcess
+  , ProcessHandle
+  )
+
+import System.Directory
+  ( doesDirectoryExist
+  , doesFileExist
+  , removeDirectoryRecursive
+  , removeFile
+  )
 
 import Control.Concurrent (threadDelay)
-
-import qualified Data.ByteString.Lazy.Char8 as LBC8
+import Control.Monad (when)
 
 -- TODO: Change Standard Library
 
-
--- TODO: Use it
 import qualified Data.Text as T
 
+import qualified Data.ByteString.Lazy.Char8 as LBC8
 
--- TODO: create library to abstract shell and go-level logic
+import Data.Aeson
+
+
+
 main :: IO ()
 main = do
+
   -- TODO: add IO arguments; flag to optionally cleanup environment
+  -- TODO: create DSL from the standard input
+  --
   -- TODO: add GDTA syntax to data types
 
   p2prcAPI <- getP2prcAPI
+
 
   let
     ( MkP2prAPI
@@ -34,24 +50,30 @@ main = do
       }
       ) = p2prcAPI
 
-  confOut <- execInitConfig
-  putStrLn confOut
+  _ <- execInitConfig
 
-  -- TODO: create record with all functions needed
-  --
-  -- TODO: Add loop to print servers list
 
   startProcessHandle <- startServer
+  -- TODO: get name of host server from config json
+  -- TODO: add option to change some default config attributes
+  -- TODO: parse config file
+  --
+  -- TODO: abstract init and server running logic into its function
+      -- work on looping function
 
   sleepNSecs 5
 
   outputStr <- execListServers
   print outputStr
 
-  mapPortOut <- execMapPort 3333
+  mapPortOut <- execMapPort 3333 -- TODO: add domain name
+  --
+  -- TODO: Add loop to print servers list
+  --
   putStrLn mapPortOut
 
   terminateProcess startProcessHandle
+
 
   -- Loop (Run replica of haskell program on different $NODES)
   --    - Start server
@@ -69,33 +91,35 @@ data P2prAPI = MkP2prAPI
   { startServer       :: IO ProcessHandle
   , execInitConfig    :: IO String
   , execListServers   :: IOEitherError IPAdressTable
-  , execMapPort       :: Int -> IO String
+  , execMapPort       :: Int -> IO String -- TODO: Parse JSON data
   }
 
 
 getP2prcAPI :: IO P2prAPI
 getP2prcAPI = do
 
-  p2prcCmd <- cleanEnvAndgetP2PrcCmd
+  cleanEnvironment
 
+  p2prcCmd <- getP2PrcCmd
 
   let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
   let execProcP2Prc       = execProcP2Prc_ p2prcCmd
 
-  -- TODO: initialise environment; perhaps cleanup state files
-  --
-  -- TODO: make it pure environment by default
-  let execInitConfig = execProcP2Prc [MkOptAtomic "--dc"] MkEmptyStdInput
-  -- TODO: get name of host server from config json
-  -- TODO: change some default config attributes
-  -- TODO: parse config file
-
 
   return $
     MkP2prAPI
-      { startServer     = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
-      , execInitConfig  = execInitConfig
-      , execListServers = execProcP2PrcParser     [MkOptAtomic "--ls"] MkEmptyStdInput
+      { startServer = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
+
+      , execInitConfig =
+        execProcP2Prc
+          [MkOptAtomic "--dc"]
+          MkEmptyStdInput
+
+      , execListServers =
+        execProcP2PrcParser
+          [MkOptAtomic "--ls"]
+          MkEmptyStdInput
+
       , execMapPort =
         \portNumber ->
           execProcP2Prc
@@ -103,10 +127,13 @@ getP2prcAPI = do
               ( "--mp"
               , show portNumber
               )
+            -- , MkOptTuple -- TODO: add domain parameter
+            --   ( "--dm"
+            --   , domainName
+            --   )
             ]
             MkEmptyStdInput
       }
-
 
 
 
@@ -135,9 +162,9 @@ data ServerInfo = MkServerInfo
   deriving Show
 
 
-data IPAddress
-  = MkIPv4 String
-  | MkIPv6 String
+data IPAddress        -- TODO: add extra type information to data type
+  = MkIPv4 String     -- TODO: list of numbers
+  | MkIPv6 String     -- TODO: list of numbers
   deriving Show
 
 
@@ -165,10 +192,10 @@ instance FromJSON ServerInfo where
           , download              = download
           , upload                = upload
           , serverPort            = getPortUNSAFE serverPort
-          , bareMetalSSHPort      = getBMShhPort bmSshPort
+          , bareMetalSSHPort      = getBMShhPort bmSshPort    -- TODO: add perhaps null placeholder??
           , nat                   = getNat nat
           , escapeImplementation  = mEscImpl
-          , customInformation     = custInfo
+          , customInformation     = custInfo                  -- TODO: deal with null value
           }
 
     where
@@ -217,9 +244,13 @@ execProcP2PrcParser_ p2prcCmd opts stdInput
   eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
 
 
-
 execProcP2Prc_ :: CLICmd -> [CLIOpt] -> StdInput -> IO String
 execProcP2Prc_ p2prcCmd ops stdi =
+  --
+  -- TODO: improve readProcess to return (Either Error String)
+      -- TODO: improve error handling at type level
+      -- TODO: use the "withReadProcess"
+  --
   readProcess
     p2prcCmd
       (optsToCLI ops)
@@ -233,7 +264,7 @@ data CLIOpt
 
 
 type CLIOptsInput = [String]
-type CLICmd = String
+type CLICmd       = String
 
 
 optsToCLI :: [CLIOpt] -> CLIOptsInput
@@ -248,60 +279,86 @@ optsToCLI = concatMap _optToCLI
 
 spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO ProcessHandle
 spawnProcP2Prc p2prcCmd =
+  --
+  -- TODO: improve spawnProcess to return (Either Error String)
+      -- TODO: improve error handling at type level
+  --
   spawnProcess p2prcCmd . optsToCLI
-
 
 
 eitherErrorDecode :: Either String a -> Either Error a
 eitherErrorDecode esa =
   case esa of
-    (Left s) -> Left $ assignError s
+    (Left s)  -> Left $ assignError s
     (Right v) -> Right v
 
 
-data Error = MkError String
+data Error = MkUnknownError String
   deriving Show
 
+
 assignError :: String -> Error
-assignError = MkError
+assignError = MkUnknownError
 -- TODO: add megaparsec to parse Error Messages
+--
+-- TODO: add error when internet connection is off
 
 
-cleanEnvAndgetP2PrcCmd :: IO String
-cleanEnvAndgetP2PrcCmd = do
+getP2PrcCmd :: IO String
+getP2PrcCmd = do
 
   -- assumes the program is ran inside the haskell module in p2prc's repo
-  readProcess "pwd" [] "" >>=
-    \pOut -> do
 
-      -- need to strip the newline and return a String again
-      let pwdOut = T.unpack . T.strip . T.pack $ pOut
+  -- TODO: change to safe type of function
+  pOut <- readProcess "pwd" [] ""
 
-      putStrLn pOut
+  -- need to strip the newline and return a String again
+  let pwdOut = T.unpack . T.strip . T.pack $ pOut
 
-      -- cleanEnvironment
-
-      -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+  -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
+  readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+  -- TODO: change to safe type of function
 
 
 cleanEnvironment :: IO ()
 cleanEnvironment = do
 
-  lsOut <- readProcess "ls" [] []
-  putStrLn lsOut
+  mapM_ removeFileIfExists
+    [ "cert.pem"
+    , "config.json"
+    , "key.pem"
+    , "p2prc.privateKey"
+    , "p2prc.PublicKeyBareMetal"
+    ]
 
-  -- rmOut <- readProcess "rm" ["config.json"] [] -- client/ p2prc.* plugin/ server/"
-  -- putStrLn rmOut
+  mapM_ removeDirRIfExists
+    [ "client"
+    , "p2p"
+    , "plugin"
+    , "server"
+    ]
 
-  -- rmOut <- readProcess "rm" [ "config.json" , "-r", "plugin/" , "-r", "client/" ] []
-    -- p2prc.* plugin/ server/"
-  -- putStrLn rmOut
+  where
 
-  putStrLn "\n\ncleaning environment..."
+  removeIfExists
+    :: (FilePath -> IO Bool)
+    -> (FilePath -> IO ())
+    -> FilePath
+    -> IO ()
+  removeIfExists doesItExists rmIt filePath =
+    do
+      res <- doesItExists filePath
+      when res $ rmIt filePath
 
-  lsOut <- readProcess "ls" [] []
-  putStrLn lsOut
+  removeDirRIfExists =
+    removeIfExists
+      doesDirectoryExist
+      removeDirectoryRecursive
+
+  removeFileIfExists =
+    removeIfExists
+      doesFileExist
+      removeFile
 
 
 sleepNSecs :: Int -> IO ()

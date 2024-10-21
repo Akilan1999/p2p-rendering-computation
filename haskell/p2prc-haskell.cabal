@@ -74,6 +74,7 @@ executable p2prc-haskell
                       , aeson
                       , process
                       , bytestring
+                      , directory
 
     -- Directories containing source files.
     hs-source-dirs:   app
