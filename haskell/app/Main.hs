@@ -3,8 +3,12 @@
 module Main where
 
 
+import System.Exit (ExitCode(ExitFailure))
+
+
 import System.Process
-  ( readProcess
+  ( readProcessWithExitCode
+  , readProcess
   , terminateProcess
   , spawnProcess
   , ProcessHandle
@@ -244,6 +248,16 @@ execProcP2PrcParser_ p2prcCmd opts stdInput
   eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
 
 
+data CLIOpt
+  = MkEmptyOpts
+  | MkOptAtomic String
+  | MkOptTuple (String, String)
+
+
+type CLIOptsInput = [String]
+type CLICmd       = String
+
+
 execProcP2Prc_ :: CLICmd -> [CLIOpt] -> StdInput -> IO String
 execProcP2Prc_ p2prcCmd ops stdi =
   --
@@ -257,14 +271,18 @@ execProcP2Prc_ p2prcCmd ops stdi =
       (show stdi)
 
 
-data CLIOpt
-  = MkEmptyOpts
-  | MkOptAtomic String
-  | MkOptTuple (String, String)
+eitherExecProcess :: CLICmd -> [CLIOpt] -> StdInput -> IO (Either Error String)
+eitherExecProcess cmd opts input =
+  do
+    (code, out, err) <- readProcessWithExitCode
+        cmd
+        (optsToCLI opts)
+        (show input)
 
+    case code of
+      ExitFailure i -> pure (Left (MkSystemError i err))
+      _             -> pure (Right out)
 
-type CLIOptsInput = [String]
-type CLICmd       = String
 
 
 optsToCLI :: [CLIOpt] -> CLIOptsInput
@@ -293,7 +311,9 @@ eitherErrorDecode esa =
     (Right v) -> Right v
 
 
-data Error = MkUnknownError String
+data Error
+  = MkUnknownError String
+  | MkSystemError Int String
   deriving Show
 
 
@@ -306,18 +326,16 @@ assignError = MkUnknownError
 
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
-
   -- assumes the program is ran inside the haskell module in p2prc's repo
-
-  -- TODO: change to safe type of function
-  pOut <- readProcess "pwd" [] ""
-
-  -- need to strip the newline and return a String again
-  let pwdOut = T.unpack . T.strip . T.pack $ pOut
-
   -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-  readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
   -- TODO: change to safe type of function
+  T.unpack . T.strip . T.pack <$> readProcess "pwd" [] "" >>=
+    \pwdOut ->
+
+      -- TODO: change to safe type of function
+      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+
 
 
 cleanEnvironment :: IO ()
