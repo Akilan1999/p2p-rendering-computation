@@ -3,13 +3,15 @@
 module Main where
 
 
-import System.Exit (ExitCode(ExitFailure))
+import System.Exit ( ExitCode(ExitFailure) )
 
 
 import System.Process
   ( readProcessWithExitCode
-  , readProcess
+  , proc
+  , createProcess
   , terminateProcess
+  , readProcess
   , spawnProcess
   , ProcessHandle
   )
@@ -37,7 +39,7 @@ import Data.Aeson
 main :: IO ()
 main = do
 
-  -- TODO: add IO arguments; flag to optionally cleanup environment
+  -- TODO: add IO arguments;
   -- TODO: create DSL from the standard input
   --
   -- TODO: add GDTA syntax to data types
@@ -271,6 +273,7 @@ execProcP2Prc_ p2prcCmd ops stdi =
       (show stdi)
 
 
+-- TODO: replace this for execProcP2Prc_
 eitherExecProcess :: CLICmd -> [CLIOpt] -> StdInput -> IO (Either Error String)
 eitherExecProcess cmd opts input =
   do
@@ -304,6 +307,26 @@ spawnProcP2Prc p2prcCmd =
   spawnProcess p2prcCmd . optsToCLI
 
 
+-- TODO: replace spawnProcess with this
+eitherSpawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO (Either Error ProcessHandle)
+eitherSpawnProcP2Prc cmd opts =
+  do
+
+    let prc = proc cmd (optsToCLI opts)
+
+    creationResult <- createProcess prc
+
+    let (_, _, _, ph) = creationResult
+
+    case creationResult of
+      (_, _,      Just  _, _) -> do
+        terminateProcess ph
+        pure $ Left $ MkErrorSpawningProcess $ "Error executing: " ++ cmd
+
+      _ -> pure $ Right ph
+
+
+
 eitherErrorDecode :: Either String a -> Either Error a
 eitherErrorDecode esa =
   case esa of
@@ -313,6 +336,7 @@ eitherErrorDecode esa =
 
 data Error
   = MkUnknownError String
+  | MkErrorSpawningProcess String
   | MkSystemError Int String
   deriving Show
 
@@ -329,11 +353,11 @@ getP2PrcCmd = do
   -- assumes the program is ran inside the haskell module in p2prc's repo
   -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
 
-  -- TODO: change to safe type of function
+  -- TODO: change to "eitherExecProcess"
   T.unpack . T.strip . T.pack <$> readProcess "pwd" [] "" >>=
     \pwdOut ->
 
-      -- TODO: change to safe type of function
+      -- TODO: change to "eitherExecProcess"
       readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
 
 
