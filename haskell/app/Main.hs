@@ -283,8 +283,8 @@ eitherExecProcess cmd opts input =
         (show input)
 
     case code of
-      ExitFailure i -> pure (Left (MkSystemError i err))
-      _             -> pure (Right out)
+      ExitFailure i -> pure $ Left $ MkSystemError i err
+      _             -> pure $ Right out
 
 
 
@@ -319,6 +319,7 @@ eitherSpawnProcP2Prc cmd opts =
     let (_, _, _, ph) = creationResult
 
     case creationResult of
+
       (_, _,      Just  _, _) -> do
         terminateProcess ph
         pure $ Left $ MkErrorSpawningProcess $ "Error executing: " ++ cmd
