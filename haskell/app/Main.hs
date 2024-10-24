@@ -11,7 +11,6 @@ import System.Process
   , proc
   , createProcess
   , terminateProcess
-  , readProcess
   , ProcessHandle
   )
 
@@ -38,53 +37,61 @@ import Data.Aeson
 main :: IO ()
 main = do
 
+
   -- TODO: add IO arguments;
   -- TODO: create DSL from the standard input
   --
   -- TODO: add GDTA syntax to data types
-
-  p2prcAPI <- getP2prcAPI
-
-
-  let
-    ( MkP2prAPI
-      { startServer     = startServer
-      , execInitConfig  = execInitConfig
-      , execListServers = execListServers
-      , execMapPort     = execMapPort
-      }
-      ) = p2prcAPI
-
-  _ <- execInitConfig
-
-
-  eitherStartProcessHandle <- startServer
   --
-  -- TODO: get name of host server from config json
-  -- TODO: add option to change some default config attributes
-  -- TODO: parse config file
-  --
-  -- TODO: abstract init and server running logic into its function
-      -- work on looping function
+  -- TODO: need monad transformers to refactor the code
 
-  case eitherStartProcessHandle of
-    (Right startProcessHandle) -> do
 
-      sleepNSecs 5
+  eitherP2prcAPI <- getP2prcAPI
 
-      outputStr <- execListServers
-      print outputStr
+  case eitherP2prcAPI of
+    (Right p2prcAPI) -> do
 
-      mapPortOut <- execMapPort 3333 -- TODO: add domain name
+      let
+        ( MkP2prAPI
+          { startServer     = startServer
+          , execInitConfig  = execInitConfig
+          , execListServers = execListServers
+          , execMapPort     = execMapPort
+          }
+          ) = p2prcAPI
+
+      _ <- execInitConfig
+
+
+      eitherStartProcessHandle <- startServer
       --
-      -- TODO: Add loop to print servers list
+      -- TODO: get name of host server from config json
+      -- TODO: add option to change some default config attributes
+      -- TODO: parse config file
       --
+      -- TODO: abstract init and server running logic into its function
+          -- work on looping function
 
-      case mapPortOut of
-        (Right v) -> putStrLn v
-        (Left e)  -> print e
+      case eitherStartProcessHandle of
+        (Right startProcessHandle) -> do
 
-      terminateProcess startProcessHandle
+          sleepNSecs 5
+
+          outputStr <- execListServers
+          print outputStr
+
+          mapPortOut <- execMapPort 3333 -- TODO: add domain name
+          --
+          -- TODO: Add loop to print servers list
+          --
+
+          case mapPortOut of
+            (Right v) -> putStrLn v
+            (Left e)  -> print e
+
+          terminateProcess startProcessHandle
+
+        (Left err) -> print err
 
     (Left err) -> print err
 
@@ -110,45 +117,49 @@ data P2prAPI = MkP2prAPI
   }
 
 
-getP2prcAPI :: IO P2prAPI
+getP2prcAPI :: IOEitherError P2prAPI
 getP2prcAPI = do
 
   cleanEnvironment
 
-  p2prcCmd <- getP2PrcCmd
+  eitherP2prcCmd <- getP2PrcCmd
 
-  let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
-  let execProcP2Prc       = eitherExecProcess p2prcCmd
+  pure $ case eitherP2prcCmd of
+    (Right p2prcCmd) -> do
+
+      let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
+      let execProcP2Prc       = eitherExecProcess p2prcCmd
 
 
-  return $
-    MkP2prAPI
-      { startServer = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
+      Right $ MkP2prAPI
+        { startServer = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
 
-      , execInitConfig =
-        execProcP2Prc
-          [MkOptAtomic "--dc"]
-          MkEmptyStdInput
-
-      , execListServers =
-        execProcP2PrcParser
-          [MkOptAtomic "--ls"]
-          MkEmptyStdInput
-
-      , execMapPort =
-        \portNumber ->
+        , execInitConfig =
           execProcP2Prc
-            [ MkOptTuple
-              ( "--mp"
-              , show portNumber
-              )
-            -- , MkOptTuple -- TODO: add domain parameter
-            --   ( "--dm"
-            --   , domainName
-            --   )
-            ]
+            [MkOptAtomic "--dc"]
             MkEmptyStdInput
-      }
+
+        , execListServers =
+          execProcP2PrcParser
+            [MkOptAtomic "--ls"]
+            MkEmptyStdInput
+
+        , execMapPort =
+          \portNumber ->
+            execProcP2Prc
+              [ MkOptTuple
+                ( "--mp"
+                , show portNumber
+                )
+              -- , MkOptTuple -- TODO: add domain parameter
+              --   ( "--dm"
+              --   , domainName
+              --   )
+              ]
+              MkEmptyStdInput
+        }
+
+    (Left err) -> Left err
 
 
 newtype IPAdressTable
@@ -281,10 +292,9 @@ eitherExecProcess cmd opts input =
         (optsToCLI opts)
         (show input)
 
-    pure $
-      case code of
-        ExitFailure i -> Left $ MkSystemError i err
-        _             -> Right out
+    pure $ case code of
+      ExitFailure i -> Left $ MkSystemError i cmd err
+      _             -> Right out
 
 
 
@@ -308,11 +318,11 @@ spawnProcP2Prc cmd opts =
     let (_, _, _, ph) = creationResult
 
     case creationResult of
-      (_, _, Just _, _) ->
-        do
-          terminateProcess ph
-          pure $ Left
-            $ MkErrorSpawningProcess $ "Error executing: " ++ cmd
+      (_, _, Just _, _) -> do
+
+        terminateProcess ph
+
+        pure $ Left $ MkErrorSpawningProcess cmd
 
       _-> pure $ Right ph
 
@@ -327,7 +337,7 @@ eitherErrorDecode esa =
 data Error
   = MkUnknownError String
   | MkErrorSpawningProcess String
-  | MkSystemError Int String
+  | MkSystemError Int String String
   deriving Show
 
 
@@ -338,7 +348,7 @@ assignError = MkUnknownError
 -- TODO: add error when internet connection is off
 
 
-getP2PrcCmd :: IO String
+getP2PrcCmd :: IOEitherError String
 getP2PrcCmd = do
 
   -- assumes the program is ran inside the haskell module in p2prc's repo
@@ -346,14 +356,18 @@ getP2PrcCmd = do
 
   let trimString = T.unpack . T.strip . T.pack
 
-  -- TODO: change to "eitherExecProcess"
+  eitherErrPwd <- eitherExecProcess "pwd" [MkEmptyOpts] MkEmptyStdInput
 
-  trimString <$> readProcess "pwd" [] "" >>=
-    \pwdOut ->
+  case eitherErrPwd of
 
-      -- TODO: change to "eitherExecProcess"
-      readProcess "sed" ["s/haskell/p2p-rendering-computation/"] pwdOut
+    (Right pwdOut) ->
+      eitherExecProcess
+        "sed"
+        [MkOptAtomic "s/haskell/p2p-rendering-computation/"]
+        $ MkStdInputVal
+          $ trimString pwdOut
 
+    err -> pure err
 
 
 cleanEnvironment :: IO ()
