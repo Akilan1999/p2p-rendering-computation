@@ -12,7 +12,6 @@ import System.Process
   , createProcess
   , terminateProcess
   , readProcess
-  , spawnProcess
   , ProcessHandle
   )
 
@@ -59,7 +58,8 @@ main = do
   _ <- execInitConfig
 
 
-  startProcessHandle <- startServer
+  eitherStartProcessHandle <- startServer
+  --
   -- TODO: get name of host server from config json
   -- TODO: add option to change some default config attributes
   -- TODO: parse config file
@@ -67,18 +67,27 @@ main = do
   -- TODO: abstract init and server running logic into its function
       -- work on looping function
 
-  sleepNSecs 5
+  case eitherStartProcessHandle of
+    (Right startProcessHandle) -> do
 
-  outputStr <- execListServers
-  print outputStr
+      sleepNSecs 5
 
-  mapPortOut <- execMapPort 3333 -- TODO: add domain name
-  --
-  -- TODO: Add loop to print servers list
-  --
-  putStrLn mapPortOut
+      outputStr <- execListServers
+      print outputStr
 
-  terminateProcess startProcessHandle
+      mapPortOut <- execMapPort 3333 -- TODO: add domain name
+      --
+      -- TODO: Add loop to print servers list
+      --
+
+      case mapPortOut of
+        (Right v) -> putStrLn v
+        (Left e)  -> print e
+
+      terminateProcess startProcessHandle
+
+    (Left err) -> print err
+
 
 
   -- Loop (Run replica of haskell program on different $NODES)
@@ -94,10 +103,10 @@ main = do
 
 
 data P2prAPI = MkP2prAPI
-  { startServer       :: IO ProcessHandle
-  , execInitConfig    :: IO String
+  { startServer       :: IOEitherError ProcessHandle
+  , execInitConfig    :: IOEitherError String
   , execListServers   :: IOEitherError IPAdressTable
-  , execMapPort       :: Int -> IO String -- TODO: Parse JSON data
+  , execMapPort       :: Int -> IOEitherError String -- TODO: Parse JSON data
   }
 
 
@@ -109,7 +118,7 @@ getP2prcAPI = do
   p2prcCmd <- getP2PrcCmd
 
   let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
-  let execProcP2Prc       = execProcP2Prc_ p2prcCmd
+  let execProcP2Prc       = eitherExecProcess p2prcCmd
 
 
   return $
@@ -140,7 +149,6 @@ getP2prcAPI = do
             ]
             MkEmptyStdInput
       }
-
 
 
 newtype IPAdressTable
@@ -237,10 +245,14 @@ type IOEitherError a = IO (Either Error a)
 execProcP2PrcParser_ ::
   FromJSON a =>
     CLICmd -> [CLIOpt] -> StdInput -> IOEitherError a
-execProcP2PrcParser_ p2prcCmd opts stdInput
-    =
-      eitherErrDecode
-        <$> execProcP2Prc_ p2prcCmd opts stdInput
+execProcP2PrcParser_ p2prcCmd opts stdInput =
+  do
+    val <- eitherExecProcess p2prcCmd opts stdInput
+
+    pure $ case val of
+      (Right v) -> eitherErrDecode v
+      (Left e)  -> Left e
+
 
   where
 
@@ -260,31 +272,19 @@ type CLIOptsInput = [String]
 type CLICmd       = String
 
 
-execProcP2Prc_ :: CLICmd -> [CLIOpt] -> StdInput -> IO String
-execProcP2Prc_ p2prcCmd ops stdi =
-  --
-  -- TODO: improve readProcess to return (Either Error String)
-      -- TODO: improve error handling at type level
-      -- TODO: use the "withReadProcess"
-  --
-  readProcess
-    p2prcCmd
-      (optsToCLI ops)
-      (show stdi)
-
-
--- TODO: replace this for execProcP2Prc_
-eitherExecProcess :: CLICmd -> [CLIOpt] -> StdInput -> IO (Either Error String)
+eitherExecProcess :: CLICmd -> [CLIOpt] -> StdInput -> IOEitherError String
 eitherExecProcess cmd opts input =
   do
-    (code, out, err) <- readProcessWithExitCode
+    (code, out, err) <-
+      readProcessWithExitCode
         cmd
         (optsToCLI opts)
         (show input)
 
-    case code of
-      ExitFailure i -> pure $ Left $ MkSystemError i err
-      _             -> pure $ Right out
+    pure $
+      case code of
+        ExitFailure i -> Left $ MkSystemError i err
+        _             -> Right out
 
 
 
@@ -298,34 +298,23 @@ optsToCLI = concatMap _optToCLI
   _optToCLI (MkOptTuple (o, v)) = [o, v]
 
 
-spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO ProcessHandle
-spawnProcP2Prc p2prcCmd =
-  --
-  -- TODO: improve spawnProcess to return (Either Error String)
-      -- TODO: improve error handling at type level
-  --
-  spawnProcess p2prcCmd . optsToCLI
-
-
--- TODO: replace spawnProcess with this
-eitherSpawnProcP2Prc :: CLICmd -> [CLIOpt] -> IO (Either Error ProcessHandle)
-eitherSpawnProcP2Prc cmd opts =
+spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IOEitherError ProcessHandle
+spawnProcP2Prc cmd opts =
   do
-
-    let prc = proc cmd (optsToCLI opts)
+    let prc = proc cmd $ optsToCLI opts
 
     creationResult <- createProcess prc
 
     let (_, _, _, ph) = creationResult
 
     case creationResult of
+      (_, _, Just _, _) ->
+        do
+          terminateProcess ph
+          pure $ Left
+            $ MkErrorSpawningProcess $ "Error executing: " ++ cmd
 
-      (_, _,      Just  _, _) -> do
-        terminateProcess ph
-        pure $ Left $ MkErrorSpawningProcess $ "Error executing: " ++ cmd
-
-      _ -> pure $ Right ph
-
+      _-> pure $ Right ph
 
 
 eitherErrorDecode :: Either String a -> Either Error a
@@ -351,11 +340,15 @@ assignError = MkUnknownError
 
 getP2PrcCmd :: IO String
 getP2PrcCmd = do
+
   -- assumes the program is ran inside the haskell module in p2prc's repo
   -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
 
+  let trimString = T.unpack . T.strip . T.pack
+
   -- TODO: change to "eitherExecProcess"
-  T.unpack . T.strip . T.pack <$> readProcess "pwd" [] "" >>=
+
+  trimString <$> readProcess "pwd" [] "" >>=
     \pwdOut ->
 
       -- TODO: change to "eitherExecProcess"
