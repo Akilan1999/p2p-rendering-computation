@@ -2,9 +2,9 @@
 
 module Main where
 
-import System.Exit ( ExitCode(ExitFailure) )
-
-import System.IO
+import System.Exit
+  ( ExitCode(ExitFailure)
+  )
 
 import System.Process
   ( readProcessWithExitCode
@@ -28,14 +28,16 @@ import Control.Monad
   , mzero
   )
 
--- TODO: Change Standard Library
-
 import qualified Data.Text as T
 
 import qualified Data.ByteString.Lazy.Char8 as LBC8
 
 import Data.Aeson
 
+
+-- import System.IO
+--
+-- TODO: Change Standard Library
 
 
 main :: IO ()
@@ -61,23 +63,23 @@ main = do
           , execInitConfig  = execInitConfig
           , execListServers = execListServers
           , execMapPort     = execMapPort
-          }
-          ) = p2prcAPI
+          }) = p2prcAPI
 
 
-      configValue <- execInitConfig
+      configValue <- execInitConfig $ MkConfigParams "dummy"
 
       print configValue
       putStrLn "\n\n\n"
 
       eitherStartProcessHandle <- startServer
 
+
       -- TODO: get name of host server from config json
       -- TODO: add option to change some default config attributes
       -- TODO: parse config file
       --
-      -- TODO: abstract init and server running logic into its function
-          -- work on looping function
+      -- TODO: work on looping function
+
 
       case eitherStartProcessHandle of
         (Right startProcessHandle) -> do
@@ -87,15 +89,26 @@ main = do
           outputStr <- execListServers
           print outputStr
 
-          mapPortOut <- execMapPort 3333 -- TODO: add domain name
+          mapPortOut <- execMapPort $ MkMapPortRequest 3333 "domain"
 
+
+          case mapPortOut of
+            (Right v) -> print v
+            (Left e)  -> print e
           --
           -- TODO: Add loop to print servers list
           --
+          --
+          -- Loop (Run replica of haskell program on different $NODES)
+          --    - Start server
+          --    - wait 4 seconds
+          --    - Identify new node running p2prc with SSH external port exposed
+          --    - SSH into machine
+          --    - Use simple File transfer to setup files
+          --    - Run server
+          --    - Use remote machine p2prc cmd to map a port using --mp
+          --    - Return back the exposed public IP and port number back to stdout
 
-          case mapPortOut of
-            (Right v) -> putStrLn $ show v
-            (Left e)  -> print e
 
           terminateProcess startProcessHandle
 
@@ -105,24 +118,22 @@ main = do
 
 
 
-  -- Loop (Run replica of haskell program on different $NODES)
-  --    - Start server
-  --    - wait 4 seconds
-  --    - Identify new node running p2prc with SSH external port exposed
-  --    - SSH into machine
-  --    - Use simple File transfer to setup files
-  --    - Run server
-  --    - Use remote machine p2prc cmd to map a port using --mp
-  --    - Return back the exposed public IP and port number back to stdout
-
-
-
 data P2prAPI = MkP2prAPI
   { startServer       :: IOEitherError ProcessHandle
-  , execInitConfig    :: IOEitherError P2prcConfig -- TODO: add parameters that can be modified
+  , execInitConfig    :: ConfigParams -> IOEitherError P2prcConfig
   , execListServers   :: IOEitherError IPAdressTable
-  , execMapPort       :: Int -> IOEitherError MapPortResponse
+  , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
   }
+
+
+data ConfigParams = MkConfigParams String
+
+
+type DomainName = String
+type PortNumber = Int
+
+data MapPortRequest
+  = MkMapPortRequest PortNumber DomainName
 
 
 getP2prcAPI :: IOEitherError P2prAPI
@@ -133,11 +144,17 @@ getP2prcAPI = do
   eitherP2prcCmd <- getP2PrcCmd
 
   pure $ case eitherP2prcCmd of
-    (Right p2prcCmd) -> do
+    (Right p2prcCmd) -> let
 
-      let execProcP2PrcParser = eitherExecProcessParser p2prcCmd
-      let execProcP2Prc       = eitherExecProcess p2prcCmd
+      execProcP2PrcParser ::
+        FromJSON a =>
+          [CLIOpt] -> StdInput -> IOEitherError a
+      execProcP2PrcParser = eitherExecProcessParser p2prcCmd
+      -- TODO: GHC question, why does it scope down instead staying generic
 
+      execProcP2Prc = eitherExecProcess p2prcCmd
+
+      in do
 
       Right $ MkP2prAPI
         { startServer = spawnProcP2Prc p2prcCmd [ MkOptAtomic "--s" ]
@@ -146,38 +163,39 @@ getP2prcAPI = do
             execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
         , execMapPort =
-          \ portNumber ->
+          \ (MkMapPortRequest portNumber _) ->
             execProcP2PrcParser
               [ MkOptTuple
                 ( "--mp"
                 , show portNumber
                 )
-              ]
-              MkEmptyStdInput
-
               -- , MkOptTuple -- TODO: add domain parameter
               --   ( "--dm"
               --   , domainName
               --   )
+              ]
+              MkEmptyStdInput
 
-        , execInitConfig = do
+        , execInitConfig =
+          \ (MkConfigParams _) -> do
 
-          confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
+            confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
-          case confInitRes of
-            (Right _) -> do
+            case confInitRes of
+              (Right _) -> do
 
-              -- TODO: get config file name dynamically
-              let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
+                -- TODO: get config file name dynamically
+                let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
 
-              -- TODO: change values before loading file
+                -- TODO: change values before loading file
 
-              -- TODO: read config check if file exists
-              configContent <- readFile fname
+                -- TODO: read config check if file exists
+                configContent <- readFile fname
 
-              pure $ eitherErrDecode configContent
+                pure $ eitherErrDecode configContent
 
-            (Left err) -> pure $ Left err
+              (Left err) -> pure $ Left err
+
         }
 
     (Left err) -> Left err
@@ -248,6 +266,7 @@ newtype IPAdressTable
   = MkIPAdressTable [ServerInfo]
   deriving Show
 
+
 instance FromJSON IPAdressTable where
   parseJSON = withObject "IPAdressTable" $
     \v ->
@@ -260,8 +279,8 @@ data ServerInfo = MkServerInfo
   , latency               :: Int
   , download              :: Int
   , upload                :: Int
-  , serverPort            :: Int
-  , bareMetalSSHPort      :: Maybe Int
+  , serverPort            :: PortNumber
+  , bareMetalSSHPort      :: Maybe PortNumber
   , nat                   :: Bool
   , escapeImplementation  :: Maybe T.Text
   , customInformation     :: Maybe T.Text
@@ -311,11 +330,11 @@ instance FromJSON ServerInfo where
     getNat ('T':_)  = True
     getNat _        = False
 
-    getBMShhPort :: String -> Maybe Int     -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
+    getBMShhPort :: String -> Maybe PortNumber  -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
     getBMShhPort []         = Nothing
     getBMShhPort bmSshPort  = Just $ getPortUNSAFE bmSshPort
 
-    getPortUNSAFE :: String -> Int          -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
+    getPortUNSAFE :: String -> PortNumber       -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
     getPortUNSAFE = read
 
     getIPAddress :: String -> String -> IPAddress
@@ -323,10 +342,10 @@ instance FromJSON ServerInfo where
     getIPAddress ip4  _   = MkIPv4 ip4
 
 
-
 data StdInput
   = MkEmptyStdInput
   | MkStdInputVal String
+
 
 instance Show StdInput where
   show MkEmptyStdInput    = ""
@@ -334,6 +353,7 @@ instance Show StdInput where
 
 
 type IOEitherError a = IO (Either Error a)
+
 
 eitherExecProcessParser ::
   FromJSON a =>
@@ -375,7 +395,6 @@ eitherExecProcess cmd opts input =
     pure $ case code of
       ExitFailure i -> Left $ MkSystemError i cmd err
       _             -> Right out
-
 
 
 optsToCLI :: [CLIOpt] -> CLIOptsInput
@@ -423,9 +442,11 @@ data Error
 
 assignError :: String -> Error
 assignError = MkUnknownError
+--
 -- TODO: add megaparsec to parse Error Messages
 --
 -- TODO: add error when internet connection is off
+--
 
 
 getP2PrcCmd :: IOEitherError String
