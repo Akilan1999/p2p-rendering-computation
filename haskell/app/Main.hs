@@ -2,7 +2,6 @@
 
 module Main where
 
-
 import System.Exit ( ExitCode(ExitFailure) )
 
 import System.IO
@@ -23,7 +22,11 @@ import System.Directory
   )
 
 import Control.Concurrent (threadDelay)
-import Control.Monad (when, mzero)
+
+import Control.Monad
+  ( when
+  , mzero
+  )
 
 -- TODO: Change Standard Library
 
@@ -85,12 +88,13 @@ main = do
           print outputStr
 
           mapPortOut <- execMapPort 3333 -- TODO: add domain name
+
           --
           -- TODO: Add loop to print servers list
           --
 
           case mapPortOut of
-            (Right v) -> putStrLn v
+            (Right v) -> putStrLn $ show v
             (Left e)  -> print e
 
           terminateProcess startProcessHandle
@@ -117,7 +121,7 @@ data P2prAPI = MkP2prAPI
   { startServer       :: IOEitherError ProcessHandle
   , execInitConfig    :: IOEitherError P2prcConfig -- TODO: add parameters that can be modified
   , execListServers   :: IOEitherError IPAdressTable
-  , execMapPort       :: Int -> IOEitherError String -- TODO: Parse JSON data
+  , execMapPort       :: Int -> IOEitherError MapPortResponse
   }
 
 
@@ -131,37 +135,34 @@ getP2prcAPI = do
   pure $ case eitherP2prcCmd of
     (Right p2prcCmd) -> do
 
-      let execProcP2PrcParser = execProcP2PrcParser_ p2prcCmd
+      let execProcP2PrcParser = eitherExecProcessParser p2prcCmd
       let execProcP2Prc       = eitherExecProcess p2prcCmd
 
 
       Right $ MkP2prAPI
-        { startServer = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
+        { startServer = spawnProcP2Prc p2prcCmd [ MkOptAtomic "--s" ]
 
         , execListServers =
-          execProcP2PrcParser
-            [MkOptAtomic "--ls"]
-            MkEmptyStdInput
+            execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
         , execMapPort =
-          \portNumber ->
-            execProcP2Prc
+          \ portNumber ->
+            execProcP2PrcParser
               [ MkOptTuple
                 ( "--mp"
                 , show portNumber
                 )
+              ]
+              MkEmptyStdInput
+
               -- , MkOptTuple -- TODO: add domain parameter
               --   ( "--dm"
               --   , domainName
               --   )
-              ]
-              MkEmptyStdInput
 
         , execInitConfig = do
 
-          confInitRes <- execProcP2Prc
-            [MkOptAtomic "--dc"]
-            MkEmptyStdInput
+          confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
           case confInitRes of
             (Right _) -> do
@@ -171,6 +172,7 @@ getP2prcAPI = do
 
               -- TODO: change values before loading file
 
+              -- TODO: read config check if file exists
               configContent <- readFile fname
 
               pure $ eitherErrDecode configContent
@@ -181,17 +183,66 @@ getP2prcAPI = do
     (Left err) -> Left err
 
 
+data MapPortResponse
+  = MkMapPortResponse
+    { ipAddress :: String
+    -- , ipAddress :: IPAddress -- TODO: fix the api output
+    -- , port      :: Int -- TODO: fix the api output
+    }
+  deriving Show
+
+
+instance FromJSON MapPortResponse where
+  parseJSON (Object o) = do
+
+    ipAddress <- o .: "IPAddress"
+
+    pure $
+      MkMapPortResponse
+        { ipAddress=ipAddress
+        }
+
+  parseJSON _ = mzero
+
+
 data P2prcConfig = MkP2prConfig
-  { machineName :: String
+  { machineName               :: String
+  -- , iPTable                   :: File
+  -- , dockerContainers          :: Directory
+  -- , defaultDockerFile         :: Directory
+  -- , dockerRunLogs             :: Directory
+  -- , speedTestFile             :: File
+  -- , iPV6Address               :: Maybe String
+  -- , pluginPath                :: Directory
+  -- , trackContainersPath       :: File
+  -- , hostServerPort            :: Int
+  -- , proxyPort                 :: Maybe Int
+  -- , groupTrackContainersPath  :: File
+  -- , fRPServerPort             :: Bool -- TODO: fix string to boolean
+  -- , behindNAT                 :: Bool -- TODO: fix string to boolean
+  -- , iPTableKey                :: String
+  -- , publicKeyFile             :: File
+  -- , privateKeyFile            :: File
+  -- , pemFile                   :: File
+  -- , keyFile                   :: File
+  -- , bareMetal                 :: Bool -- TODO: fix string to boolean
+  -- , customConfig -- TODO: fix this field
   }
   deriving Show
 
+
 instance FromJSON P2prcConfig where
-  -- TODO: parse values into the proper data types
-  parseJSON (Object o) = MkP2prConfig
-    <$> o .: "MachineName"
+  parseJSON (Object o) = do
+
+    machineName <- o .: "MachineName"
+
+    pure
+      $ MkP2prConfig
+        { machineName=machineName
+        }
 
   parseJSON _ = mzero
+
 
 newtype IPAdressTable
   = MkIPAdressTable [ServerInfo]
@@ -284,10 +335,10 @@ instance Show StdInput where
 
 type IOEitherError a = IO (Either Error a)
 
-execProcP2PrcParser_ ::
+eitherExecProcessParser ::
   FromJSON a =>
     CLICmd -> [CLIOpt] -> StdInput -> IOEitherError a
-execProcP2PrcParser_ p2prcCmd opts stdInput =
+eitherExecProcessParser p2prcCmd opts stdInput =
   do
     val <- eitherExecProcess p2prcCmd opts stdInput
 
@@ -392,7 +443,7 @@ getP2PrcCmd = do
     (Right pwdOut) ->
       eitherExecProcess
         "sed"
-        [MkOptAtomic "s/haskell/p2p-rendering-computation/"]
+        [ MkOptAtomic "s/haskell/p2p-rendering-computation/" ]
         $ MkStdInputVal
           $ trimString pwdOut
 
