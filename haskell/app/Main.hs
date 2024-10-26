@@ -5,6 +5,7 @@ module Main where
 
 import System.Exit ( ExitCode(ExitFailure) )
 
+import System.IO
 
 import System.Process
   ( readProcessWithExitCode
@@ -22,7 +23,7 @@ import System.Directory
   )
 
 import Control.Concurrent (threadDelay)
-import Control.Monad (when)
+import Control.Monad (when, mzero)
 
 -- TODO: Change Standard Library
 
@@ -60,11 +61,14 @@ main = do
           }
           ) = p2prcAPI
 
-      _ <- execInitConfig
 
+      configValue <- execInitConfig
+
+      print configValue
+      putStrLn "\n\n\n"
 
       eitherStartProcessHandle <- startServer
-      --
+
       -- TODO: get name of host server from config json
       -- TODO: add option to change some default config attributes
       -- TODO: parse config file
@@ -111,7 +115,7 @@ main = do
 
 data P2prAPI = MkP2prAPI
   { startServer       :: IOEitherError ProcessHandle
-  , execInitConfig    :: IOEitherError String
+  , execInitConfig    :: IOEitherError P2prcConfig -- TODO: add parameters that can be modified
   , execListServers   :: IOEitherError IPAdressTable
   , execMapPort       :: Int -> IOEitherError String -- TODO: Parse JSON data
   }
@@ -134,11 +138,6 @@ getP2prcAPI = do
       Right $ MkP2prAPI
         { startServer = spawnProcP2Prc p2prcCmd [MkOptAtomic "--s"]
 
-        , execInitConfig =
-          execProcP2Prc
-            [MkOptAtomic "--dc"]
-            MkEmptyStdInput
-
         , execListServers =
           execProcP2PrcParser
             [MkOptAtomic "--ls"]
@@ -157,10 +156,42 @@ getP2prcAPI = do
               --   )
               ]
               MkEmptyStdInput
+
+        , execInitConfig = do
+
+          confInitRes <- execProcP2Prc
+            [MkOptAtomic "--dc"]
+            MkEmptyStdInput
+
+          case confInitRes of
+            (Right _) -> do
+
+              -- TODO: get config file name dynamically
+              let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
+
+              -- TODO: change values before loading file
+
+              configContent <- readFile fname
+
+              pure $ eitherErrDecode configContent
+
+            (Left err) -> pure $ Left err
         }
 
     (Left err) -> Left err
 
+
+data P2prcConfig = MkP2prConfig
+  { machineName :: String
+  }
+  deriving Show
+
+instance FromJSON P2prcConfig where
+  -- TODO: parse values into the proper data types
+  parseJSON (Object o) = MkP2prConfig
+    <$> o .: "MachineName"
+
+  parseJSON _ = mzero
 
 newtype IPAdressTable
   = MkIPAdressTable [ServerInfo]
@@ -187,9 +218,9 @@ data ServerInfo = MkServerInfo
   deriving Show
 
 
-data IPAddress        -- TODO: add extra type information to data type
-  = MkIPv4 String     -- TODO: list of numbers
-  | MkIPv6 String     -- TODO: list of numbers
+data IPAddress
+  = MkIPv4 String
+  | MkIPv6 String
   deriving Show
 
 
@@ -265,12 +296,10 @@ execProcP2PrcParser_ p2prcCmd opts stdInput =
       (Left e)  -> Left e
 
 
-  where
-
-  eitherErrDecode ::
-    FromJSON a =>
-      String -> Either Error a
-  eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
+eitherErrDecode ::
+  FromJSON a =>
+    String -> Either Error a
+eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
 
 
 data CLIOpt
