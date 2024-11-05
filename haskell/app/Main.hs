@@ -34,22 +34,46 @@ import qualified Data.ByteString.Lazy.Char8 as LBC8
 
 import Data.Aeson
 
-
 -- import System.IO
+
+
+-- URGENT TASKS
 --
--- TODO: Change Standard Library
+-- TODO: setup the project as a haskell library
+-- TODO: splitting code on different files and directories
+-- TODO: lock cabal index
+-- TODO: setup nix flake package
+--
+-- TODO: P2PRC setup
+  -- p2prc runtime packaging
+    -- Perhaps create internal script to run P2PRC from nix flake
+      -- "nix flake run ..."
+      -- simplify packaging
+  -- check version P2PRC: only run if version if above a certain value
+  -- setup p2prc command
+    -- check if p2prc command is available in environment first
+    -- otherwise check folder above
+--
+-- TODO: add Haddock documentation
+--
+-- TODO: add quickcheck testing (quickchecking-dynamic)
+--
+-- TODO: publish haskell library
 
 
 main :: IO ()
 main = do
 
 
-  -- TODO: add IO arguments;
-  -- TODO: create DSL from the standard input
+  -- important but not urgent yet
   --
+  -- TODO: Change Standard Library
   -- TODO: add GDTA syntax to data types
-  --
   -- TODO: need monad transformers to refactor the code
+  --
+  -- TODO: parse IO arguments;
+    -- TODO: create DSL from the standard input
+  --
 
 
   eitherP2prcAPI <- getP2prcAPI
@@ -63,22 +87,18 @@ main = do
           , execInitConfig  = execInitConfig
           , execListServers = execListServers
           , execMapPort     = execMapPort
-          }) = p2prcAPI
+          }
+          ) = p2prcAPI
 
 
-      configValue <- execInitConfig $ MkConfigParams "dummy"
+      configValue <- execInitConfig
+
+      -- TODO: get name of host server from config json
 
       print configValue
       putStrLn "\n\n\n"
 
       eitherStartProcessHandle <- startServer
-
-
-      -- TODO: get name of host server from config json
-      -- TODO: add option to change some default config attributes
-      -- TODO: parse config file
-      --
-      -- TODO: work on looping function
 
 
       case eitherStartProcessHandle of
@@ -95,9 +115,9 @@ main = do
           case mapPortOut of
             (Right v) -> print v
             (Left e)  -> print e
-          --
-          -- TODO: Add loop to print servers list
-          --
+
+
+          -- TODO: work on looping function
           --
           -- Loop (Run replica of haskell program on different $NODES)
           --    - Start server
@@ -120,20 +140,14 @@ main = do
 
 data P2prAPI = MkP2prAPI
   { startServer       :: IOEitherError ProcessHandle
-  , execInitConfig    :: ConfigParams -> IOEitherError P2prcConfig
+  , execInitConfig    :: IOEitherError P2prcConfig
   , execListServers   :: IOEitherError IPAdressTable
   , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
   }
 
 
-data ConfigParams = MkConfigParams String
-
-
-type DomainName = String
-type PortNumber = Int
-
 data MapPortRequest
-  = MkMapPortRequest PortNumber DomainName
+  = MkMapPortRequest Int String
 
 
 getP2prcAPI :: IOEitherError P2prAPI
@@ -160,7 +174,7 @@ getP2prcAPI = do
         { startServer = spawnProcP2Prc p2prcCmd [ MkOptAtomic "--s" ]
 
         , execListServers =
-            execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
+          execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
         , execMapPort =
           \ (MkMapPortRequest portNumber _) ->
@@ -176,25 +190,25 @@ getP2prcAPI = do
               ]
               MkEmptyStdInput
 
-        , execInitConfig =
-          \ (MkConfigParams _) -> do
+        , execInitConfig = do
 
-            confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
+          confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
-            case confInitRes of
-              (Right _) -> do
+          case confInitRes of
+            (Right _) -> do
 
-                -- TODO: get config file name dynamically
-                let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
+              -- TODO: get config file name dynamically
 
-                -- TODO: change values before loading file
+              -- TODO: change values before loading file
+              let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
 
-                -- TODO: read config check if file exists
-                configContent <- readFile fname
 
-                pure $ eitherErrDecode configContent
+              -- TODO: read config check if file exists
+              configContent <- readFile fname
 
-              (Left err) -> pure $ Left err
+              pure $ eitherErrDecode configContent
+
+            (Left err) -> pure $ Left err
 
         }
 
@@ -210,6 +224,7 @@ data MapPortResponse
   deriving Show
 
 
+
 instance FromJSON MapPortResponse where
   parseJSON (Object o) = do
 
@@ -223,30 +238,58 @@ instance FromJSON MapPortResponse where
   parseJSON _ = mzero
 
 
+
 data P2prcConfig = MkP2prConfig
   { machineName               :: String
-  -- , iPTable                   :: File
-  -- , dockerContainers          :: Directory
-  -- , defaultDockerFile         :: Directory
-  -- , dockerRunLogs             :: Directory
-  -- , speedTestFile             :: File
+  -- , iPTable                   :: String -- File
+  -- , dockerContainers          :: String -- Directory
+  -- , defaultDockerFile         :: String -- Directory
+  -- , dockerRunLogs             :: String -- Directory
+  -- , speedTestFile             :: String -- File
   -- , iPV6Address               :: Maybe String
-  -- , pluginPath                :: Directory
-  -- , trackContainersPath       :: File
+  -- , pluginPath                :: String -- Directory
+  -- , trackContainersPath       :: String -- File
   -- , hostServerPort            :: Int
   -- , proxyPort                 :: Maybe Int
   -- , groupTrackContainersPath  :: File
-  -- , fRPServerPort             :: Bool -- TODO: fix string to boolean
-  -- , behindNAT                 :: Bool -- TODO: fix string to boolean
+  -- , fRPServerPort             :: Bool
+  -- , behindNAT                 :: Bool
   -- , iPTableKey                :: String
-  -- , publicKeyFile             :: File
-  -- , privateKeyFile            :: File
-  -- , pemFile                   :: File
-  -- , keyFile                   :: File
-  -- , bareMetal                 :: Bool -- TODO: fix string to boolean
-  -- , customConfig -- TODO: fix this field
+  -- , publicKeyFile             :: String -- File
+  -- , privateKeyFile            :: String -- File
+  -- , pemFile                   :: String -- File
+  -- , keyFile                   :: String -- File
+  -- , bareMetal                 :: Bool
+  -- , customConfig
   }
   deriving Show
+
+
+-- TODO: p2prc API
+  --
+  -- ListServers
+    -- remove "ip_address" root field if not needed
+    -- "Nat field" returning a JSON Boolean
+    -- serverPort as a JSON number
+    -- baremetalPort as a JSON number
+    -- have either IPV4 or IPV6 field visible
+    -- remove "customInformation" if not needed anymore
+    -- remove "escapeImplementation" if not needed anymore
+  --
+  -- Config file
+    --
+    -- Fix JSON number: ServerPort
+    -- Fix: IPV6Address dont show if value does not exist
+    -- Fix JSON number: ProxyPort to number (dont show if it does not exist)
+    -- Fix JSON number: fRPServerPort
+    -- Fix JSON boolean: fRPServerPort
+    -- Fix JSON boolean: behindNAT
+    -- Fix JSON boolean: bareMetal
+    -- remove "customConfig" if not needed
+  --
+  -- MapPort
+    -- to have a dedicated ip address (with type either IPV6 or IPV4 fields)
+    -- to have a dedicated port field
 
 
 instance FromJSON P2prcConfig where
@@ -269,7 +312,7 @@ newtype IPAdressTable
 
 instance FromJSON IPAdressTable where
   parseJSON = withObject "IPAdressTable" $
-    \v ->
+    \ v ->
       MkIPAdressTable <$> v .: "ip_address"
 
 
@@ -279,8 +322,8 @@ data ServerInfo = MkServerInfo
   , latency               :: Int
   , download              :: Int
   , upload                :: Int
-  , serverPort            :: PortNumber
-  , bareMetalSSHPort      :: Maybe PortNumber
+  , serverPort            :: Int
+  , bareMetalSSHPort      :: Maybe Int
   , nat                   :: Bool
   , escapeImplementation  :: Maybe T.Text
   , customInformation     :: Maybe T.Text
@@ -296,7 +339,7 @@ data IPAddress
 
 instance FromJSON ServerInfo where
   parseJSON = withObject "ServerInfo" $
-    \o -> do
+    \ o -> do
 
       name        <- o .: "Name"
       ip4str      <- o .: "IPV4"
@@ -310,6 +353,7 @@ instance FromJSON ServerInfo where
       mEscImpl    <- o .: "EscapeImplementation"
       custInfo    <- o .: "CustomInformation"
 
+
       pure $
         MkServerInfo
           { name                  = name
@@ -318,7 +362,7 @@ instance FromJSON ServerInfo where
           , download              = download
           , upload                = upload
           , serverPort            = getPortUNSAFE serverPort
-          , bareMetalSSHPort      = getBMShhPort bmSshPort    -- TODO: add perhaps null placeholder??
+          , bareMetalSSHPort      = getBMShhPort bmSshPort
           , nat                   = getNat nat
           , escapeImplementation  = mEscImpl
           , customInformation     = custInfo                  -- TODO: deal with null value
@@ -330,11 +374,11 @@ instance FromJSON ServerInfo where
     getNat ('T':_)  = True
     getNat _        = False
 
-    getBMShhPort :: String -> Maybe PortNumber  -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
+    getBMShhPort :: String -> Maybe Int     -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
     getBMShhPort []         = Nothing
     getBMShhPort bmSshPort  = Just $ getPortUNSAFE bmSshPort
 
-    getPortUNSAFE :: String -> PortNumber       -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
+    getPortUNSAFE :: String -> Int          -- TODO: Dangerous partial function call !!!!!!!!!!!!!!!!!!!
     getPortUNSAFE = read
 
     getIPAddress :: String -> String -> IPAddress
@@ -446,7 +490,6 @@ assignError = MkUnknownError
 -- TODO: add megaparsec to parse Error Messages
 --
 -- TODO: add error when internet connection is off
---
 
 
 getP2PrcCmd :: IOEitherError String
