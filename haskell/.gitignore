@@ -11,3 +11,4 @@ server
 
 key.pem
 cert.pem
+cabal.project.local
