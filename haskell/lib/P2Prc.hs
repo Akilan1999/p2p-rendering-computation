@@ -1,15 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module P2Prc ( runP2Prc )
-  where
+module P2Prc ( runP2Prc ) where
 
-
-import System.Process ( ProcessHandle, terminateProcess )
+import System.Process
+  ( ProcessHandle
+  , terminateProcess
+  )
 
 import Control.Concurrent ( threadDelay )
 
-
-import Data.Aeson
+import Data.Aeson ( FromJSON )
 
 
 import Environment  ( cleanEnvironment )
@@ -23,6 +23,14 @@ import JSON
   )
 
 import CLI
+  ( StdInput(..)
+  , CLIOpt(..)
+  , eitherErrDecode
+  , getP2PrcCmd
+  , eitherExecProcess
+  , eitherExecProcessParser
+  , spawnProcP2Prc
+  )
 
 
 -- URGENT TASKS
@@ -46,9 +54,6 @@ import CLI
 --
 -- TODO: add use case examples (extra-source_files)
 
-
-
--- Module: API
 
 runP2Prc :: IO ()
 runP2Prc = do
@@ -135,6 +140,7 @@ runP2Prc = do
     (Left err) -> print err
 
 
+-- Module: API
 
 data P2prAPI = MkP2prAPI
   { startServer       :: IOEitherError ProcessHandle
