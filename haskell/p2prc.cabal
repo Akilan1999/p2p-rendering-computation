@@ -86,4 +86,10 @@ library
 
     exposed-modules:  P2Prc
 
+    other-modules:      API
+                      , CLI
+                      , Environment
+                      , JSON
+                      , Error
+
     default-language: GHC2021
