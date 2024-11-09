@@ -1,14 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module P2Prc
-  ( runP2Prc
-  )
+module P2Prc ( runP2Prc )
   where
 
 
-import System.Exit
-  ( ExitCode(ExitFailure)
-  )
+import System.Exit ( ExitCode(ExitFailure) )
 
 import System.Process
   ( readProcessWithExitCode
@@ -25,7 +21,7 @@ import System.Directory
   , removeFile
   )
 
-import Control.Concurrent (threadDelay)
+import Control.Concurrent ( threadDelay )
 
 import Control.Monad
   ( when
@@ -64,6 +60,7 @@ import Data.Aeson
 
 
 
+-- Module: API
 
 runP2Prc :: IO ()
 runP2Prc = do
@@ -87,7 +84,6 @@ runP2Prc = do
 
   case eitherP2prcAPI of
     (Right p2prcAPI) -> do
-
       let
         ( MkP2prAPI
           { startServer     = startServer
@@ -110,6 +106,8 @@ runP2Prc = do
 
       case eitherStartProcessHandle of
         (Right startProcessHandle) -> do
+
+          let sleepNSecs i = threadDelay (i * 1000000)
 
           sleepNSecs 5
 
@@ -221,6 +219,9 @@ getP2prcAPI = do
 
     (Left err) -> Left err
 
+
+
+-- Module: JSON
 
 newtype MapPortResponse
   = MkMapPortResponse
@@ -393,6 +394,26 @@ instance FromJSON ServerInfo where
     getIPAddress ip4  _   = MkIPv4 ip4
 
 
+-- Module Error
+
+data Error
+  = MkUnknownError String
+  | MkErrorSpawningProcess String
+  | MkSystemError Int String String
+  deriving Show
+
+type IOEitherError a = IO (Either Error a)
+
+assignError :: String -> Error
+assignError = MkUnknownError
+--
+-- TODO: add megaparsec to parse Error Messages
+--
+-- TODO: add error when internet connection is off
+
+
+-- Module: CLI
+
 data StdInput
   = MkEmptyStdInput
   | MkStdInputVal String
@@ -403,7 +424,13 @@ instance Show StdInput where
   show (MkStdInputVal v)  = v
 
 
-type IOEitherError a = IO (Either Error a)
+data CLIOpt
+  = MkEmptyOpts
+  | MkOptAtomic String
+  | MkOptTuple (String, String)
+
+type CLIOptsInput = [String]
+type CLICmd       = String
 
 
 eitherExecProcessParser ::
@@ -422,16 +449,6 @@ eitherErrDecode ::
   FromJSON a =>
     String -> Either Error a
 eitherErrDecode = eitherErrorDecode . eitherDecode . LBC8.pack
-
-
-data CLIOpt
-  = MkEmptyOpts
-  | MkOptAtomic String
-  | MkOptTuple (String, String)
-
-
-type CLIOptsInput = [String]
-type CLICmd       = String
 
 
 eitherExecProcess :: CLICmd -> [CLIOpt] -> StdInput -> IOEitherError String
@@ -484,21 +501,6 @@ eitherErrorDecode esa =
     (Right v) -> Right v
 
 
-data Error
-  = MkUnknownError String
-  | MkErrorSpawningProcess String
-  | MkSystemError Int String String
-  deriving Show
-
-
-assignError :: String -> Error
-assignError = MkUnknownError
---
--- TODO: add megaparsec to parse Error Messages
---
--- TODO: add error when internet connection is off
-
-
 getP2PrcCmd :: IOEitherError String
 getP2PrcCmd = do
 
@@ -520,6 +522,8 @@ getP2PrcCmd = do
 
     err -> pure err
 
+
+-- Module: Environment
 
 cleanEnvironment :: IO ()
 cleanEnvironment = do
@@ -561,6 +565,3 @@ cleanEnvironment = do
       doesFileExist
       removeFile
 
-
-sleepNSecs :: Int -> IO ()
-sleepNSecs i = threadDelay (i * 1000000)
