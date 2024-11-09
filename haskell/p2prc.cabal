@@ -78,7 +78,7 @@ executable p2prc
                       , p2prc
 
     -- Directories containing source files.
-    hs-source-dirs:   app
+    hs-source-dirs:   src
 
     -- Base language which the package is written in.
     default-language: GHC2021
