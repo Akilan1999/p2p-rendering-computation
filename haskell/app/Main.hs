@@ -2,6 +2,9 @@
 
 module Main where
 
+
+import P2Prc
+
 import System.Exit
   ( ExitCode(ExitFailure)
   )
@@ -42,7 +45,7 @@ import Data.Aeson
 -- TODO: setup the project as a haskell library
 -- TODO: splitting code on different files and directories
 -- TODO: lock cabal index
--- TODO: setup nix flake package
+-- TODO: add Haddock documentation
 --
 -- TODO: P2PRC setup
   -- p2prc runtime packaging
@@ -54,11 +57,11 @@ import Data.Aeson
     -- check if p2prc command is available in environment first
     -- otherwise check folder above
 --
--- TODO: add Haddock documentation
---
--- TODO: add quickcheck testing (quickchecking-dynamic)
---
 -- TODO: publish haskell library
+--
+-- TODO: add use case examples (extra-source_files)
+
+
 
 
 main :: IO ()
@@ -74,6 +77,9 @@ main = do
   -- TODO: parse IO arguments;
     -- TODO: create DSL from the standard input
   --
+  -- TODO: setup nix flake package
+  -- TODO: add quickcheck testing (quickchecking-dynamic)
+
 
 
   eitherP2prcAPI <- getP2prcAPI
@@ -131,6 +137,8 @@ main = do
 
 
           terminateProcess startProcessHandle
+
+          print siuu
 
         (Left err) -> print err
 
