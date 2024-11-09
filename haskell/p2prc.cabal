@@ -66,9 +66,7 @@ executable p2prc
 
     -- Other library packages from which modules are imported.
     build-depends:      base
-                      , text
                       , p2prc
-                      , process
 
     -- Base language which the package is written in.
     default-language: GHC2021
@@ -87,7 +85,5 @@ library
     hs-source-dirs:   lib
 
     exposed-modules:  P2Prc
-
-    other-extensions: OverloadedStrings
 
     default-language: GHC2021
