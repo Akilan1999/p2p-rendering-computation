@@ -8,4 +8,4 @@ import P2PRC
 
 main :: IO ()
 main =
-  runP2PRC 3333 "jose.akilan.io"
+  runP2PRC 8080 "jose.akilan.io"

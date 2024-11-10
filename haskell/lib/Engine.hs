@@ -6,10 +6,14 @@ module Engine
   where
 
 
+import Control.Concurrent
+import Data.Char (toLower)
+import System.IO
+import Control.Monad (when)
+
 
 import System.Process ( terminateProcess )
 
-import Control.Concurrent ( threadDelay )
 
 import API
   ( P2PRCapi(..)
@@ -105,7 +109,6 @@ runP2PRC portNumber domainName = do
 
           mapPortOut <- execMapPort $ MkMapPortRequest portNumber domainName
 
-
           case mapPortOut of
             (Right v) -> print v
             (Left e)  -> print e
@@ -123,11 +126,22 @@ runP2PRC portNumber domainName = do
           --    - Use remote machine p2prc cmd to map a port using --mp
           --    - Return back the exposed public IP and port number back to stdout
 
+          exitOnQ $ terminateProcess startProcessHandle
 
-          terminateProcess startProcessHandle
 
         (Left err) -> print err
 
     (Left err) -> print err
+
+    where
+
+
+    exitOnQ :: IO () -> IO ()
+    exitOnQ f = do
+        hSetBuffering stdin NoBuffering
+        c <- getChar
+        when (toLower c /= 'q') $ exitOnQ f
+        f
+
 
 
