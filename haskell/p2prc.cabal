@@ -1,6 +1,6 @@
 cabal-version:      3.0
 
-name:         p2prc
+name:               p2prc
 
 -- See the Haskell package versioning policy (PVP) for standards
 -- guiding when and how versions should be incremented.
@@ -10,9 +10,9 @@ name:         p2prc
 --                  | | | +--- code changes with no API change
 version:            0.1.0.0
 
-synopsis: p2prc haskell library
+synopsis:           P2PRC haskell library
 
-description: Implements a client interface to the P2PRC networking runtime
+description:        Implements a client interface to the P2PRC networking runtime
 
 license:            GPL-3.0-only
 
@@ -29,29 +29,26 @@ extra-doc-files:    README.md
 
 
 common warnings
-    ghc-options: -Wall
+    ghc-options:        -Wall
 
 executable p2prc
 
-    import:           warnings
+    import:             warnings
 
-    hs-source-dirs:   src
+    hs-source-dirs:     src
 
-    main-is:          Main.hs
+    main-is:            Main.hs
 
-    -- Modules included in this executable, other than Main.
-    -- other-modules:    Example
-
-    other-extensions: OverloadedStrings
+    other-extensions:   OverloadedStrings
 
     build-depends:      base
                       , p2prc
 
-    default-language: GHC2021
+    default-language:   GHC2021
 
 library
 
-    import:           warnings
+    import:             warnings
 
     build-depends:      base
                       , text
@@ -60,14 +57,15 @@ library
                       , bytestring
                       , directory
 
-    hs-source-dirs:   lib
+    hs-source-dirs:     lib
 
-    exposed-modules:  P2Prc
+    exposed-modules:    P2PRC
 
     other-modules:      API
+                      , Engine
                       , CLI
                       , Environment
                       , JSON
                       , Error
 
-    default-language: GHC2021
+    default-language:   GHC2021
