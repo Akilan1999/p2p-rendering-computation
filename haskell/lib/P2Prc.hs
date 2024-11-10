@@ -7,8 +7,8 @@ import System.Process ( terminateProcess )
 import Control.Concurrent ( threadDelay )
 
 import API
-  ( P2prAPI(..)
-  , MapPortRequest(..)
+  ( P2PRCapi(..)
+  , MapPortRequest(MkMapPortRequest)
   , getP2prcAPI
   )
 
@@ -37,13 +37,14 @@ import API
 runP2Prc :: IO ()
 runP2Prc = do
 
-
+  --
+  -- TODO: add quickcheck testing (quickchecking-dynamic)
   --
   -- TODO: Change Standard Library
   -- TODO: add GDTA syntax to data types
+  --
   -- TODO: need monad transformers to refactor the code
   --
-  -- TODO: add quickcheck testing (quickchecking-dynamic)
   --
   -- TODO: parse IO arguments;
     -- TODO: create DSL from the standard input
@@ -68,7 +69,7 @@ runP2Prc = do
   case eitherP2prcAPI of
     (Right p2prcAPI) -> do
       let
-        ( MkP2prAPI
+        ( MkP2PRCapi
           { startServer     = startServer
           , execInitConfig  = execInitConfig
           , execListServers = execListServers
