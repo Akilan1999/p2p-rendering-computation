@@ -1,9 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module P2Prc ( runP2Prc ) where
+module Engine
+  ( runP2PRC
+  )
+  where
+
 
 
 import System.Process ( terminateProcess )
+
 import Control.Concurrent ( threadDelay )
 
 import API
@@ -34,8 +39,8 @@ import API
 --
 
 
-runP2Prc :: IO ()
-runP2Prc = do
+runP2PRC :: Int -> String -> IO ()
+runP2PRC portNumber domainName = do
 
   --
   -- TODO: add quickcheck testing (quickchecking-dynamic)
@@ -98,7 +103,7 @@ runP2Prc = do
           outputStr <- execListServers
           print outputStr
 
-          mapPortOut <- execMapPort $ MkMapPortRequest 3333 "domain"
+          mapPortOut <- execMapPort $ MkMapPortRequest portNumber domainName
 
 
           case mapPortOut of

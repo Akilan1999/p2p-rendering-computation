@@ -1,9 +1,11 @@
 
 module Main where
 
-import P2Prc (runP2Prc)
+import P2PRC
+  ( runP2PRC
+  )
 
 
 main :: IO ()
 main =
-  runP2Prc
+  runP2PRC 3333 "jose.akilan.io"
