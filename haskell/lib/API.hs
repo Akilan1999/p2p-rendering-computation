@@ -1,6 +1,6 @@
 
 module API
-  ( P2prAPI(..)
+  ( P2PRCapi(..)
   , MapPortRequest(..)
   , getP2prcAPI
   )
@@ -32,7 +32,7 @@ import Environment  ( cleanEnvironment )
 
 
 
-data P2prAPI = MkP2prAPI
+data P2PRCapi = MkP2PRCapi
   { startServer       :: IOEitherError ProcessHandle
   , execInitConfig    :: IOEitherError P2prcConfig
   , execListServers   :: IOEitherError IPAdressTable
@@ -44,7 +44,7 @@ data MapPortRequest
   = MkMapPortRequest Int String
 
 
-getP2prcAPI :: IOEitherError P2prAPI
+getP2prcAPI :: IOEitherError P2PRCapi
 getP2prcAPI = do
 
   cleanEnvironment
@@ -64,23 +64,23 @@ getP2prcAPI = do
 
       in do
 
-      Right $ MkP2prAPI
+      Right $ MkP2PRCapi
         { startServer = spawnProcP2Prc p2prcCmd [ MkOptAtomic "--s" ]
 
         , execListServers =
           execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
         , execMapPort =
-          \ (MkMapPortRequest portNumber _) ->
+          \ (MkMapPortRequest portNumber domainName) ->
             execProcP2PrcParser
               [ MkOptTuple
                 ( "--mp"
                 , show portNumber
                 )
-              -- , MkOptTuple -- TODO: add domain parameter
-              --   ( "--dm"
-              --   , domainName
-              --   )
+                , MkOptTuple
+                ( "--dn"
+                , domainName
+                )
               ]
               MkEmptyStdInput
 
