@@ -43,8 +43,8 @@ import API
 --
 
 
-runP2PRC :: Int -> String -> IO ()
-runP2PRC portNumber domainName = do
+runP2PRC :: MapPortRequest -> IO ()
+runP2PRC (MkMapPortRequest portNumber domainName) = do
 
   --
   -- TODO: add quickcheck testing (quickchecking-dynamic)
@@ -135,13 +135,10 @@ runP2PRC portNumber domainName = do
 
     where
 
-
     exitOnQ :: IO () -> IO ()
-    exitOnQ f = do
-        hSetBuffering stdin NoBuffering
-        c <- getChar
-        when (toLower c /= 'q') $ exitOnQ f
-        f
-
-
+    exitOnQ exitF = do
+      hSetBuffering stdin NoBuffering
+      c <- getChar
+      when (toLower c /= 'q') $ exitOnQ exitF
+      exitF
 
