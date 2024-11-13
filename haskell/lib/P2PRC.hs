@@ -1,40 +1,48 @@
+{-# OPTIONS_HADDOCK show-extensions #-}
+
+
 {- |
-   Module      : Text.Pandoc
-   Copyright   : Copyright (C) 2006-2024 John MacFarlane
+   Module      : P2PRC
+   Copyright   : Copyright (C) 2024-2024 Jose Fernandes
    License     : GNU GPL, version 2 or above
 
-   Maintainer  : John MacFarlane <jgm@berkeley.edu>
-   Stability   : alpha
+   Maintainer  : Jose Fernandes <jf94.uk@gmail.com>
+   Stability   : beta
    Portability : portable
 
-This helper module exports the main writers, readers, and data
-structure definitions from the Pandoc libraries.
+This helper module exports the main functions and data type definitions necessary to get started with the P2PRC api.
 
-A typical application will chain together a reader and a writer
-to convert strings from one format to another.  For example, the
-following simple program will act as a filter converting markdown
-fragments to reStructuredText, using reference-style links instead of
-inline links:
+A minimal application will require the import of "runP2PRC" function that accepts a "MapPortRequest" value that exposes a specific port number and associates it with a domain name in the internet.
+
+This is a small template to get quickly get started with this interface. We assume the user has already an application listening on the tcp socket "8080".
 
 > module Main where
-> import Text.Pandoc
-> import Data.Text (Text)
-> import qualified Data.Text.IO as T
 >
-> mdToRST :: Text -> IO Text
-> mdToRST txt = runIOorExplode $
->   readMarkdown def txt
->   >>= writeRST def{ writerReferenceLinks = True }
+> import P2PRC
+>   ( runP2PRC
+>   , MapPortRequest(MkMapPortRequest)
+>   )
+>
+>
 >
 > main :: IO ()
-> main = do
->   T.getContents >>= mdToRST >>= T.putStrLn
+> main =
+>   runP2PRC
+>     ( MkMapPortRequest 8080 "jose.akilan.io"
+>     )
 
 -}
 
+
 module P2PRC
-  ( runP2PRC
-  , MapPortRequest(..)
+  ( MapPortRequest(..)
+  , P2PRCapi
+  , IPAdressTable
+  , MapPortResponse
+  , P2prcConfig
+  , IOEitherError
+  , getP2prcAPI
+  , runP2PRC
   )
   where
 
@@ -43,7 +51,17 @@ import Engine
   ( runP2PRC
   )
 
+import JSON
+  ( IPAdressTable
+  , MapPortResponse
+  , P2prcConfig
+  )
 
 import API
   ( MapPortRequest(MkMapPortRequest)
+  , P2PRCapi
+  , getP2prcAPI
   )
+
+
+import Error (IOEitherError)
