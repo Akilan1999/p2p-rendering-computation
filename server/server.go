@@ -2,7 +2,6 @@ package server
 
 import (
 	b64 "encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
@@ -11,8 +10,8 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
 	"net/http"
+	"os/user"
 	"strconv"
 	"time"
 )
@@ -69,45 +68,45 @@ func Server() (*gin.Engine, error) {
 	//Gets Ip Table from server node
 	r.POST("/IpTable", func(c *gin.Context) {
 		// Getting IPV4 address of client
-		var ClientHost p2p.IpAddress
-
-		if p2p.Ip4or6(c.ClientIP()) == "version 6" {
-			ClientHost.Ipv6 = c.ClientIP()
-		} else {
-			ClientHost.Ipv4 = c.ClientIP()
-		}
-
-		// Variable to store IP table information
-		var IPTable p2p.IpAddresses
-
-		// Receive file from POST request
-		body, err := c.FormFile("json")
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
-
-		// Open file
-		open, err := body.Open()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
-
-		// Open received file
-		file, err := ioutil.ReadAll(open)
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
-
-		json.Unmarshal(file, &IPTable)
-
-		//Add Client IP address to IPTable struct
-		IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
-
-		// Runs speed test to return only servers in the IP table pingable
-		err = IPTable.SpeedTestUpdatedIPTable()
-		if err != nil {
-			c.String(http.StatusOK, fmt.Sprint(err))
-		}
+		//var ClientHost p2p.IpAddress
+		//
+		//if p2p.Ip4or6(c.ClientIP()) == "version 6" {
+		//	ClientHost.Ipv6 = c.ClientIP()
+		//} else {
+		//	ClientHost.Ipv4 = c.ClientIP()
+		//}
+		//
+		//// Variable to store IP table information
+		//var IPTable p2p.IpAddresses
+		//
+		//// Receive file from POST request
+		//body, err := c.FormFile("json")
+		//if err != nil {
+		//	c.String(http.StatusOK, fmt.Sprint(err))
+		//}
+		//
+		//// Open file
+		//open, err := body.Open()
+		//if err != nil {
+		//	c.String(http.StatusOK, fmt.Sprint(err))
+		//}
+		//
+		//// Open received file
+		//file, err := ioutil.ReadAll(open)
+		//if err != nil {
+		//	c.String(http.StatusOK, fmt.Sprint(err))
+		//}
+		//
+		//json.Unmarshal(file, &IPTable)
+		//
+		////Add Client IP address to IPTable struct
+		//IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
+		//
+		//// Runs speed test to return only servers in the IP table pingable
+		//err = IPTable.SpeedTestUpdatedIPTable()
+		//if err != nil {
+		//	c.String(http.StatusOK, fmt.Sprint(err))
+		//}
 
 		// Reads IP addresses from ip table
 		IpAddresses, err := p2p.ReadIpTable()
@@ -294,7 +293,7 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.ProxyServer = "False"
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
-			if config.BareMetal == "True" {
+			if config.BareMetal {
 				_, SSHPort, err := MapPort("22", "")
 				if err != nil {
 					return nil, err
@@ -303,9 +302,6 @@ func Server() (*gin.Engine, error) {
 			}
 
 			//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
-
-			// append the following to the ip table
-			table.IpAddress = append(table.IpAddress, ProxyIpAddr)
 			// write information back to the IP Table
 		}
 
@@ -321,13 +317,33 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.ProxyServer = "True"
 		}
 		ProxyIpAddr.EscapeImplementation = ""
-		if config.BareMetal == "True" {
+		if config.BareMetal {
 			ProxyIpAddr.BareMetalSSHPort = "22"
 		}
 
-		table.IpAddress = append(table.IpAddress, ProxyIpAddr)
-
 	}
+
+	// Get machine username
+	currentUser, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	// Add username p2prc binary is being run under
+	ProxyIpAddr.MachineUsername = currentUser.Username
+	ProxyIpAddr.UnSafeMode = config.UnsafeMode
+	// Adds the public key information to the IPTable
+	// improving transmission of IPTables without the
+	// entire public key is future work to be improved
+	// in the P2PRC protocol level (Improving by adding
+	// UDP with TCP reliability layer).
+	ProxyIpAddr.PublicKey, err = config.GetPublicKey()
+
+	if err != nil {
+		return nil, err
+	}
+
+	// append the following to the ip table
+	table.IpAddress = append(table.IpAddress, ProxyIpAddr)
 
 	// Writing results to the IPTable
 	err = table.WriteIpTable()
@@ -406,11 +422,8 @@ func MapPort(port string, domainName string) (string, string, error) {
 			return "", "", err
 		}
 
-		fmt.Println(domainName)
-
 		// Doing the proxy mapping for the domain name
 		if domainName != "" {
-			fmt.Println("called --------------------------------")
 			fmt.Println("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4)
 			URL := "http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort + "/AddProxy?port=" + proxyPort + "&domain_name=" + domainName + "&ip_address=" + lowestLatencyIpAddress.Ipv4
 			//} else {
@@ -426,6 +439,7 @@ func MapPort(port string, domainName string) (string, string, error) {
 		ProxyIpAddr.Name = config.MachineName
 		ProxyIpAddr.NAT = "False"
 		ProxyIpAddr.EscapeImplementation = "FRP"
+
 		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 	} else {
 		return "", "", errors.New("proxy IP not found")
