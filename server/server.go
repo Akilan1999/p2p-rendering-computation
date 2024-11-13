@@ -2,6 +2,7 @@ package server
 
 import (
     b64 "encoding/base64"
+    "encoding/json"
     "errors"
     "fmt"
     "github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
