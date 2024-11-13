@@ -12,7 +12,7 @@
 
 This helper module exports the main functions and data type definitions necessary to get started with the P2PRC api.
 
-A minimal application will require the import of "runP2PRC" function that accepts a "MapPortRequest" value that exposes a specific port number and associates it with a domain name in the internet.
+A minimal application will require the import of 'runP2PRC' function that accepts a 'MapPortRequest' value that exposes a specific port number and associates it with a domain name in the internet.
 
 This is a small template to get quickly get started with this interface. We assume the user has already an application listening on the tcp socket "8080".
 
@@ -35,14 +35,15 @@ This is a small template to get quickly get started with this interface. We assu
 
 
 module P2PRC
-  ( MapPortRequest(..)
+  ( getP2prcAPI
+  , runP2PRC
+  , MapPortRequest(..)
   , P2PRCapi
   , IPAdressTable
   , MapPortResponse
   , P2prcConfig
+  , Error
   , IOEitherError
-  , getP2prcAPI
-  , runP2PRC
   )
   where
 
@@ -64,4 +65,9 @@ import API
   )
 
 
-import Error (IOEitherError)
+import Error
+  ( Error
+  , IOEitherError
+  )
+
+
