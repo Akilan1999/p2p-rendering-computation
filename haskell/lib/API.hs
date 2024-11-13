@@ -10,7 +10,9 @@ import System.Process ( ProcessHandle )
 
 import Data.Aeson ( FromJSON )
 
-import Error (IOEitherError)
+import Error
+  ( IOEitherError
+  )
 
 import JSON
   ( IPAdressTable
@@ -40,8 +42,19 @@ data P2PRCapi = MkP2PRCapi
   }
 
 
-data MapPortRequest
-  = MkMapPortRequest Int String
+{- |
+
+__Example:__
+
+@
+port = 'MkMapPortRequest' 8080 \"jose.akilan.io\"
+@
+
+-}
+data MapPortRequest =
+  MkMapPortRequest
+    Int -- ^ TCP socket number
+    String -- ^ Network domain name
 
 
 getP2prcAPI :: IOEitherError P2PRCapi

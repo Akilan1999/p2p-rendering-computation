@@ -1,4 +1,7 @@
-module Environment ( cleanEnvironment ) where
+module Environment
+  ( cleanEnvironment
+  )
+  where
 
 
 import System.Directory

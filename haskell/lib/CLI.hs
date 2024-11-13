@@ -8,14 +8,19 @@ import System.Process
   , ProcessHandle
   )
 
-import System.Exit ( ExitCode(ExitFailure) )
-
-import Data.Aeson
+import System.Exit
+  ( ExitCode(ExitFailure)
+  )
 
 import Error
   ( IOEitherError
   , Error(..)
   , assignError
+  )
+
+import Data.Aeson
+  ( FromJSON
+  , eitherDecode
   )
 
 import qualified Data.Text as T
