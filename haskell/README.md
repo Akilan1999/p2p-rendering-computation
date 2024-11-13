@@ -1,29 +1,36 @@
-::: {#package-header}
-[p2prc-0.1.0.0: P2PRC haskell library]{.caption}
+<div id="package-header">
 
--   [Contents](index.html)
--   [Index](doc-index.html)
-:::
+<span class="caption">p2prc-0.1.0.0: P2PRC haskell library</span>
 
-::: {#content}
-::: {#module-header}
-  -------------- -----------------------------------------
-  Copyright      Copyright (C) 2006-2024 John MacFarlane
-  License        GNU GPL, version 2 or above
-  Maintainer     John MacFarlane \<jgm@berkeley.edu\>
-  Stability      alpha
-  Portability    portable
-  Safe Haskell   Safe-Inferred
-  Language       GHC2021
-  -------------- -----------------------------------------
+- [Contents](index.html)
+- [Index](doc-index.html)
+
+</div>
+
+<div id="content">
+
+<div id="module-header">
+
+|              |                                         |
+|--------------|-----------------------------------------|
+| Copyright    | Copyright (C) 2006-2024 John MacFarlane |
+| License      | GNU GPL, version 2 or above             |
+| Maintainer   | John MacFarlane \<jgm@berkeley.edu\>    |
+| Stability    | alpha                                   |
+| Portability  | portable                                |
+| Safe Haskell | Safe-Inferred                           |
+| Language     | GHC2021                                 |
 
 P2PRC
-:::
 
-::: {#description}
+</div>
+
+<div id="description">
+
 Description
 
-::: doc
+<div class="doc">
+
 This helper module exports the main writers, readers, and data structure
 definitions from the Pandoc libraries.
 
@@ -45,51 +52,69 @@ reStructuredText, using reference-style links instead of inline links:
     main :: IO ()
     main = do
       T.getContents >>= mdToRST >>= T.putStrLn
-:::
-:::
 
-::: {#synopsis}
+</div>
+
+</div>
+
+<div id="synopsis">
+
 Synopsis
 
--   [runP2PRC](#v:runP2PRC) ::
-    [MapPortRequest](P2PRC.html#t:MapPortRequest "P2PRC") -\>
-    [IO]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/System-IO.html#t:IO "System.IO")
-    ()
--   [data]{.keyword} [MapPortRequest](#t:MapPortRequest) =
-    [MkMapPortRequest](#v:MkMapPortRequest)
-    [Int]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-Int.html#t:Int "Data.Int")
-    [String]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-String.html#t:String "Data.String")
-:::
+- [runP2PRC](#v:runP2PRC) ::
+  [MapPortRequest](P2PRC.html#t:MapPortRequest "P2PRC") -\>
+  [IO]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/System-IO.html#t:IO "System.IO")
+  ()
+- <span class="keyword">data</span> [MapPortRequest](#t:MapPortRequest)
+  = [MkMapPortRequest](#v:MkMapPortRequest)
+  [Int]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-Int.html#t:Int "Data.Int")
+  [String]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-String.html#t:String "Data.String")
 
-::: {#interface}
+</div>
+
+<div id="interface">
+
 # Documentation
 
-::: top
-[runP2PRC]{#v:runP2PRC .def} ::
+<div class="top">
+
+<span id="v:runP2PRC" class="def">runP2PRC</span> ::
 [MapPortRequest](P2PRC.html#t:MapPortRequest "P2PRC") -\>
 [IO]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/System-IO.html#t:IO "System.IO")
-() [\#](#v:runP2PRC){.selflink}
+() <a href="#v:runP2PRC" class="selflink">#</a>
 
-::: doc
+<div class="doc">
+
 Hello World
-:::
-:::
 
-::: top
-[data]{.keyword} [MapPortRequest]{#t:MapPortRequest .def}
-[\#](#t:MapPortRequest){.selflink}
+</div>
 
-::: {.subs .constructors}
+</div>
+
+<div class="top">
+
+<span class="keyword">data</span> <span id="t:MapPortRequest"
+class="def">MapPortRequest</span>
+<a href="#t:MapPortRequest" class="selflink">#</a>
+
+<div class="subs constructors">
+
 Constructors
 
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---
-  [MkMapPortRequest]{#v:MkMapPortRequest .def} [Int]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-Int.html#t:Int "Data.Int") [String]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-String.html#t:String "Data.String")    
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---
-:::
-:::
-:::
-:::
+|                                                                                                                                                                                                                                                                                                                                                                                                     |     |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|
+| <span id="v:MkMapPortRequest" class="def">MkMapPortRequest</span> [Int]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-Int.html#t:Int "Data.Int") [String]($%7Bpkgroot%7D/../../../../dcnyq1a8qi8x59n5p53d0dx42cl8hf8x-ghc-9.6.5-doc/share/doc/ghc/html/libraries/base-4.18.2.1/Data-String.html#t:String "Data.String") |     |
 
-::: {#footer}
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="footer">
+
 Produced by [Haddock](http://www.haskell.org/haddock/) version 2.29.2
-:::
+
+</div>
