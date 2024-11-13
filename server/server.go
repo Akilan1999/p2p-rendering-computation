@@ -2,7 +2,6 @@ package server
 
 import (
     b64 "encoding/base64"
-    "encoding/json"
     "errors"
     "fmt"
     "github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
@@ -11,7 +10,6 @@ import (
     "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
     "github.com/Akilan1999/p2p-rendering-computation/server/docker"
     "github.com/gin-gonic/gin"
-    "io/ioutil"
     "net/http"
     "os/user"
     "strconv"
@@ -69,46 +67,46 @@ func Server() (*gin.Engine, error) {
 
     //Gets Ip Table from server node
     r.POST("/IpTable", func(c *gin.Context) {
-        // Getting IPV4 address of client
-        var ClientHost p2p.IpAddress
-
-        if p2p.Ip4or6(c.ClientIP()) == "version 6" {
-            ClientHost.Ipv6 = c.ClientIP()
-        } else {
-            ClientHost.Ipv4 = c.ClientIP()
-        }
-
-        // Variable to store IP table information
-        var IPTable p2p.IpAddresses
-
-        // Receive file from POST request
-        body, err := c.FormFile("json")
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
-
-        // Open file
-        open, err := body.Open()
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
-
-        // Open received file
-        file, err := ioutil.ReadAll(open)
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
-
-        json.Unmarshal(file, &IPTable)
-
-        //Add Client IP address to IPTable struct
-        IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
-
-        // Runs speed test to return only servers in the IP table pingable
-        err = IPTable.SpeedTestUpdatedIPTable()
-        if err != nil {
-            c.String(http.StatusOK, fmt.Sprint(err))
-        }
+        //// Getting IPV4 address of client
+        //var ClientHost p2p.IpAddress
+        //
+        //if p2p.Ip4or6(c.ClientIP()) == "version 6" {
+        //	ClientHost.Ipv6 = c.ClientIP()
+        //} else {
+        //	ClientHost.Ipv4 = c.ClientIP()
+        //}
+        //
+        //// Variable to store IP table information
+        //var IPTable p2p.IpAddresses
+        //
+        //// Receive file from POST request
+        //body, err := c.FormFile("json")
+        //if err != nil {
+        //	c.String(http.StatusOK, fmt.Sprint(err))
+        //}
+        //
+        //// Open file
+        //open, err := body.Open()
+        //if err != nil {
+        //	c.String(http.StatusOK, fmt.Sprint(err))
+        //}
+        //
+        //// Open received file
+        //file, err := ioutil.ReadAll(open)
+        //if err != nil {
+        //	c.String(http.StatusOK, fmt.Sprint(err))
+        //}
+        //
+        //json.Unmarshal(file, &IPTable)
+        //
+        ////Add Client IP address to IPTable struct
+        //IPTable.IpAddress = append(IPTable.IpAddress, ClientHost)
+        //
+        //// Runs speed test to return only servers in the IP table pingable
+        //err = IPTable.SpeedTestUpdatedIPTable()
+        //if err != nil {
+        //	c.String(http.StatusOK, fmt.Sprint(err))
+        //}
 
         // Reads IP addresses from ip table
         IpAddresses, err := p2p.ReadIpTable()
