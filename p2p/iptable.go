@@ -21,6 +21,7 @@ type IpAddresses struct {
 
 type IpAddress struct {
 	Name                 string        `json:"Name"`
+	MachineUsername      string        `json:"MachineUsername"`
 	Ipv4                 string        `json:"IPV4"`
 	Ipv6                 string        `json:"IPV6"`
 	Latency              time.Duration `json:"Latency"`
@@ -31,6 +32,8 @@ type IpAddress struct {
 	NAT                  string        `json:"NAT"`
 	EscapeImplementation string        `json:"EscapeImplementation"`
 	ProxyServer          string        `json:"ProxyServer"`
+	UnSafeMode           bool          `json:"UnSafeMode"`
+	PublicKey            string        `json:"PublicKey"`
 	CustomInformation    string        `json:"CustomInformation"`
 	//CustomInformationKey []byte        `json:"CustomInformationKey"`
 }

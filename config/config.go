@@ -36,7 +36,8 @@ type Config struct {
 	PrivateKeyFile           string
 	PemFile                  string
 	KeyFile                  string
-	BareMetal                string
+	BareMetal                bool
+	UnsafeMode               bool
 	CustomConfig             interface{}
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
