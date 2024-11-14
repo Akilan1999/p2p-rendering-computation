@@ -31,7 +31,7 @@ func AddCustomInformationToIPTable(text string) error {
 	if found {
 		table.WriteIpTable()
 		// update IPTable after modified entry
-		UpdateIpTableListClient()
+		go UpdateIpTableListClient()
 	} else {
 		return errors.New("start server with p2prc -s as the server is currently not running")
 	}

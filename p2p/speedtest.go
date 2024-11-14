@@ -1,5 +1,9 @@
 package p2p
 
+import (
+	"github.com/Akilan1999/p2p-rendering-computation/config"
+)
+
 // SpeedTest Runs a speed test and does updates IP tables accordingly
 func (ip *IpAddresses) SpeedTest() error {
 
@@ -50,9 +54,24 @@ func (ip *IpAddresses) SpeedTest() error {
 
 // SpeedTestUpdatedIPTable Called when ip tables from httpclient/server is also passed on
 func (ip *IpAddresses) SpeedTestUpdatedIPTable() error {
+
+	Config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return err
+	}
+
 	targets, err := ReadIpTable()
 	if err != nil {
 		return err
+	}
+
+	// Checks if baremetal mode and unsafe mode
+	// is enabled. If it is enabled it adds the
+	// the propagated public key to the list.
+
+	AddPublicKey := false
+	if Config.BareMetal && Config.UnsafeMode {
+		AddPublicKey = true
 	}
 
 	// To ensure struct has no duplicates IP addresses
@@ -64,6 +83,16 @@ func (ip *IpAddresses) SpeedTestUpdatedIPTable() error {
 		//To ensure that there are no duplicate IP addresses
 		Exists := false
 		for k := range ip.IpAddress {
+			if AddPublicKey && ip.IpAddress[k].PublicKey != "" {
+				// This function call (AddAuthorisationKey) is inefficient but to be optimised later on.
+				// This is because when if the user is running on as unsafe mode the authorization file
+				// is opened from the SSH directory and then iterates through every single SSH entry
+				// to find out if the SSH entry exists or not. This will incur multiple CPU cycles
+				// for no reason. A better approach would be to have been to store the states on memory and only
+				// add when needed based on the memory location. This is something is to be discussed
+				// and look upon later on.
+				AddAuthorisationKey(ip.IpAddress[k].PublicKey)
+			}
 			// Checks if both the IPV4 addresses are the same or the IPV6 address is not
 			// an empty string and IPV6 address are the same
 			if (ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 && targets.IpAddress[i].NAT == "True") || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6) {

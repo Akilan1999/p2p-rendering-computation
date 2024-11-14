@@ -64,10 +64,11 @@ func UpdateIpTable(IpAddress string, serverPort string, wg *sync.WaitGroup) erro
         }
     }
 
-    err = ipStruct.WriteIpTable()
-    if err != nil {
-        return err
-    }
+    // Not required to update IP table as speed test updates the IP Table
+    //err = ipStruct.WriteIpTable()
+    //if err != nil {
+    //    return err
+    //}
 
     wg.Done()
 
