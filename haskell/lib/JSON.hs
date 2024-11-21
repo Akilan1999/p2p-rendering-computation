@@ -39,6 +39,7 @@ instance FromJSON MapPortResponse where
 
 
 
+-- | Host P2prc configuration
 newtype P2prcConfig = MkP2prConfig
   { machineName               :: String
   -- , iPTable                   :: String -- File
