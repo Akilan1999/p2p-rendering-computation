@@ -14,10 +14,6 @@ synopsis:           P2PRC haskell library
 
 description:        Implements a client interface to the P2PRC networking runtime
 
-license:            GPL-3.0-only
-
-license-file:       LICENSE
-
 author:             xecarlox94
 
 maintainer:         jf94.uk@gmail.com
