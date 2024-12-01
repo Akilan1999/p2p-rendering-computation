@@ -17,7 +17,7 @@ import System.Process ( terminateProcess )
 
 import API
   ( P2PRCapi(..)
-  , MapPortRequest(MkMapPortRequest)
+  , MapPortRequest(..)
   , getP2prcAPI
   )
 
