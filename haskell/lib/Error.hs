@@ -5,19 +5,24 @@ module Error
   ) where
 
 
--- ^ Error type for the application
+{- |
+  Haskell-side Error value. This type is designed to parse and track System and P2PRC's error signals in a safe and effective manner.
+
+  It does have an 'MkUnknownError' value which is meant to be warn about new kinds of error not yet accounted in this client. Github issues and pull requests are very welcome to improve error handling by parsing more types of errors.
+
+-}
 data Error
-  = MkUnknownError
-      String -- ^ error message
-  | MkErrorSpawningProcess
-      String -- ^ error message
-  | MkSystemError
-      Int -- ^ System error code
-      String -- ^ String1
-      String -- ^ String2
+  = MkCLISystemError        -- ^ This is a CLI System Error
+      Int                     -- ^ System error code
+      String                  -- ^ Command name executed
+      String                  -- ^ Error output
+  | MkErrorSpawningProcess  -- ^ Spawing process error
+      String                  -- ^ Spawning executable name
+  | MkUnknownError          -- ^ This is an unparsed P2PRC's error
+      String                  -- ^ Unparsed error message
   deriving Show
 
--- ^ Type synonym for an IO action with either returns an Error or a parsed value
+-- | Type synonym for an IO action with either returns an Error or a parsed value
 type IOEitherError a = IO ( Either Error a)
 
 assignError :: String -> Error

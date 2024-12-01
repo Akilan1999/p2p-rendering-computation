@@ -42,7 +42,19 @@ import API
 -- TODO: publish haskell library
 --
 
--- | Hello World
+{-|
+  This function starts and bootstraps the P2PRC runtime that associates the a specific host's machine port to a DNS address to expose a certain application to the P2PRC network. You will only need to also import the 'MkMapPortRequest' data constructor to represent the this port request.
+
+  __This example demonstrates how it can be ran on the IO context:__
+
+  @
+  example :: IO ()
+  example = do
+    runP2PRC
+      ( MkMapPortRequest 8080 "jose.akilan.io"
+      )
+  @
+-}
 runP2PRC :: MapPortRequest -> IO ()
 runP2PRC (MkMapPortRequest portNumber domainName) = do
 
@@ -76,15 +88,15 @@ runP2PRC (MkMapPortRequest portNumber domainName) = do
   eitherP2prcAPI <- getP2prcAPI
 
   case eitherP2prcAPI of
-    (Right p2prcAPI) -> do
+    (Right
+      ( MkP2PRCapi
+        { startServer     = startServer
+        , execInitConfig  = execInitConfig
+        , execListServers = execListServers
+        , execMapPort     = execMapPort
+        }
+      )) -> do
       let
-        ( MkP2PRCapi
-          { startServer     = startServer
-          , execInitConfig  = execInitConfig
-          , execListServers = execListServers
-          , execMapPort     = execMapPort
-          }
-          ) = p2prcAPI
 
 
       configValue <- execInitConfig
