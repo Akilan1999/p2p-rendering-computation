@@ -56,7 +56,7 @@ module P2PRC
   , IPAdressTable
   , MapPortRequest(..)
   , MapPortResponse
-  , Error
+  , Error(..)
 
     -- ** Type Synonyms
     -- | This section is reserved to some useful type synonyms that add significant ergonomics.
@@ -71,7 +71,7 @@ import Engine
 
 import JSON
   ( IPAdressTable
-  , MapPortResponse
+  , MapPortResponse(..)
   , P2prcConfig
   )
 
@@ -83,7 +83,7 @@ import API
 
 
 import Error
-  ( Error
+  ( Error(..)
   , IOEitherError
   )
 

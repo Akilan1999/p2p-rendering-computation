@@ -3,7 +3,7 @@
 module JSON
   ( P2prcConfig
   , IPAdressTable
-  , MapPortResponse
+  , MapPortResponse(..)
   )
   where
 
@@ -15,13 +15,16 @@ import qualified Data.Text as T
 import Data.Aeson
 
 
-newtype MapPortResponse
-  = MkMapPortResponse
-    { ipAddress :: String
-    -- , ipAddress :: IPAddress -- TODO: fix the api output
-    -- , port      :: Int -- TODO: fix the api output
+{-# WARNING MapPortResponse "This newtype is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
+
+-- | This record type represents P2PRC's response to the TCP port and DNS address allocation.
+data MapPortResponse
+  = MkMapPortResponse       -- ^ Single data constructor
+    { ipAddress :: String     -- ^ Column separated Host's IP address and Port
     }
   deriving Show
+    -- , ipAddress :: IPAddress -- TODO: fix the api output
+    -- , port      :: Int -- TODO: fix the api output
 
 
 
@@ -30,15 +33,13 @@ instance FromJSON MapPortResponse where
 
     ipAddress <- o .: "IPAddress"
 
-    pure $
-      MkMapPortResponse
-        { ipAddress=ipAddress
-        }
+    pure $ MkMapPortResponse ipAddress
 
   parseJSON _ = mzero
 
 
 
+{-# WARNING P2prcConfig "This type is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
 -- | Host P2prc configuration
 newtype P2prcConfig = MkP2prConfig
   { machineName               :: String
@@ -105,6 +106,8 @@ instance FromJSON P2prcConfig where
 
   parseJSON _ = mzero
 
+
+{-# WARNING IPAdressTable "This newtype is highly unstable due to undergoing work on improving P2PRC's server api. For more information, visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114" #-}
 
 newtype IPAdressTable
   = MkIPAdressTable [ServerInfo]

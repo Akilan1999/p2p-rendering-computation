@@ -76,7 +76,7 @@ eitherExecProcess cmd opts input =
         (show input)
 
     pure $ case code of
-      ExitFailure i -> Left $ MkSystemError i cmd err
+      ExitFailure i -> Left $ MkCLISystemError i cmd err
       _             -> Right out
 
 
