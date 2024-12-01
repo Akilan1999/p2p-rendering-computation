@@ -16,7 +16,7 @@ import Error
 
 import JSON
   ( IPAdressTable
-  , MapPortResponse
+  , MapPortResponse(..)
   , P2prcConfig
   )
 
@@ -47,19 +47,11 @@ data P2PRCapi = MkP2PRCapi
   }
 
 
-{- |
-
-__Example:__
-
-@
-port = 'MkMapPortRequest' 8080 \"jose.akilan.io\"
-@
-
--}
+-- | This type defines the request required to create an association between a TCP socket port and a DNS server in the network. If successful, it makes a resource available in the network.
 data MapPortRequest =
-  MkMapPortRequest
-    Int -- ^ TCP socket number
-    String -- ^ Network domain name
+  MkMapPortRequest    -- ^ P2PRC's port allocation request value
+    Int                 -- ^ TCP socket number
+    String              -- ^ Network domain name
 
 
 {-|

@@ -15,16 +15,13 @@ import qualified Data.Text as T
 import Data.Aeson
 
 
-{-# WARNING MapPortResponse "This newtype is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
+-- {-# WARNING MapPortResponse "This newtype is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
 
--- | This record type represents P2PRC's response to the TCP port and DNS address allocation.
-data MapPortResponse
-  = MkMapPortResponse       -- ^ Single data constructor
-    { ipAddress :: String     -- ^ Column separated Host's IP address and Port
-    }
+-- ^ This newtype represents P2PRC's response to the TCP port and DNS address allocation. This value will confirm the successful allocation and return information about it.
+newtype MapPortResponse
+  = MkMapPortResponse   -- ^ Allocation information value
+    String                -- ^ Column separated Host's IP address and Port String
   deriving Show
-    -- , ipAddress :: IPAddress -- TODO: fix the api output
-    -- , port      :: Int -- TODO: fix the api output
 
 
 

@@ -55,7 +55,7 @@ module P2PRC
     -- | These types represent the core data that is communicated between requests and the runtime.
   , IPAdressTable
   , MapPortRequest(..)
-  , MapPortResponse
+  , MapPortResponse(..)
   , Error(..)
 
     -- ** Type Synonyms
