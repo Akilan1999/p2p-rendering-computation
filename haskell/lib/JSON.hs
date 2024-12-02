@@ -1,8 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module JSON
-  ( P2prcConfig
-  , IPAdressTable
+  ( P2prcConfig(..)
+  , IPAdressTable(..)
+  , IPAddress(..)
+  , ServerInfo(..)
   , MapPortResponse(..)
   )
   where
@@ -17,7 +19,7 @@ import Data.Aeson
 
 -- {-# WARNING MapPortResponse "This newtype is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
 
--- ^ This newtype represents P2PRC's response to the TCP port and DNS address allocation. This value will confirm the successful allocation and return information about it.
+-- ^ This represents P2PRC's response to the TCP port and DNS address allocation. This value will confirm the successful allocation and return information about it.
 newtype MapPortResponse
   = MkMapPortResponse   -- ^ Allocation information value
     String                -- ^ Column separated Host's IP address and Port String
@@ -37,31 +39,31 @@ instance FromJSON MapPortResponse where
 
 
 {-# WARNING P2prcConfig "This type is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
--- | Host P2prc configuration
-newtype P2prcConfig = MkP2prConfig
-  { machineName               :: String
-  -- , iPTable                   :: String -- File
-  -- , dockerContainers          :: String -- Directory
-  -- , defaultDockerFile         :: String -- Directory
-  -- , dockerRunLogs             :: String -- Directory
-  -- , speedTestFile             :: String -- File
-  -- , iPV6Address               :: Maybe String
-  -- , pluginPath                :: String -- Directory
-  -- , trackContainersPath       :: String -- File
-  -- , hostServerPort            :: Int
-  -- , proxyPort                 :: Maybe Int
-  -- , groupTrackContainersPath  :: File
-  -- , fRPServerPort             :: Bool
-  -- , behindNAT                 :: Bool
-  -- , iPTableKey                :: String
-  -- , publicKeyFile             :: String -- File
-  -- , privateKeyFile            :: String -- File
-  -- , pemFile                   :: String -- File
-  -- , keyFile                   :: String -- File
-  -- , bareMetal                 :: Bool
-  -- , customConfig
-  }
-  deriving Show
+newtype P2prcConfig                         -- ^ Host P2prc configuration
+  = MkP2prConfig                              -- ^ Unique Constructor
+    { machineName               :: String     -- ^ Machine Name
+    }
+    deriving Show
+    -- , iPTable                   :: String -- File
+    -- , dockerContainers          :: String -- Directory
+    -- , defaultDockerFile         :: String -- Directory
+    -- , dockerRunLogs             :: String -- Directory
+    -- , speedTestFile             :: String -- File
+    -- , iPV6Address               :: Maybe String
+    -- , pluginPath                :: String -- Directory
+    -- , trackContainersPath       :: String -- File
+    -- , hostServerPort            :: Int
+    -- , proxyPort                 :: Maybe Int
+    -- , groupTrackContainersPath  :: File
+    -- , fRPServerPort             :: Bool
+    -- , behindNAT                 :: Bool
+    -- , iPTableKey                :: String
+    -- , publicKeyFile             :: String -- File
+    -- , privateKeyFile            :: String -- File
+    -- , pemFile                   :: String -- File
+    -- , keyFile                   :: String -- File
+    -- , bareMetal                 :: Bool
+    -- , customConfig
 
 
 -- TODO: p2prc API
@@ -106,8 +108,11 @@ instance FromJSON P2prcConfig where
 
 {-# WARNING IPAdressTable "This newtype is highly unstable due to undergoing work on improving P2PRC's server api. For more information, visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114" #-}
 
+
+-- | IP Table
 newtype IPAdressTable
-  = MkIPAdressTable [ServerInfo]
+  = MkIPAdressTable       -- ^ Constructor
+    [ServerInfo]            -- ^ List Servers
   deriving Show
 
 
@@ -117,18 +122,20 @@ instance FromJSON IPAdressTable where
       MkIPAdressTable <$> v .: "ip_address"
 
 
-data ServerInfo = MkServerInfo
-  { name                  :: T.Text
-  , ip                    :: IPAddress
-  , latency               :: Int
-  , download              :: Int
-  , upload                :: Int
-  , serverPort            :: Int
-  , bareMetalSSHPort      :: Maybe Int
-  , nat                   :: Bool
-  , escapeImplementation  :: Maybe T.Text
-  , customInformation     :: Maybe T.Text
-  }
+{-# WARNING ServerInfo "This type is highly unstable due to undergoing work on improving P2PRC's server api. For more information, visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114" #-}
+data ServerInfo =
+  MkServerInfo
+    { name                  :: T.Text
+    , ip                    :: IPAddress
+    , latency               :: Int
+    , download              :: Int
+    , upload                :: Int
+    , serverPort            :: Int
+    , bareMetalSSHPort      :: Maybe Int
+    , nat                   :: Bool
+    , escapeImplementation  :: Maybe T.Text
+    , customInformation     :: Maybe T.Text
+    }
   deriving Show
 
 

@@ -15,7 +15,7 @@ import Error
   )
 
 import JSON
-  ( IPAdressTable
+  ( IPAdressTable(..)
   , MapPortResponse(..)
   , P2prcConfig
   )
@@ -33,21 +33,16 @@ import CLI
 import Environment  ( cleanEnvironment )
 
 
-
-{- |
-
-Haskell API
-
--}
-data P2PRCapi = MkP2PRCapi
-  { startServer       :: IOEitherError ProcessHandle
-  , execInitConfig    :: IOEitherError P2prcConfig
-  , execListServers   :: IOEitherError IPAdressTable
-  , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
-  }
+data P2PRCapi   -- ^ Haskell API
+  = MkP2PRCapi  -- ^ Main Constructor
+    { startServer       :: IOEitherError ProcessHandle  -- ^ start server
+    , execInitConfig    :: IOEitherError P2prcConfig
+    , execListServers   :: IOEitherError IPAdressTable
+    , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
+    }
 
 
--- | This type defines the request required to create an association between a TCP socket port and a DNS server in the network. If successful, it makes a resource available in the network.
+-- | This defines the request required to create an association between a TCP socket port and a DNS server in the network. If successful, it makes a resource available in the network.
 data MapPortRequest =
   MkMapPortRequest    -- ^ P2PRC's port allocation request value
     Int                 -- ^ TCP socket number
