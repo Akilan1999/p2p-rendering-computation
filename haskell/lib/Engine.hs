@@ -55,7 +55,9 @@ import API
       )
   @
 -}
-runP2PRC :: MapPortRequest -> IO ()
+runP2PRC
+  :: MapPortRequest   -- ^ TCP Port Request
+  -> IO ()
 runP2PRC (MkMapPortRequest portNumber domainName) = do
 
   --

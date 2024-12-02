@@ -48,12 +48,14 @@ module P2PRC
 
     -- ** Interface data types
     -- | This section gives an overview on the runtime and host machine interfaces.
-  , P2PRCapi
-  , P2prcConfig
+  , P2PRCapi(..)
+  , P2prcConfig(..)
 
     -- ** Primitive data types
     -- | These types represent the core data that is communicated between requests and the runtime.
-  , IPAdressTable
+  , IPAdressTable(..)
+  , ServerInfo(..)
+  , IPAddress(..)
   , MapPortRequest(..)
   , MapPortResponse(..)
   , Error(..)
@@ -70,14 +72,16 @@ import Engine
   )
 
 import JSON
-  ( IPAdressTable
+  ( IPAdressTable(..)
+  , ServerInfo(..)
+  , IPAddress(..)
   , MapPortResponse(..)
-  , P2prcConfig
+  , P2prcConfig(..)
   )
 
 import API
-  ( MapPortRequest(MkMapPortRequest)
-  , P2PRCapi
+  ( MapPortRequest(..)
+  , P2PRCapi(..)
   , getP2prcAPI
   )
 
