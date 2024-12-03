@@ -1,0 +1,15 @@
+CHANGELOG.md
+client
+config.json
+dist-newstyle
+p2p
+p2prc.privateKey
+p2prc.PublicKeyBareMetal
+plugin
+server
+
+haddocks/
+
+key.pem
+cert.pem
+cabal.project.local
