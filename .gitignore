@@ -33,7 +33,7 @@ server/docker/containers/
 export/
 
 # Any testing file
-test*
+*test
 
 # Ignore public and private keys
 p2prc.publicKey

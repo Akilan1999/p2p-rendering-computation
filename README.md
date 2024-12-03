@@ -2,6 +2,9 @@
 > Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
 > Currently HEAD is always intended to stay on a working state. It is recommended to always use HEAD in your go.mod file.
 
+> [!WARNING]  
+> The root node of P2PRC is down. We are working on creating a new root node with more stable performance. The new root node will be added on the 27th of November. 
+
 <h1 align="center">
   <br>
   <a href=""><img src="https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png" alt="p2prc" width="400"></a>
