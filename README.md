@@ -1,9 +1,9 @@
+> [!TIP]
+> Haskell bindings supported!: [Bindinga documentaton](Docs/haskell/index.html)
+
 > [!NOTE]
 > Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
 > Currently HEAD is always intended to stay on a working state. It is recommended to always use HEAD in your go.mod file.
-
-> [!WARNING]  
-> The root node of P2PRC is down. We are working on creating a new root node with more stable performance. The new root node will be added on the 27th of November. 
 
 <h1 align="center">
   <br>
@@ -53,7 +53,10 @@ flexibility on tracking the container's usages and killing the containers at any
    4. [Config Module](Docs/ConfigImplementation.md)
    5. [Cli Module](Docs/CliImplementation.md)
    6. [Plugin Module](Docs/PluginImplementation.md)
-   7. [Language Bindings](Docs/Bindings.md)
+   7. [Language bindings](Docs/Bindings.md)
+   8. [Domain name mappings](Docs/Bindings.md)
+5. Language bindings
+   1. [Haskell](Docs/haskell/index.html)
 <!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
 <br>
