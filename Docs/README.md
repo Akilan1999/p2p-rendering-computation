@@ -17,5 +17,5 @@
    7. [Language bindings](Bindings.md)
    8. [Domain name mappings](Bindings.md)
 5. Language bindings
-   1. [Haskell](Haskell/index.html)
+   1. [Haskell](haskell/index.html)
 
