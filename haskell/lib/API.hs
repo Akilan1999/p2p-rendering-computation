@@ -15,7 +15,7 @@ import Error
   )
 
 import JSON
-  ( IPAdressTable(..)
+  ( IPAddressTable(..)
   , MapPortResponse(..)
   , P2prcConfig
   )
@@ -33,12 +33,18 @@ import CLI
 import Environment  ( cleanEnvironment )
 
 
-data P2PRCapi   -- ^ Haskell API
-  = MkP2PRCapi  -- ^ Main Constructor
-    { startServer       :: IOEitherError ProcessHandle  -- ^ start server
+-- | Lower level P2PRC Haskell api that exposes basic functionality necessary to joint the network.
+
+data P2PRCapi
+  = MkP2PRCapi
+    { startServer       :: IOEitherError ProcessHandle
+      -- ^ Start server
     , execInitConfig    :: IOEitherError P2prcConfig
-    , execListServers   :: IOEitherError IPAdressTable
+      -- ^ Instantiate server configuration
+    , execListServers   :: IOEitherError IPAddressTable
+      -- ^ List servers in network
     , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
+      -- ^ Exposes and associates a local TCP port with a remote DNS address
     }
 
 
@@ -52,7 +58,9 @@ data MapPortRequest =
 {-|
   This function cleans the previous running state (ensuring a pure P2PRC runtime state) and builds up a conditional 'P2PRCapi' instance.
 
-  __The following example show how this function can be used to expose the runtime functionalities:__
+  ==== __Example__
+
+  The following example show how this function can be used to expose the runtime functionalities:
 
   @
   example :: IOEitherError P2PRCapi

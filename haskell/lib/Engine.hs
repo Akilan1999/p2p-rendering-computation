@@ -45,7 +45,9 @@ import API
 {-|
   This function starts and bootstraps the P2PRC runtime that associates the a specific host's machine port to a DNS address to expose a certain application to the P2PRC network. You will only need to also import the 'MkMapPortRequest' data constructor to represent the this port request.
 
-  __This example demonstrates how it can be ran on the IO context:__
+  ==== __Example__
+
+  This example demonstrates how it can be ran on the IO context:
 
   @
   example :: IO ()
