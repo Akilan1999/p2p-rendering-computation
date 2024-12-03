@@ -1,5 +1,5 @@
 > [!TIP]
-> Haskell bindings supported!: [Bindings documentaton](Docs/haskell/index.html)
+> Haskell bindings supported!: [Bindings documentaton](Docs/haskell/)
 
 > [!NOTE]
 > Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
@@ -56,7 +56,7 @@ flexibility on tracking the container's usages and killing the containers at any
    7. [Language bindings](Docs/Bindings.md)
    8. [Domain name mappings](Docs/Bindings.md)
 5. Language bindings
-   1. [Haskell](Docs/haskell/index.html)
+   1. [Haskell](Docs/haskell/)
 <!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
 <br>
