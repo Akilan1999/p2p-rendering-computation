@@ -1,5 +1,5 @@
 > [!TIP]
-> Haskell bindings supported!: [Bindinga documentaton](Docs/haskell/index.html)
+> Haskell bindings supported!: [Bindings documentaton](Docs/haskell/index.html)
 
 > [!NOTE]
 > Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
