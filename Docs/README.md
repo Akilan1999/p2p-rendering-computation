@@ -16,5 +16,6 @@
    6. [Plugin Module](PluginImplementation.md)
    7. [Language bindings](Bindings.md)
    8. [Domain name mappings](Bindings.md)
-<!-- 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
+5. Language bindings
+   1. [Haskell](Haskell/index.html)
 
