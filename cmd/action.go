@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
@@ -178,7 +180,9 @@ var CliAction = func(ctx *cli.Context) error {
 	if ExecutePlugin != "" {
 		// To execute plugin requires the container ID or group ID provided when being executed
 		if ID != "" {
-			err := plugin.CheckRunPlugin(ExecutePlugin, ID)
+			// fmt.Println(PluginArgs.Value())
+			// fmt.Println(strings.Split(PluginArgs.Value()[0], ","))
+			err := plugin.CheckRunPlugin(ExecutePlugin, ID, strings.Split(PluginArgs.Value()[0], ","))
 			if err != nil {
 				fmt.Println(err)
 			} else {
@@ -256,7 +260,7 @@ var CliAction = func(ctx *cli.Context) error {
 	//--------------------------------
 
 	if PullPlugin != "" {
-		err := plugin.DownloadPlugin(PullPlugin)
+		_, err := plugin.DownloadPlugin(PullPlugin)
 		if err != nil {
 			fmt.Println(err)
 		} else {

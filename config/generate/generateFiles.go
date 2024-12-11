@@ -5,12 +5,13 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"io/ioutil"
+	"os"
+
 	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/go-git/go-git/v5"
 	"golang.org/x/crypto/ssh"
-	"io/ioutil"
-	"os"
 )
 
 // GenerateFiles Generates all the files needed to setup P2PRC
@@ -23,10 +24,10 @@ func GenerateFiles(rootNodes ...p2p.IpAddress) (err error) {
 	if err != nil {
 		return err
 	}
-	err = GeneratePluginDirectory()
-	if err != nil {
-		return err
-	}
+	// err = GeneratePluginDirectory()
+	// if err != nil {
+	// 	return err
+	// }
 	err = GenerateClientTrackContainers()
 	return
 }
@@ -44,7 +45,7 @@ func GenerateIPTableFile(rootNodes []p2p.IpAddress) (err error) {
 	// If root node addresses are not provided as optional parameters
 	if len(rootNodes) <= 0 {
 		rootnode.Name = "Node1"
-		rootnode.ServerPort = "8078"
+		rootnode.ServerPort = "9999"
 		rootnode.NAT = "False"
 		rootnode.Ipv4 = "217.76.63.222"
 		rootnode.ProxyServer = "True"
@@ -93,32 +94,32 @@ func GenerateDockerFiles() (err error) {
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(path + "server"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"server", os.ModePerm); err != nil {
-			return err
-		}
-		if _, err = os.Stat(path + "server/docker"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
-				return err
-			}
-		}
-		if _, err = os.Stat(path + "server/docker/containers/docker-ubuntu-sshd"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"server/docker/containers/docker-ubuntu-sshd", os.ModePerm); err != nil {
-				return err
-			}
-		}
+	// if _, err = os.Stat(path + "server"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"server", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path+"server/docker/containers", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// 	if _, err = os.Stat(path + "server/docker/containers/mrp2p-docker"); os.IsNotExist(err) {
+	// 		if err = os.Mkdir(path + "server/docker/containers/mrp2p-docker", os.ModePerm); err != nil {
+	// 			return err
+	// 		}
+	// 	}
 
-	}
+	// }
 
 	// Clone base docker image
 	_, err = git.PlainClone(path+"server/docker/containers/docker-ubuntu-sshd", false, &git.CloneOptions{
@@ -129,6 +130,11 @@ func GenerateDockerFiles() (err error) {
 		return err
 	}
 
+	_, err = git.PlainClone(path+"server/docker/containers/mrp2p-docker", false, &git.CloneOptions{
+		URL:      "https://github.com/MFMemon/mrp2p-docker",
+		Progress: os.Stdout,
+	})
+
 	return
 }
 
@@ -138,44 +144,94 @@ func GeneratePluginDirectory() (err error) {
 	if err != nil {
 		return err
 	}
-	if _, err = os.Stat(path + "plugin"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"plugin", os.ModePerm); err != nil {
-			return err
-		}
-		if _, err = os.Stat(path + "plugin/deploy"); os.IsNotExist(err) {
-			if err = os.Mkdir(path+"plugin/deploy", os.ModePerm); err != nil {
-				return err
-			}
-		}
+	// if _, err = os.Stat(path + "plugin"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	// if _, err = os.Stat(path + "plugin/deploy"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin/deploy", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	// if _, err = os.Stat(path + "plugin/deploy/mretcd"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"plugin/deploy/mretcd", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	_, err = git.PlainClone(path+"plugin/deploy/mretcd", false, &git.CloneOptions{
+		URL:      "https://github.com/MFMemon/mrp2pmaster.git",
+		Progress: os.Stdout,
+	})
+	if err != nil {
+		return err
 	}
+
 	return
 }
 
 func GenerateClientTrackContainers() (err error) {
 	path, err := config.GetCurrentPath()
 	if err != nil {
-		return err
+		return
 	}
-	if _, err = os.Stat(path + "client"); os.IsNotExist(err) {
-		if err = os.Mkdir(path+"client", os.ModePerm); err != nil {
-			return err
-		}
-		if err = os.Mkdir(path+"client/trackcontainers", os.ModePerm); err != nil {
-			return err
-		}
 
-		if _, err = os.Stat(path + "client/trackcontainers/trackcontainers.json"); os.IsNotExist(err) {
-			_, err = os.Create(path + "client/trackcontainers/trackcontainers.json")
-			if err != nil {
-				return err
-			}
-			_, err = os.Create(path + "client/trackcontainers/grouptrackcontainers.json")
-			if err != nil {
-				return err
-			}
-		}
+	dirPath := path + "client/trackcontainers/"
 
+	err = os.MkdirAll(dirPath, 0777)
+
+	if err != nil {
+		return
 	}
+
+	fExists, err := FileExists(dirPath + "trackcontainers.json")
+	if err != nil {
+		return
+	}
+
+	if !fExists {
+		_, err = os.Create(dirPath + "trackcontainers.json")
+		if err != nil {
+			return
+		}
+	}
+
+	fExists, err = FileExists(dirPath + "grouptrackcontainers.json")
+	if err != nil {
+		return
+	}
+
+	if !fExists {
+		_, err = os.Create(dirPath + "grouptrackcontainers.json")
+		if err != nil {
+			return
+		}
+	}
+
+	// if _, err = os.Stat(path + "client"); os.IsNotExist(err) {
+	// 	if err = os.Mkdir(path+"client", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+
+	// 	if err = os.Mkdir(path+"client/trackcontainers", os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+
+	// 	if _, err = os.Stat(path + "client/trackcontainers/trackcontainers.json"); os.IsNotExist(err) {
+	// 		_, err = os.Create(path + "client/trackcontainers/trackcontainers.json")
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		_, err = os.Create(path + "client/trackcontainers/grouptrackcontainers.json")
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 	}
+
+	// }
 	return
 }
 

@@ -1,10 +1,11 @@
 package generate
 
 import (
-	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"math/rand"
 	"os"
 	"time"
+
+	"github.com/Akilan1999/p2p-rendering-computation/config"
 )
 
 var (

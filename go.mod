@@ -2,6 +2,8 @@ module github.com/Akilan1999/p2p-rendering-computation
 
 go 1.18
 
+// replace github.com/Akilan1999/p2p-rendering-computation => github.com/MFMemon/p2p-rendering-computation v1.1.2-0.20241019185344-b4691113dcbd
+
 require (
 	github.com/apenella/go-ansible v1.1.0
 	github.com/docker/docker v20.10.0-beta1.0.20201113105859-b6bfff2a628f+incompatible
