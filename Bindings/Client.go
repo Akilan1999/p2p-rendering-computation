@@ -17,8 +17,8 @@ import (
 // --------------------------------- Container Control ----------------------------------------
 
 //export StartContainer
-func StartContainer(IP string) (output *C.char) {
-	container, err := abstractions.StartContainer(IP)
+func StartContainer(IP string, NumPorts int, ContainerName string, BaseImage string) (output *C.char) {
+	container, err := abstractions.StartContainer(IP, NumPorts, ContainerName, BaseImage)
 	if err != nil {
 		return C.CString(err.Error())
 	}
