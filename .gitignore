@@ -42,3 +42,7 @@ p2prc.PublicKeyBareMetal
 
 # Ignore pem files
 *.pem
+
+# Nix and Nix flake files
+result
+result-*
