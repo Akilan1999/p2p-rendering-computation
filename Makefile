@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 
 install:
 	sh install.sh p2prc
