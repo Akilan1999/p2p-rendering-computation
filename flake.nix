@@ -23,11 +23,8 @@
           callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
         in
         {
-          # packages.default = callPackage ./. {
-            # inherit (gomod2nix.legacyPackages.${system}) buildGoApplication;
-          # };
 
-          packages.default = pkgs.callPackage ./. { };
+          packages.default = callPackage ./. { };
 
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
