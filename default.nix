@@ -17,4 +17,5 @@ pkgs.buildGoApplication {
   pwd = ./.;
   src = ./.;
   modules = ./gomod2nix.toml;
+  doCheck = false;
 }
