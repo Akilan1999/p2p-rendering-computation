@@ -16,7 +16,7 @@
           cabal-install
           haskell.compiler.ghc96
           zlib.dev
-          p2prc.packages.${system}
+          p2prc.outputs.packages.${system}.default
         ];
       };
     }
