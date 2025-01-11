@@ -2,9 +2,12 @@
 module API
   ( P2PRCapi(..)
   , MapPortRequest(..)
-  , getP2prcAPI
+  , p2prcAPI
   )
   where
+
+
+import System.Directory ( getCurrentDirectory )
 
 import System.Process ( ProcessHandle )
 
@@ -24,13 +27,12 @@ import CLI
   ( StdInput(..)
   , CLIOpt(..)
   , eitherErrDecode
-  , getP2PrcCmd
+  , p2PrcCmdName
   , eitherExecProcess
   , eitherExecProcessParser
   , spawnProcP2Prc
   )
 
-import Environment  ( cleanEnvironment )
 
 
 -- | Lower level P2PRC Haskell api that exposes basic functionality necessary to joint the network.
@@ -56,7 +58,7 @@ data MapPortRequest =
 
 
 {-|
-  This function cleans the previous running state (ensuring a pure P2PRC runtime state) and builds up a conditional 'P2PRCapi' instance.
+  This function intiates a pure P2PRC runtime state and builds up a 'P2PRCapi' API instance.
 
   ==== __Example__
 
@@ -83,69 +85,62 @@ data MapPortRequest =
       errValue -> errValue
   @
 -}
-{-# WARNING getP2prcAPI "This function is currently unstable since it assumes that the Haskell program is executed from the P2PRC \"haskell\" subfolder and the \"p2prc\" executable in the the root folder." #-}
-getP2prcAPI :: IOEitherError P2PRCapi
-getP2prcAPI = do
 
-  cleanEnvironment
+{-# WARNING p2prcAPI "This function is currently unstable because the configuration reading is dependent on the following issue: https://github.com/Akilan1999/p2p-rendering-computation/issues/120" #-}
+p2prcAPI :: P2PRCapi
+p2prcAPI =
+  MkP2PRCapi
+    { startServer = spawnProcP2Prc p2PrcCmdName [ MkOptAtomic "--s" ]
 
-  eitherP2prcCmd <- getP2PrcCmd
+    , execListServers =
+      execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
-  pure $ case eitherP2prcCmd of
-    (Right p2prcCmd) -> let
+    , execMapPort =
+      \ (MkMapPortRequest portNumber domainName) ->
+        execProcP2PrcParser
+          [ MkOptTuple
+            ( "--mp"
+            , show portNumber
+            )
+            , MkOptTuple
+            ( "--dn"
+            , domainName
+            )
+          ]
+          MkEmptyStdInput
 
-      execProcP2PrcParser ::
-        FromJSON a =>
-          [CLIOpt] -> StdInput -> IOEitherError a
-      execProcP2PrcParser = eitherExecProcessParser p2prcCmd
-      -- TODO: GHC question, why does it scope down instead staying generic
+    , execInitConfig = do
 
-      execProcP2Prc = eitherExecProcess p2prcCmd
+      confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
-      in do
+      case confInitRes of
+        (Right _) -> do
 
-      Right $ MkP2PRCapi
-        { startServer = spawnProcP2Prc p2prcCmd [ MkOptAtomic "--s" ]
+          -- TODO: get config file name dynamically
+          --
+          currDirectory <- getCurrentDirectory
 
-        , execListServers =
-          execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
-
-        , execMapPort =
-          \ (MkMapPortRequest portNumber domainName) ->
-            execProcP2PrcParser
-              [ MkOptTuple
-                ( "--mp"
-                , show portNumber
-                )
-                , MkOptTuple
-                ( "--dn"
-                , domainName
-                )
-              ]
-              MkEmptyStdInput
-
-        , execInitConfig = do
-
-          confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
-
-          case confInitRes of
-            (Right _) -> do
-
-              -- TODO: get config file name dynamically
-
-              -- TODO: change values before loading file
-              let fname = "/home/xecarlox/Desktop/p2p-rendering-computation/haskell/config.json" :: FilePath
+          -- TODO: change values before loading file
+          let fname = currDirectory ++ "/config.json" :: FilePath
 
 
-              -- TODO: read config check if file exists
-              configContent <- readFile fname
+          -- TODO: read config check if file exists
+          configContent <- readFile fname
 
-              pure $ eitherErrDecode configContent
+          pure $ eitherErrDecode configContent
 
-            (Left err) -> pure $ Left err
+        (Left err) -> pure $ Left err
 
-        }
+    }
 
-    (Left err) -> Left err
 
+  where
+
+  execProcP2PrcParser ::
+    FromJSON a =>
+      [CLIOpt] -> StdInput -> IOEitherError a
+  execProcP2PrcParser = eitherExecProcessParser p2PrcCmdName
+  -- TODO: GHC question, why does it scope down instead staying generic
+
+  execProcP2Prc = eitherExecProcess p2PrcCmdName
 

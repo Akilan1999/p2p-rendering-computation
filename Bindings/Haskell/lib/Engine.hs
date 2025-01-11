@@ -18,7 +18,7 @@ import System.Process ( terminateProcess )
 import API
   ( P2PRCapi(..)
   , MapPortRequest(..)
-  , getP2prcAPI
+  , p2prcAPI
   )
 
 
@@ -60,7 +60,7 @@ import API
 runP2PRC
   :: MapPortRequest   -- ^ TCP Port Request
   -> IO ()
-runP2PRC (MkMapPortRequest portNumber domainName) = do
+runP2PRC (MkMapPortRequest portNumber domainName) = let
 
   --
   -- TODO: add quickcheck testing (quickchecking-dynamic)
@@ -87,19 +87,15 @@ runP2PRC (MkMapPortRequest portNumber domainName) = do
   -- TODO: Error
     -- assign error: should parse other error
 
+  ( MkP2PRCapi
+    { startServer     = startServer
+    , execInitConfig  = execInitConfig
+    , execListServers = execListServers
+    , execMapPort     = execMapPort
+    }
+    ) = p2prcAPI
 
-
-  eitherP2prcAPI <- getP2prcAPI
-
-  case eitherP2prcAPI of
-    (Right
-      ( MkP2PRCapi
-        { startServer     = startServer
-        , execInitConfig  = execInitConfig
-        , execListServers = execListServers
-        , execMapPort     = execMapPort
-        }
-      )) -> do
+  in do
       let
 
 
@@ -147,7 +143,6 @@ runP2PRC (MkMapPortRequest portNumber domainName) = do
 
         (Left err) -> print err
 
-    (Left err) -> print err
 
     where
 
