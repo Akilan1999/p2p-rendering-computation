@@ -58,31 +58,35 @@ data MapPortRequest =
 
 
 {-|
-  This function intiates a pure P2PRC runtime state and builds up a 'P2PRCapi' API instance.
+  This function intiates a pure P2PRC runtime state and builds up a 'P2PRCapi' API instance. It allows a developer to create computing orchestration algorithms using the API primitives.
 
   ==== __Example__
 
   The following example show how this function can be used to expose the runtime functionalities:
 
   @
-  example :: IOEitherError P2PRCapi
-  example = do
+module Main where
 
-    eitherP2prcAPI <- getP2prcAPI
+import P2PRC
+  ( p2prcAPI
+  , P2PRCapi(..)
+  )
 
-    case eitherP2prcAPI of
-      ( Right
-        ( MkP2PRCapi
-          { startServer     = startServer
-          , execInitConfig  = execInitConfig
-          , execListServers = execListServers
-          , execMapPort     = execMapPort
-          }
-        )) -> do
+main :: IO ()
+main =
 
-        -- Your code logic
+  print "Hello P2PRC"
 
-      errValue -> errValue
+  -- your code logic goes here
+
+  where
+
+  MkP2PRCapi
+    { startServer=startServer
+    , execMapPort=execMapPort
+    , execListServers=execListServers
+    , execInitConfig=execInitConfig
+    } = p2prcAPI
   @
 -}
 
@@ -139,6 +143,7 @@ p2prcAPI =
   execProcP2PrcParser ::
     FromJSON a =>
       [CLIOpt] -> StdInput -> IOEitherError a
+
   execProcP2PrcParser = eitherExecProcessParser p2PrcCmdName
   -- TODO: GHC question, why does it scope down instead staying generic
 
