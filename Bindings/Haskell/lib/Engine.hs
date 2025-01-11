@@ -60,7 +60,13 @@ import API
 runP2PRC
   :: MapPortRequest   -- ^ TCP Port Request
   -> IO ()
-runP2PRC (MkMapPortRequest portNumber domainName) = let
+runP2PRC
+  ( MkMapPortRequest
+      portNumber
+      domainName
+  )
+  =
+  let
 
   --
   -- TODO: add quickcheck testing (quickchecking-dynamic)

@@ -77,7 +77,6 @@ eitherExecProcess cmd opts input =
       ExitFailure i -> Left $ MkCLISystemError i cmd err
       _             -> Right out
 
-
 optsToCLI :: [CLIOpt] -> CLIOptsInput
 optsToCLI = concatMap _optToCLI
   where
