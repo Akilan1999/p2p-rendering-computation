@@ -2,7 +2,7 @@
   description = "Nix flake for P2PRC Haskell library";
 
   inputs = {
-    p2prc = { url = "../../"; };
+    p2prc.url = "../../";
     utils.url = "github:numtide/flake-utils";
   };
 
@@ -16,7 +16,7 @@
           cabal-install
           haskell.compiler.ghc96
           zlib.dev
-          p2prc.packages.default
+          p2prc.packages.${system}
         ];
       };
     }
