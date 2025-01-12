@@ -23,8 +23,6 @@ import Data.Aeson
   , eitherDecode
   )
 
-import qualified Data.Text as T
-
 import qualified Data.ByteString.Lazy.Char8 as LBC8
 
 
@@ -79,7 +77,6 @@ eitherExecProcess cmd opts input =
       ExitFailure i -> Left $ MkCLISystemError i cmd err
       _             -> Right out
 
-
 optsToCLI :: [CLIOpt] -> CLIOptsInput
 optsToCLI = concatMap _optToCLI
   where
@@ -116,25 +113,8 @@ eitherErrorDecode esa =
     (Right v) -> Right v
 
 
-getP2PrcCmd :: IOEitherError String
-getP2PrcCmd = do
-
-  -- assumes the program is ran inside the haskell module in p2prc's repo
-  -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-
-  let trimString = T.unpack . T.strip . T.pack
-
-  eitherErrPwd <- eitherExecProcess "pwd" [MkEmptyOpts] MkEmptyStdInput
-
-  case eitherErrPwd of
-
-    (Right pwdOut) ->
-      eitherExecProcess
-        "sed"
-        [ MkOptAtomic "s/haskell/p2p-rendering-computation/" ]
-        $ MkStdInputVal
-          $ trimString pwdOut
-
-    err -> pure err
-
+-- assumes the program is ran inside the haskell module in p2prc's repo
+-- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
+p2PrcCmdName :: String
+p2PrcCmdName = "p2p-rendering-computation"
 

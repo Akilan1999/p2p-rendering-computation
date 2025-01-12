@@ -1,22 +1,21 @@
-{ nixpkgs ? import <nixpkgs> {  } }:
+{ pkgs ? (
+    let
+      inherit (builtins) fetchTree fromJSON readFile;
+      inherit ((fromJSON (readFile ./flake.lock)).nodes) nixpkgs gomod2nix;
+    in
+    import (fetchTree nixpkgs.locked) {
+      overlays = [
+        (import "${fetchTree gomod2nix.locked}/overlay.nix")
+      ];
+    }
+  )
+}:
 
-let
-  pkgs = [
-    nixpkgs.go
-    nixpkgs.tmux
-    nixpkgs.docker
-    nixpkgs.vim
-  ];
-
-in
-  nixpkgs.stdenv.mkDerivation {
-    name = "env";
-    buildInputs = pkgs;
-    pure-eval = true;
-    shellHook =
-    ''
-        make
-        export P2PRC=$PWD
-        export PATH=$PWD:$PATH
-    '';
-  }
+pkgs.buildGoApplication {
+  pname = "p2p-rendering-computation";
+  version = "2.0.0";
+  pwd = ./.;
+  src = ./.;
+  modules = ./gomod2nix.toml;
+  doCheck = false;
+}
