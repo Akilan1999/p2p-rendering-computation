@@ -40,7 +40,7 @@ module P2PRC
      It is intended this way to give freedom to the developer to implement their own orchestration strategies.
     -}
     runP2PRC
-  , getP2prcAPI
+  , p2prcAPI
 
     -- * Data Types
     {- | This section describes and explains the library's type system, more specifically, the interfaces and primitive types.
@@ -82,7 +82,7 @@ import JSON
 import API
   ( MapPortRequest(..)
   , P2PRCapi(..)
-  , getP2prcAPI
+  , p2prcAPI
   )
 
 
