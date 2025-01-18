@@ -1,0 +1,222 @@
+#+begin_quote
+[!TIP] Haskell bindings supported!:
+[[https://p2prc.akilan.io/Docs/haskell/P2PRC.html][Bindings
+documentaton]]
+
+#+end_quote
+
+#+begin_quote
+[!NOTE] Fixing documentation to latest changes. If you have any
+questions setting up P2PRC either
+[[https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose][create
+an issue]] or send me an email (me AT akilan dot io). Currently HEAD is
+always intended to stay on a working state. It is recommended to always
+use HEAD in your go.mod file.
+
+#+end_quote
+
+#+begin_html
+  <h1 align="center">
+#+end_html
+
+#+begin_html
+  </h1>
+#+end_html
+
+#+begin_html
+  <!-- seperator -->
+#+end_html
+
+The main aim of this project was to create a custom peer to peer
+network. The user acting as the client has total flexibility on how to
+batch the tasks and the user acting as the server has complete
+flexibility on tracking the container's usages and killing the
+containers at any point of time.
+
+** Latest tutorial
+:PROPERTIES:
+:CUSTOM_ID: latest-tutorial
+:END:
+[[https://www.youtube.com/watch?v=OMwCpedu5cs%22][[[https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg]]]]
+
+** Table of contents in the current README
+:PROPERTIES:
+:CUSTOM_ID: table-of-contents-in-the-current-readme
+:END:
+1. [[#Introduction][Introduction]]
+2. [[#extend-your-application-with-p2prc][Installation]]
+3. [[#Design-Architecture][Design Architecture]]
+4. [[#Implementation][Implementation]]
+5. [[#Find-out-more][Find out more]]
+
+* Table of contents in the Docs folder
+:PROPERTIES:
+:CUSTOM_ID: table-of-contents-in-the-docs-folder
+:END:
+1. [[file:Docs/Introduction.md][Introduction]]
+2. [[file:Docs/Installation.md][Installation]]
+3. [[file:Docs/Abstractions.md][Abstractions]]
+4. [[file:Docs/Implementation.md][Implementation]]
+   1. [[file:Docs/ClientImplementation.md][Client Module]]
+   2. [[file:Docs/P2PImplementation.md][P2P Module]]
+   3. [[file:Docs/ServerImplementation.md][Server Module]]
+   4. [[file:Docs/ConfigImplementation.md][Config Module]]
+   5. [[file:Docs/CliImplementation.md][Cli Module]]
+   6. [[file:Docs/PluginImplementation.md][Plugin Module]]
+   7. [[file:Docs/Bindings.md][Language bindings]]
+   8. [[file:Docs/Bindings.md][Domain name mappings]]
+5. Language bindings
+   1. [[file:Docs/haskell/][Haskell]]
+
+** Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+This project aims to create a peer to peer (p2p) network, where a user
+can use the p2p network to act as a client (i.e sending tasks) or the
+server (i.e executing the tasks). A prototype application will be
+developed, which comes bundled with a p2p module and possible to execute
+docker containers or virtual environments across selected nodes.
+
+*** Objectives
+:PROPERTIES:
+:CUSTOM_ID: objectives
+:END:
+- Background review on peer to peer network, virtual environments,
+  decentralized rendering tools and tools to batch any sort of tasks.
+- Creating p2p network
+- Server to create a containerised environment
+- The client node to run tasks on Server containerised node
+
+[[file:Docs/Introduction.md][Read more on the introduction]]
+
+** Extend your application with P2PRC
+:PROPERTIES:
+:CUSTOM_ID: extend-your-application-with-p2prc
+:END:
+#+begin_src go
+package main
+
+import (
+    "fmt"
+    "github.com/Akilan1999/p2p-rendering-computation/abstractions"
+)
+
+func main() {
+    _, err := abstractions.Init(nil)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    // start p2prc
+    _, err = abstractions.Start()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    // Run server till termination
+    for {
+
+    }
+}
+#+end_src
+
+*** Export once this is added export P2PRC as environment paths
+:PROPERTIES:
+:CUSTOM_ID: export-once-this-is-added-export-p2prc-as-environment-paths
+:END:
+#+begin_example
+export P2PRC=<PROJECT PATH>
+export PATH=<PROJECT PATH>:${PATH}
+#+end_example
+
+[[file:Docs/Abstractions.md][Read more]] ...
+
+** Installation from source
+:PROPERTIES:
+:CUSTOM_ID: installation-from-source
+:END:
+1. Ensure the Go compiler is installed
+
+   #+begin_example
+   go version
+   #+end_example
+
+2. Ensure docker is installed (Should run without sudo)
+
+   #+begin_example
+   docker ps
+   #+end_example
+
+3. Clone this repository
+
+   #+begin_example
+   git clone https://github.com/Akilan1999/p2p-rendering-computation
+   #+end_example
+
+4. Install and build the project
+
+   #+begin_example
+   make install
+   #+end_example
+
+- If you look closely you will get outputs such as:
+  =// Add them to your .bashrc file        export P2PRC=/<path>/p2p-rendering-computation  export PATH=/<path>/p2p-rendering-computation:${PATH}=
+
+5. [@5] Test if it works
+
+   #+begin_example
+   p2prc -h
+   #+end_example
+
+   or
+
+   #+begin_example
+   ./p2prc -h
+   #+end_example
+
+   [[file:Docs/Installation.md][Read more on the installation and
+   usage]]
+
+** Design Architecture
+:PROPERTIES:
+:CUSTOM_ID: design-architecture
+:END:
+The design architecture was inspired and based on the linux kernel
+design. The project is segmented into various modules. Each module is
+responsible for certain tasks in the project. The modules are highly
+dependent on each other hence the entire codebase can be considered as a
+huge monolithic chuck which acts as its own library
+
+[[file:Docs/DesignArchtectureIntro.md][Read more on the Design
+Architecture]]
+
+** Implementation
+:PROPERTIES:
+:CUSTOM_ID: implementation
+:END:
+The programming language used for this project was Golang. The reason Go
+lang was chosen was because it is a compiled language. The entire
+codebase is just a single binary file. When distributing to other linux
+distributing the only requirement would be the binary file to run the
+code. It is easy to write independant modules and be monolithic at the
+sametime using Go. Using Go.mod makes it very easy to handle external
+libraries and modularise code. The go.mod name for the project is
+git.sr.ht/~akilan1999/p2p-rendering-computation.
+
+[[file:Docs/Implementation.md][Read more on the Implementation]]
+
+** Find out more
+:PROPERTIES:
+:CUSTOM_ID: find-out-more
+:END:
+As we are working on the open source project p2prc (i.e p2p network
+designed for computation).If you are interested in participating as a
+contributor or just providing feedback on new features to build or even
+just curious about new features added to the project. We have decided to
+create a discord group.\\
+[[https://discord.gg/b4nRGTjYqy][[[https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2]]]]
+
+[[https://github.com/Gaurav-Gosain][[[https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date]]]]
