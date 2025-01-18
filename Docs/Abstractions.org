@@ -29,7 +29,7 @@ The Abstractions package consists of black-boxed functions for P2PRC.
 
 --------------
 
-*** Next Chapter: [[file:Implementation.md][Implementation]]
+*** Next Chapter: [[file:Implementation.org][Implementation]]
 :PROPERTIES:
 :CUSTOM_ID: next-chapter-implementation
 :END:

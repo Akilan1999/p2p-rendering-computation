@@ -2,8 +2,6 @@
 :PROPERTIES:
 :CUSTOM_ID: installation
 :END:
-| [[file:Introduction.md][◀ Previous]] | [[file:Abstractions.md][Next ▶]] |
-|--------------------------------------+----------------------------------|
 
 Over here we will cover the basic steps to get the server and client
 side running.
@@ -352,10 +350,3 @@ Refer the section [[#install-docker][Install Docker]]. - =cd plugin= -
 =go test .=
 
 #+end_quote
-
---------------
-
-*** Next Chapter: [[file:Abstractions.md][Abstractions]]
-:PROPERTIES:
-:CUSTOM_ID: next-chapter-abstractions
-:END:
