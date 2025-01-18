@@ -2,16 +2,6 @@
 :PROPERTIES:
 :CUSTOM_ID: plugin-module-implementation
 :END:
-** Topics
-:PROPERTIES:
-:CUSTOM_ID: topics
-:END:
-1. [[#introduction][Introduciton]]
-2. [[#site-File-Template][Site.yml]]
-3. [[#hosts-file][Host]]
-4. [[#description-file][Description]]
-5. [[#automatic-port-allocations][Automatic port allocations]]
-6. [[#sample-plugins-implemented][Sample plugins implemented]]
 
 ** Introduction
 :PROPERTIES:

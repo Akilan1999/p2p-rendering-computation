@@ -2,8 +2,6 @@
 :PROPERTIES:
 :CUSTOM_ID: chapter-1-introduction
 :END:
-| [[file:README.md][◀ Back to TOC]] | [[file:Installation.md][Next ▶]] |
-|-----------------------------------+----------------------------------|
 
 ** Abstract
 :PROPERTIES:
@@ -39,10 +37,3 @@ computing power similar to what is happening in the web server area. By
 using peer to peer principles it is possible to remove the
 monopolisation factor and increase the bandwidth between the client and
 server.
-
---------------
-
-*** Next Chapter: [[file:Installation.md][Installation]]
-:PROPERTIES:
-:CUSTOM_ID: next-chapter-installation
-:END:

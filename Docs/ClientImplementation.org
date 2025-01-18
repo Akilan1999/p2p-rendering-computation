@@ -14,17 +14,6 @@ the IP tables from the previous servers.
 
 [[file:images/NumOfHops.png]] [[file:images/clientmoduleArch.png]]
 
-** Topics
-:PROPERTIES:
-:CUSTOM_ID: topics
-:END:
-1. [[#updating-the-IP-table][Updating the IP table]]
-2. [[#reading-server-specifications][Reading server specifications]]
-3. [[#Client-creating-and-removing-container][Client creating and
-   removing container]]
-4. [[#Tracking-Containers][Tracking Containers]]
-5. [[#Grouping-Containers][Grouping Containers]]
-
 This section focuses in depth on how the client module works. The client
 module is incharge of communicating with different servers based on the
 IP addresses provided to the user. The IP addresses are derived from
