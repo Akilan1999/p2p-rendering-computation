@@ -1,12 +1,12 @@
 #+begin_quote
-[!TIP] Haskell bindings supported!:
+Haskell bindings supported!:
 [[https://p2prc.akilan.io/Docs/haskell/P2PRC.html][Bindings
 documentaton]]
 
 #+end_quote
 
 #+begin_quote
-[!NOTE] Fixing documentation to latest changes. If you have any
+Fixing documentation to latest changes. If you have any
 questions setting up P2PRC either
 [[https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose][create
 an issue]] or send me an email (me AT akilan dot io). Currently HEAD is
@@ -37,7 +37,7 @@ containers at any point of time.
 :PROPERTIES:
 :CUSTOM_ID: latest-tutorial
 :END:
-[[https://www.youtube.com/watch?v=OMwCpedu5cs%22][[[https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg]]]]
+[[https://www.youtube.com/watch?v=OMwCpedu5cs%22][https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg]]
 
 ** Table of contents in the current README
 :PROPERTIES:
@@ -216,7 +216,7 @@ As we are working on the open source project p2prc (i.e p2p network
 designed for computation).If you are interested in participating as a
 contributor or just providing feedback on new features to build or even
 just curious about new features added to the project. We have decided to
-create a discord group.\\
-[[https://discord.gg/b4nRGTjYqy][[[https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2]]]]
+create a discord group.
+[[https://discord.gg/b4nRGTjYqy][https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2]]
 
-[[https://github.com/Gaurav-Gosain][[[https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date]]]]
+[[https://github.com/Gaurav-Gosain][https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date]]
