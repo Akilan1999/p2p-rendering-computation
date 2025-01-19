@@ -1,31 +1,4 @@
-#+begin_quote
-Haskell bindings supported!:
-[[https://p2prc.akilan.io/Docs/haskell/P2PRC.html][Bindings
-documentaton]]
-
-#+end_quote
-
-#+begin_quote
-Fixing documentation to latest changes. If you have any
-questions setting up P2PRC either
-[[https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose][create
-an issue]] or send me an email (me AT akilan dot io). Currently HEAD is
-always intended to stay on a working state. It is recommended to always
-use HEAD in your go.mod file.
-
-#+end_quote
-
-#+begin_html
-  <h1 align="center">
-#+end_html
-
-#+begin_html
-  </h1>
-#+end_html
-
-#+begin_html
-  <!-- seperator -->
-#+end_html
+https://raw.githubusercontent.com/Akilan1999/p2p-rendering-computation/master/Docs/images/p2prclogo.png]]
 
 The main aim of this project was to create a custom peer to peer
 network. The user acting as the client has total flexibility on how to
@@ -39,32 +12,20 @@ containers at any point of time.
 :END:
 [[https://www.youtube.com/watch?v=OMwCpedu5cs%22][https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg]]
 
-** Table of contents in the current README
-:PROPERTIES:
-:CUSTOM_ID: table-of-contents-in-the-current-readme
-:END:
-1. [[#Introduction][Introduction]]
-2. [[#extend-your-application-with-p2prc][Installation]]
-3. [[#Design-Architecture][Design Architecture]]
-4. [[#Implementation][Implementation]]
-5. [[#Find-out-more][Find out more]]
-
 * Table of contents in the Docs folder
 :PROPERTIES:
 :CUSTOM_ID: table-of-contents-in-the-docs-folder
 :END:
-1. [[file:Docs/Introduction.md][Introduction]]
-2. [[file:Docs/Installation.md][Installation]]
-3. [[file:Docs/Abstractions.md][Abstractions]]
-4. [[file:Docs/Implementation.md][Implementation]]
-   1. [[file:Docs/ClientImplementation.md][Client Module]]
-   2. [[file:Docs/P2PImplementation.md][P2P Module]]
-   3. [[file:Docs/ServerImplementation.md][Server Module]]
-   4. [[file:Docs/ConfigImplementation.md][Config Module]]
-   5. [[file:Docs/CliImplementation.md][Cli Module]]
-   6. [[file:Docs/PluginImplementation.md][Plugin Module]]
-   7. [[file:Docs/Bindings.md][Language bindings]]
-   8. [[file:Docs/Bindings.md][Domain name mappings]]
+1. [[file:Docs/Introduction.org][Introduction]]
+2. [[file:Docs/Installation.org][Installation]]
+3. [[file:Docs/Abstractions.org][Abstractions]]
+4. [[file:Docs/Implementation.org][Implementation]]
+   1. [[file:Docs/ClientImplementation.org][Client Module]]
+   2. [[file:Docs/P2PImplementation.org][P2P Module]]
+   3. [[file:Docs/ServerImplementation.org][Server Module]]
+   4. [[file:Docs/ConfigImplementation.org][Config Module]]
+   5. [[file:Docs/CliImplementation.org][Cli Module]]
+   6. [[file:Docs/PluginImplementation.org][Plugin Module]]
 5. Language bindings
    1. [[file:Docs/haskell/][Haskell]]
 
@@ -217,6 +178,3 @@ designed for computation).If you are interested in participating as a
 contributor or just providing feedback on new features to build or even
 just curious about new features added to the project. We have decided to
 create a discord group.
-[[https://discord.gg/b4nRGTjYqy][https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2]]
-
-[[https://github.com/Gaurav-Gosain][https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date]]
