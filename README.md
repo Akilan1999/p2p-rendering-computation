@@ -20,9 +20,32 @@
   <a href="https://pkg.go.dev/git.sr.ht/~akilan1999/p2p-rendering-computation"><img alt="GoDoc reference example" src="https://img.shields.io/badge/godoc-reference-blue.svg" style="padding:5px;margin:5px;" /></a>
 </div>
 
-The main aim of this project was to create a custom peer to peer network. The user acting as the
+<!-- The main aim of this project was to create a custom peer to peer network. The user acting as the
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
-flexibility on tracking the container's usages and killing the containers at any point of time.
+flexibility on tracking the container's usages and killing the containers at any point of time. -->
+<!-- The objective is to allow users to self host servers in easier 
+and abstracted manner. The main aim of this project was to create a custom peer to peer network for distributed computing. The user acting as the client has total flexibility on how to batch the tasks to any of nodes in networks. These nodes can anywhere from personal 
+computers behind NAT to custom hardware for running custom workload. The aim to provide 
+access to Heterogeneous set of nodes as a singular global list and abstract away the networking details giving the user focus on designing a custom orchestrator based
+on the requirements of a user.  -->
+
+This project aims to simplify self-hosting servers and streamline the creation of distributed systems. The primary focus is to enable users to design custom peer-to-peer networks for distributed computing, offering full flexibility and control while abstracting away the complexities of networking.
+
+## Key Features
+Simplified Self-Hosting
+Empower users to easily host nodes, whether on personal computers behind NAT, custom hardware, or cloud-based infrastructure.
+
+### Custom Peer-to-Peer Networks
+Build a decentralised network tailored to user requirements, enabling distributed task execution without the need for in-depth networking knowledge.
+
+### Heterogeneous Node Support
+Harness a diverse array of nodes—from personal computers to specialised hardware—seamlessly integrated into a global node list.
+
+### Abstracted Networking Layer
+Networking details are completely abstracted, enabling users to focus on developing bespoke task orchestration systems. No more manual configuration of IPs, ports, or connection logic.
+
+### Flexible Task Distribution
+Users acting as clients retain full control over how tasks are batched and assigned to nodes, creating endless possibilities for optimising performance based on specific use cases.
 
 ## Latest tutorial
 [![IMAGE ALT TEXT](https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg)](https://www.youtube.com/watch?v=OMwCpedu5cs")
