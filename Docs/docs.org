@@ -1,4 +1,4 @@
-yes* Chapter 1: Introduction
+* Chapter 1: Introduction
 :PROPERTIES:
 :CUSTOM_ID: chapter-1-introduction
 :END:
