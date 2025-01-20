@@ -23,9 +23,9 @@
 <!-- The main aim of this project was to create a custom peer to peer network. The user acting as the
 client has total flexibility on how to batch the tasks and the user acting as the server has complete
 flexibility on tracking the container's usages and killing the containers at any point of time. -->
-<!-- The objective is to allow users to self host servers in easier 
-and abstracted manner. The main aim of this project was to create a custom peer to peer network for distributed computing. The user acting as the client has total flexibility on how to batch the tasks to any of nodes in networks. These nodes can anywhere from personal 
-computers behind NAT to custom hardware for running custom workload. The aim to provide 
+<!-- The objective is to allow users to self host servers in easier
+and abstracted manner. The main aim of this project was to create a custom peer to peer network for distributed computing. The user acting as the client has total flexibility on how to batch the tasks to any of nodes in networks. These nodes can anywhere from personal
+computers behind NAT to custom hardware for running custom workload. The aim to provide
 access to Heterogeneous set of nodes as a singular global list and abstract away the networking details giving the user focus on designing a custom orchestrator based
 on the requirements of a user.  -->
 
@@ -39,7 +39,7 @@ Empower users to easily host nodes, whether on personal computers behind NAT, cu
 Build a decentralised network tailored to user requirements, enabling distributed task execution without the need for in-depth networking knowledge.
 
 ### Heterogeneous Node Support
-Harness a diverse array of nodes—from personal computers to specialised hardware—seamlessly integrated into a global node list.
+Harness a diverse array of nodes from personal computers to specialised hardware—seamlessly integrated into a global node list.
 
 ### Abstracted Networking Layer
 Networking details are completely abstracted, enabling users to focus on developing bespoke task orchestration systems. No more manual configuration of IPs, ports, or connection logic.
@@ -84,6 +84,7 @@ Users acting as clients retain full control over how tasks are batched and assig
 
 <br>
 
+<!-- 
 ## Introduction
 This project aims to create a peer to peer (p2p) network, where a user can use the p2p network to act as a client (i.e sending tasks) or the server (i.e executing the tasks). A prototype application will be developed, which comes bundled with a p2p module and possible to execute docker containers or virtual environments across selected nodes.
 
@@ -91,11 +92,11 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 - Background review on peer to peer network, virtual environments, decentralized rendering tools and tools to batch any sort of tasks.
 - Creating p2p network
 - Server to create a containerised environment
-- The client node to run tasks on Server containerised node
+- The client node to run tasks on Server containerised node -->
 
-[Read more on the introduction](Docs/Introduction.md)
+<!-- [Read more on the introduction](Docs/Introduction.md) -->
 
-<br>
+<!-- <br> -->
 
 ## Extend your application with P2PRC
 ```go
@@ -187,7 +188,6 @@ The programming language used for this project was Golang. The reason Go lang wa
 
 ## Find out more
 As we are working on the open source project p2prc (i.e  p2p network designed for computation).If you are interested in participating as a contributor
-or just providing feedback on new features to build  or even just curious about new features added to the project. We have decided to create a discord group.
-[![Support Server](https://discordapp.com/api/guilds/854397492795277322/widget.png?style=banner2)](https://discord.gg/b4nRGTjYqy)
+or just providing feedback on new features to build or even just curious about new features added to the project do file an Issue or send an email to me@akilan.io.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
