@@ -7,20 +7,17 @@
 :PROPERTIES:
 :CUSTOM_ID: abstract
 :END:
-This project focuses on creating a framework on running heavy tasks that
-a regular computer cannot run easily such as graphically demanding video
-games, rendering 3D animations , protein folding simulations. In this
-project the major focus will not be on the financial incentive part. A
-peer to peer network will be created to help run tasks decentrally,
-increasing bandwidth for running tasks. To ensure the tasks in the peer
-to peer network do not corrupt the server 0S (Operating System), they
-will be executed in a virtual environment in the server.
+This project focuses on creating a framework for running heavy computational tasks that a regular 
+computer cannot handle easily. These tasks may include graphically demanding video games, rendering 
+3D animations, and performing complex protein folding simulations. The major focus of this project 
+is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P) 
+network to decentralise task execution and increase the computational bandwidth available for 
+such tasks.
 
-The main aim of this project was to create a custom peer to peer
-network. The user acting as the client has total flexibility on how to
-batch the tasks and the user acting as the server has complete
-flexibility on tracking the container's usages and killing the
-containers at any point of time.
+The P2PRC framework serves as a foundation for decentralised rendering and computation, 
+providing insights into how tasks can be distributed efficiently across a network of peers. 
+Leveraging the P2PRC approach, this project extends its capabilities to handle a 
+wider range of computationally intensive tasks.
 
 ** Motivation
 :PROPERTIES:
@@ -144,7 +141,7 @@ USAGE:
    p2prc [global options] command [command options] [arguments...]
 
 VERSION:
-   <version no>
+   2.0.0
 
 COMMANDS:
    help, h  Shows a list of commands or help for one command
@@ -157,6 +154,7 @@ GLOBAL OPTIONS:
    --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
    --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
    --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
+   --BaseImage value, --bi value          Specifying the docker base image to template the dockerfile [$CONTAINER_NAME]
    --RemoveVM value, --rm value           Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id [$REMOVE_VM]
    --ID value, --id value                 Docker Container ID [$ID]
    --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
@@ -172,10 +170,13 @@ GLOBAL OPTIONS:
    --Groups, --groups                     View all groups (default: false) [$GROUPS]
    --RemoveContainerGroup, --rmcgroup     Remove specific container in the group (default: false) [$REMOVE_CONTAINER_GROUP]
    --RemoveGroup value, --rmgroup value   Removes the entire group [$REMOVE_GROUP]
+   --MAPPort value, --mp value            Maps port for a specific port provided as the parameter [$MAPPORT]
+   --DomainName value, --dn value         While mapping ports allows to set a domain name to create a mapping in the proxy server [$DOMAINNAME]
    --Generate value, --gen value          Generates a new copy of P2PRC which can be modified based on your needs [$GENERATE]
    --ModuleName value, --mod value        New go project module name [$MODULENAME]
    --PullPlugin value, --pp value         Pulls plugin from git repos [$PULLPLUGIN]
    --RemovePlugin value, --rp value       Removes plugin [$REMOVEPLUGIN]
+   --AddMetaData value, --amd value       Adds metadata about the current node in the p2p network which is then propagated through the network [$ADDMETADATA]
    --help, -h                             show help (default: false)
    --version, -v                          print the version (default: false)
 #+end_example
@@ -264,9 +265,6 @@ p2prc --ni
 p2prc --tc
 #+end_example
 
-[[file:ClientImplementation.md#tracking-containers][read more on
-tracking containers]]
-
 *** Running plugin
 :PROPERTIES:
 :CUSTOM_ID: running-plugin
@@ -323,16 +321,6 @@ p2prc --rmcgroup --group <group id> --id <container id>
 p2prc --rmgroup <group id>
 #+end_example
 
-[[file:ClientImplementation.md#Grouping-Containers][read more on
-grouping containers]] ### Extending usecase of P2PRC (Requires a go
-compiler to run)
-
-#+begin_example
-p2prc --gen <project name> --mod <go module name>
-#+end_example
-
-[[file:GenerateImplementation.md][read more about the generate module]]
-
 *** Pulling plugin from a remote repo
 :PROPERTIES:
 :CUSTOM_ID: pulling-plugin-from-a-remote-repo
@@ -357,53 +345,22 @@ p2prc --rp <plugin name>
 p2prc --amd "custom metadata"
 #+end_example
 
+*** MapPort and link to domain name
+#+begin_example
+p2prc --mp <port no to map> --dn <domain name to link Mapped port against>
+#+end_example
+
 --------------
-
-* Using Plugins
-:PROPERTIES:
-:CUSTOM_ID: using-plugins
-:END:
-This feature is still Under Development:
-[[file:PluginImplementation.md][Read more on the implementation]]
-
-**** Dependencies
-:PROPERTIES:
-:CUSTOM_ID: dependencies
-:END:
-- Ansible:
-  - Debian/ubuntu: =sudo apt install ansible=
-  - Others:
-    [[https://ansible-tips-and-tricks.readthedocs.io/en/latest/ansible/install/][Installation
-    link]]
-
-**** Run Test Cases
-:PROPERTIES:
-:CUSTOM_ID: run-test-cases
-:END:
-- Generate Test Case Ansible file
-  - =make testcases=
-- Enter inside plugin directory and run tests.
-
-#+begin_quote
-[!NOTE] That docker needs to installed and needs to run without sudo.
-Refer the section [[#install-docker][Install Docker]]. - =cd plugin= -
-=go test .=
-
-#+end_quote
 
 * P2P Module Implementation
 :PROPERTIES:
 :CUSTOM_ID: p2p-module-implementation
 :END:
-The P2P module (i.e Peer to Peer Module) is responsible for storing the
-IP table and interacting with the IP table. In the following
-implementation of the P2P module ,the IP table stores information about
-servers available in the network. The other functionality the P2P module
-takes care of is doing the appropriate speed tests to the servers in the
-IP table. This is for informing the users about nodes which are close by
-and nodes which have quicker uploads and downloads speeds. The module is
-responsible to ensure that there are no duplicate server IPs in the IP
-table and to remove all server IPs which are not pingable.
+The P2P module is for managing server information within the network. 
+It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing 
+entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers 
+to determine upload and download speeds. This valuable information enables users to identify nearby 
+servers with optimal performance, enhancing their overall network experience.
 
 #+caption: UML diagram of P2P module
 [[file:images/p2pmoduleArch.png]]
