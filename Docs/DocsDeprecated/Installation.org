@@ -1,0 +1,352 @@
+* Installation
+:PROPERTIES:
+:CUSTOM_ID: installation
+:END:
+
+Over here we will cover the basic steps to get the server and client
+side running.
+
+** Latest release install
+:PROPERTIES:
+:CUSTOM_ID: latest-release-install
+:END:
+https://github.com/Akilan1999/p2p-rendering-computation/releases
+
+** Install from Github master branch
+:PROPERTIES:
+:CUSTOM_ID: install-from-github-master-branch
+:END:
+*** Install Go lang
+:PROPERTIES:
+:CUSTOM_ID: install-go-lang
+:END:
+The entire the implementation of this project is done using Go lang.
+Thus, we need go lang to compile to code to a binary file.
+[[https://golang.org/doc/install][Instructions to install Go lang]]
+
+*** Install Docker
+:PROPERTIES:
+:CUSTOM_ID: install-docker
+:END:
+In this project the choice of virtualization is Docker due to it's wide
+usage in the developer community. In the server module we use the Docker
+Go API to create and interact with the containers.
+
+[[https://docs.docker.com/get-docker/][Instructions to install docker]]
+
+[[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker][Instructions
+to install docker GPU]]
+
+#+begin_example
+// Do ensure that the docker command does not need sudo to run
+sudo chmod 666 /var/run/docker.sock
+#+end_example
+
+*** Build Project and install project
+:PROPERTIES:
+:CUSTOM_ID: build-project-and-install-project
+:END:
+To set up the internal dependencies and build the entire go code into a
+single binary
+
+#+begin_example
+make install
+#+end_example
+
+**** For Windows
+:PROPERTIES:
+:CUSTOM_ID: for-windows
+:END:
+To set up P2PRC on Windows, simply run this batch file. *Make sure you
+are not in admin mode when running this.*
+
+#+begin_example
+.\install.bat
+#+end_example
+
+*** Add appropriate paths to =.bashrc=
+:PROPERTIES:
+:CUSTOM_ID: add-appropriate-paths-to-.bashrc
+:END:
+#+begin_example
+export P2PRC=/<PATH>/p2p-rendering-computation
+export PATH=/<PATH>/p2p-rendering-computation:${PATH}
+#+end_example
+
+*** Set up configuration file
+:PROPERTIES:
+:CUSTOM_ID: set-up-configuration-file
+:END:
+#+begin_example
+make configfile 
+#+end_example
+
+Open the config file =config.json= and add the IPv6 address if you have
+one.
+
+*** Test if binary works
+:PROPERTIES:
+:CUSTOM_ID: test-if-binary-works
+:END:
+#+begin_example
+p2prc --help
+#+end_example
+
+**** Output:
+:PROPERTIES:
+:CUSTOM_ID: output
+:END:
+#+begin_example
+NAME:
+   p2p-rendering-computation - p2p cli application to create and access VMs in other servers
+
+USAGE:
+   p2prc [global options] command [command options] [arguments...]
+
+VERSION:
+   <version no>
+
+COMMANDS:
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --Server, -s                           Starts server (default: false) [$SERVER]
+   --UpdateServerList, --us               Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
+   --ListServers, --ls                    List servers which can render tasks (default: false) [$LIST_SERVERS]
+   --AddServer value, --as value          Adds server IP address to iptables [$ADD_SERVER]
+   --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
+   --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
+   --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
+   --RemoveVM value, --rm value           Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id [$REMOVE_VM]
+   --ID value, --id value                 Docker Container ID [$ID]
+   --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
+   --GPU, --gpu                           Create Docker Containers to access GPU (default: false) [$USE_GPU]
+   --Specification value, --specs value   Specs of the server node [$SPECS]
+   --SetDefaultConfig, --dc               Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
+   --NetworkInterfaces, --ni              Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
+   --ViewPlugins, --vp                    Shows plugins available to be executed (default: false) [$VIEW_PLUGIN]
+   --TrackedContainers, --tc              View (currently running) containers which have been created from the client side  (default: false) [$TRACKED_CONTAINERS]
+   --ExecutePlugin value, --plugin value  Plugin which needs to be executed [$EXECUTE_PLUGIN]
+   --CreateGroup, --cgroup                Creates a new group (default: false) [$CREATE_GROUP]
+   --Group value, --group value           group flag with argument group ID [$GROUP]
+   --Groups, --groups                     View all groups (default: false) [$GROUPS]
+   --RemoveContainerGroup, --rmcgroup     Remove specific container in the group (default: false) [$REMOVE_CONTAINER_GROUP]
+   --RemoveGroup value, --rmgroup value   Removes the entire group [$REMOVE_GROUP]
+   --Generate value, --gen value          Generates a new copy of P2PRC which can be modified based on your needs [$GENERATE]
+   --ModuleName value, --mod value        New go project module name [$MODULENAME]
+   --PullPlugin value, --pp value         Pulls plugin from git repos [$PULLPLUGIN]
+   --RemovePlugin value, --rp value       Removes plugin [$REMOVEPLUGIN]
+   --help, -h                             show help (default: false)
+   --version, -v                          print the version (default: false)
+#+end_example
+
+--------------
+
+* Using basic commands
+:PROPERTIES:
+:CUSTOM_ID: using-basic-commands
+:END:
+*** Start as a server
+:PROPERTIES:
+:CUSTOM_ID: start-as-a-server
+:END:
+Do ensure you have Docker installed for this
+
+#+begin_example
+p2prc -s 
+#+end_example
+
+*** View server Specification
+:PROPERTIES:
+:CUSTOM_ID: view-server-specification
+:END:
+#+begin_example
+p2prc --specs=<ip address>
+#+end_example
+
+*** Run container
+:PROPERTIES:
+:CUSTOM_ID: run-container
+:END:
+use the =--gpu= if you know the other machine has a gpu.
+
+#+begin_example
+p2prc --touch=<server ip address> -p <number of ports> --gpu
+#+end_example
+
+*** Remove container
+:PROPERTIES:
+:CUSTOM_ID: remove-container
+:END:
+The docker id is present in the output where you create a container
+
+#+begin_example
+p2prc --rm=<server ip address> --id=<docker container id> 
+#+end_example
+
+*** Adding servers to ip table
+:PROPERTIES:
+:CUSTOM_ID: adding-servers-to-ip-table
+:END:
+#+begin_example
+p2prc --as=<server ip address you want to add> 
+#+end_example
+
+*** Update ip table
+:PROPERTIES:
+:CUSTOM_ID: update-ip-table
+:END:
+#+begin_example
+p2prc --us 
+#+end_example
+
+*** List Servers
+:PROPERTIES:
+:CUSTOM_ID: list-servers
+:END:
+#+begin_example
+p2prc --ls 
+#+end_example
+
+*** View Network interfaces
+:PROPERTIES:
+:CUSTOM_ID: view-network-interfaces
+:END:
+#+begin_example
+p2prc --ni
+#+end_example
+
+*** Viewing Containers created Client side
+:PROPERTIES:
+:CUSTOM_ID: viewing-containers-created-client-side
+:END:
+#+begin_example
+p2prc --tc
+#+end_example
+
+[[file:ClientImplementation.md#tracking-containers][read more on
+tracking containers]]
+
+*** Running plugin
+:PROPERTIES:
+:CUSTOM_ID: running-plugin
+:END:
+#+begin_example
+p2prc --plugin <plugin name> --id <container id or group id>
+#+end_example
+
+*** Create group
+:PROPERTIES:
+:CUSTOM_ID: create-group
+:END:
+#+begin_example
+p2prc --cgroup
+#+end_example
+
+*** Add container to group
+:PROPERTIES:
+:CUSTOM_ID: add-container-to-group
+:END:
+#+begin_example
+p2prc --group <group id> --id <container id>
+#+end_example
+
+*** View groups
+:PROPERTIES:
+:CUSTOM_ID: view-groups
+:END:
+#+begin_example
+p2prc --groups
+#+end_example
+
+*** View specific group
+:PROPERTIES:
+:CUSTOM_ID: view-specific-group
+:END:
+#+begin_example
+p2prc --group <group id>
+#+end_example
+
+*** Delete container from group
+:PROPERTIES:
+:CUSTOM_ID: delete-container-from-group
+:END:
+#+begin_example
+p2prc --rmcgroup --group <group id> --id <container id> 
+#+end_example
+
+*** Delete entire group
+:PROPERTIES:
+:CUSTOM_ID: delete-entire-group
+:END:
+#+begin_example
+p2prc --rmgroup <group id>
+#+end_example
+
+[[file:ClientImplementation.md#Grouping-Containers][read more on
+grouping containers]] ### Extending usecase of P2PRC (Requires a go
+compiler to run)
+
+#+begin_example
+p2prc --gen <project name> --mod <go module name>
+#+end_example
+
+[[file:GenerateImplementation.md][read more about the generate module]]
+
+*** Pulling plugin from a remote repo
+:PROPERTIES:
+:CUSTOM_ID: pulling-plugin-from-a-remote-repo
+:END:
+#+begin_example
+p2prc --pp <repo link>
+#+end_example
+
+*** Deleting plugin from the plugin directory
+:PROPERTIES:
+:CUSTOM_ID: deleting-plugin-from-the-plugin-directory
+:END:
+#+begin_example
+p2prc --rp <plugin name> 
+#+end_example
+
+*** Added custom metadata about the current node
+:PROPERTIES:
+:CUSTOM_ID: added-custom-metadata-about-the-current-node
+:END:
+#+begin_example
+p2prc --amd "custom metadata"
+#+end_example
+
+--------------
+
+* Using Plugins
+:PROPERTIES:
+:CUSTOM_ID: using-plugins
+:END:
+This feature is still Under Development:
+[[file:PluginImplementation.md][Read more on the implementation]]
+
+**** Dependencies
+:PROPERTIES:
+:CUSTOM_ID: dependencies
+:END:
+- Ansible:
+  - Debian/ubuntu: =sudo apt install ansible=
+  - Others:
+    [[https://ansible-tips-and-tricks.readthedocs.io/en/latest/ansible/install/][Installation
+    link]]
+
+**** Run Test Cases
+:PROPERTIES:
+:CUSTOM_ID: run-test-cases
+:END:
+- Generate Test Case Ansible file
+  - =make testcases=
+- Enter inside plugin directory and run tests.
+
+#+begin_quote
+[!NOTE] That docker needs to installed and needs to run without sudo.
+Refer the section [[#install-docker][Install Docker]]. - =cd plugin= -
+=go test .=
+
+#+end_quote

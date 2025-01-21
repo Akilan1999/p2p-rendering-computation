@@ -1,0 +1,180 @@
+* Language Bindings
+:PROPERTIES:
+:CUSTOM_ID: language-bindings
+:END:
+[[https://en.wikipedia.org/wiki/Language_binding][Language bindings]]
+refers to wrappers to bridge 2 programming languages. This is used in
+P2PRC to extend calling P2PRC functions in other programming languages.
+Currently this is done by generating =.so= and =.h= from the Go
+compiler.
+
+** How to build shared object files
+:PROPERTIES:
+:CUSTOM_ID: how-to-build-shared-object-files
+:END:
+**** The easier way
+:PROPERTIES:
+:CUSTOM_ID: the-easier-way
+:END:
+#+begin_src sh
+# Run
+make sharedObjects
+#+end_src
+
+**** Or the direct way
+:PROPERTIES:
+:CUSTOM_ID: or-the-direct-way
+:END:
+#+begin_src sh
+# Run
+cd Bindings && go build -buildmode=c-shared -o p2prc.so
+#+end_src
+
+**** If successfully built:
+:PROPERTIES:
+:CUSTOM_ID: if-successfully-built
+:END:
+#+begin_src sh
+# Enter into the Bindings directory
+cd Bindings
+# List files
+ls
+# Find files
+p2prc.h p2prc.so
+#+end_src
+
+** Workings under the hood
+:PROPERTIES:
+:CUSTOM_ID: workings-under-the-hood
+:END:
+Below are a sample set of commands to open the bindings implementation.
+
+#+begin_example
+# run
+cd Bindings/
+# list files
+ls 
+# search for file
+Client.go
+#+end_example
+
+*** In Client go
+:PROPERTIES:
+:CUSTOM_ID: in-client-go
+:END:
+There a few things to notice which are different from your standard Go
+programs:
+
+**** 1. We import "C" which means [[https://pkg.go.dev/cmd/cgo][Cgo]] is required.
+:PROPERTIES:
+:CUSTOM_ID: we-import-c-which-means-cgo-is-required.
+:END:
+#+begin_src go
+import "C"
+#+end_src
+
+**** 2. All functions which are required to be called from other programming languages have comment such as.
+:PROPERTIES:
+:CUSTOM_ID: all-functions-which-are-required-to-be-called-from-other-programming-languages-have-comment-such-as.
+:END:
+#+begin_src go
+//export <function name>
+
+// ------------ Example ----------------
+// The function below allows to externally
+// to call the P2PRC function to start containers
+// in a specific node in the know list of nodes
+// in the p2p network.
+// Note: the comment "//export StartContainer".
+
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+ }
+#+end_src
+
+**** 3. While looking through the file (If 2 files are compared it is pretty trivial to notice a common structure).
+:PROPERTIES:
+:CUSTOM_ID: while-looking-through-the-file-if-2-files-are-compared-it-is-pretty-trivial-to-notice-a-common-structure.
+:END:
+#+begin_src go
+// --------- Example ------------
+
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+}
+
+//export ViewPlugin
+func ViewPlugin() (output *C.char) {
+    plugins, err := plugin.DetectPlugins()
+    if err != nil {
+        return C.CString(err.Error())
+    }
+    return ConvertStructToJSONString(plugins)
+}
+#+end_src
+
+**** It is easy to notice that:
+:PROPERTIES:
+:CUSTOM_ID: it-is-easy-to-notice-that
+:END:
+- =ConvertStructToJSONString(<go object>)=: This is a helper function
+  that convert a go object to JSON string initially and converts it to
+  =CString=.
+- =(output *C.char)=: This is the return type for most of the functions.
+
+**** A Pseudo code to refer to the common function implementation shape could be represented as:
+:PROPERTIES:
+:CUSTOM_ID: a-pseudo-code-to-refer-to-the-common-function-implementation-shape-could-be-represented-as
+:END:
+#+begin_example
+func <Function name> (output *C.char) {
+      <response>,<error> := <P2PRC function name>(<parameters if needed>)
+      if <error> != nil {
+          return C.CString(<error>.Error())
+      }
+      return ConvertStructToJSONString(<response>)
+}
+#+end_example
+
+** Current languages supported
+:PROPERTIES:
+:CUSTOM_ID: current-languages-supported
+:END:
+- Python
+
+*** Build sample python program
+:PROPERTIES:
+:CUSTOM_ID: build-sample-python-program
+:END:
+The easier way
+
+#+begin_src sh
+# Run
+make python
+# Expected ouput
+Output is in the Directory Bindings/python/export/
+# Run
+cd Bindings/python/export/
+# list files
+ls
+# Expected output
+SharedObjects/  p2prc.py
+#+end_src
+
+Above shows a generated folder which consists of a folder called
+"SharedObjects/" which consists of =p2prc.so= and =p2prc.h= files.
+=p2prc.py= refers to a sample python script calling P2PRC go functions.
+To start an any project to extend P2PRC with python, This generated
+folder can copied and created as a new git repo for P2PRC extensions
+scripted or used a reference point as proof of concept that P2PRC can be
+called from other programming languages.

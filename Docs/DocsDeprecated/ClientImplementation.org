@@ -1,0 +1,124 @@
+* Client Module Implementation
+:PROPERTIES:
+:CUSTOM_ID: client-module-implementation
+:END:
+The Client Module interacts with the P2P module and Server Module. It is
+responsible for interacting with the server module and appropriately
+updating the IP table on the client side. It connects to the server
+using the server's REST Apis. It is also the primary decision maker on
+how the IP table is updated is on the client side. This is because each
+user can have requirements like how many number of hops they would want
+to do to update their IP table. Hops is the number of times the client
+is going to download the IP table from different servers ,once it gets
+the IP tables from the previous servers.
+
+[[file:images/NumOfHops.png]] [[file:images/clientmoduleArch.png]]
+
+This section focuses in depth on how the client module works. The client
+module is incharge of communicating with different servers based on the
+IP addresses provided to the user. The IP addresses are derived from
+peer to peer modules. The objective here is how the client module
+interacts with peer to peer module and server module.
+
+*** Updating the IP table
+:PROPERTIES:
+:CUSTOM_ID: updating-the-ip-table
+:END:
+The client module calls the peer to peer module to get the local IP
+table initially, Based on the servers IP addresses available it calls
+the speedtest function from the peer to peer module to update IP
+addresses with information such as latencies, download and upload
+speeds. Once this is done the client module does a Rest Api call to the
+server to download its IP Table. Once the hops are done it writes the
+appropriate results to the Local IP table. Once this is done it prints
+out the results. To derive parameters such as current the public IP
+address the url "http://ip-api.com/json/" was called. This url returns
+json response of the current public IP address. This feature will be
+used in the future to ensure that the user's current IP address will not
+be used for a speed test. Clients IP table is updated to the server
+using a form of type multipart.
+
+*** Reading server specifications
+:PROPERTIES:
+:CUSTOM_ID: reading-server-specifications
+:END:
+The client module calls the route /server_specs and reads the json
+response. If the json response was successful then it just calls the
+pretty print function which just prints the json output in the terminal.
+
+*** Client creating and removing container
+:PROPERTIES:
+:CUSTOM_ID: client-creating-and-removing-container
+:END:
+The client module uses the servers Rest apis to create and delete
+containers. To create a container the client requires 3 parameters being
+the server ip address, the number of the ports the user wants to open
+and if the user wants it connected to the GPU or not. The 3 parameters
+are sent as a GET request to the server and the server responds with a
+json file which has information such as the container ID, ports open ,
+SSH username, SSH password, VNC username and VNC password. At the moment
+the username and password are hard coded from the server side for both
+SSH and VNC. To remove a container the client module only requires the
+server IP address and the container ID. The client prints the response
+from the server Rest api.
+
+*** Tracking Containers
+:PROPERTIES:
+:CUSTOM_ID: tracking-containers
+:END:
+Clients create docker images in multiple machines. This means if the
+client (i.e user) has many containers created there needs to be a way to
+track them. To track containers there is a file called
+=trackcontainers.json= which tracks all the containers running. The
+snippet below show a sample structure of file =trackcontainer.json=.
+
+#+begin_example
+{
+    "TrackContainer": [
+        {
+            "ID": "<ID>",
+            "Container": {<docker.DockerVM struct>},
+            "IpAddress": "<IP Address>"
+        }
+    ]
+} 
+#+end_example
+
+The default path to the container tracker is
+=client/trackcontainers/trackcontainers.json=.
+
+*** Grouping Containers
+:PROPERTIES:
+:CUSTOM_ID: grouping-containers
+:END:
+When starting a set container possibility to be able to group them. The
+benefit this would be that when executing plugins the group ID would be
+enough to execute plugin in a set of containers. This provides the
+possibility to execute repetitive tasks in containers in a single cli
+command. To store groups there is a file called
+=grouptrackcontainer.json= which tracks all the groups currently present
+set by the client. The snippet below show a sample structure of file
+=grouptrackcontainer.json=.
+
+#+begin_example
+{
+ "Groups": [
+  {
+   "ID": "grp<Random UUID>",
+   "TrackContainer": [{client.TrackContainers struct}]
+  }
+ ]
+}
+#+end_example
+
+The default path to the container tracker is
+=client/trackcontainers/grouptrackcontainer.json=.
+
+#+begin_quote
+[!NOTE] The group id will be auto-generated and will have its own prefix
+in the start which will mostly be =grp<UUID>=.\\
+When a container is removed using the command.
+=p2prc --rm <IP Address> --id <Container id>=. It will be automatically
+deleted from the groups it exists in.
+
+#+end_quote
