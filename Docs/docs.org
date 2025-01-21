@@ -4,12 +4,6 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
 
-#+ATTR_HTML: :align right
-#+ATTR_ORG: :align center
-#+ATTR_ORG: :width
-[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
-
-
 * Introduction
 :PROPERTIES:
 :CUSTOM_ID: chapter1-introduction
