@@ -1,6 +1,18 @@
-* Chapter 1: Introduction
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/search.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
+
+
+#+ATTR_HTML: :align right
+#+ATTR_ORG: :align center
+#+ATTR_ORG: :width
+[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
+
+
+* Introduction
 :PROPERTIES:
-:CUSTOM_ID: chapter-1-introduction
+:CUSTOM_ID: chapter1-introduction
 :END:
 
 ** Abstract
@@ -191,7 +203,6 @@ GLOBAL OPTIONS:
 :PROPERTIES:
 :CUSTOM_ID: start-as-a-server
 :END:
-Do ensure you have Docker installed for this
 
 #+begin_example
 p2prc -s 
@@ -391,12 +402,23 @@ configuration module.
 {
   "ip_address": [
     {
-      "ipv4": "<ipv4 address>",
-      "latency": "<latency>",
-      "download": "<download>",
-      "upload": "<upload>"
-      "port no": "<server port no>",
-    }
+			"Name": "<hostname of the machine>",
+			"MachineUsername": "<machine username>",
+			"IPV4": "<ipv4 address>",
+			"IPV6": "<ipv6 address (Not used)>",
+			"Latency": <latency to the server>,
+			"Download": <download speed (Not used)>,
+			"Upload": <upload speed (Not used)>,
+			"ServerPort": "<server port no>",
+			"BareMetalSSHPort": "<Baremetal ssh port no>",
+			"NAT": "<boolean representing if the node is behind NAT or not>",
+			"EscapeImplementation": "<NAT traversal implementation>",
+			"ProxyServer": "<If the node listed is acting as a proxy server>",
+			"UnSafeMode": <Unsafe mode if turned on will allow all nodes in the network public keys to be 
+      added to that particular node>",
+			"PublicKey": "<Public key of that particular node>",
+			"CustomInformation": "<custom information passed in through all the nodes in the network>"
+		}
   ]
 }
 #+end_src
@@ -704,7 +726,7 @@ The Abstractions package consists of black-boxed functions for P2PRC.
 - =ViewIPTable()=: View the IP table which about nodes in the network.
 - =UpdateIPTable()=: Force update IP table to learn about new nodes
   faster.
-
+  
 * NAT Traversal
 :PROPERTIES:
 :CUSTOM_ID: nat-traversal
@@ -723,7 +745,7 @@ there are 2 actions performed. The first one is =/FRPPort= to the TURN
 server to receive a port which is used to generate the external port
 from the TURN server. The flow below describes the workflow.
 
-*** Client mode
+* Client mode
 :PROPERTIES:
 :CUSTOM_ID: client-mode
 :END:
@@ -755,3 +777,55 @@ func main() {
    }
 }
 #+end_src
+
+
+
+
+
+* Ideas for future potencial features
+Consists of personal loideas for the future of P2PRC.
+At moment only has main contributors writiing to this.
+
+** To support hetrogenous set of Nodes that cannot run P2PRC
+This stems from a personal issue I have when doing research
+on [[https://github.com/CTSRD-CHERI/cheribsd][CheriBSD]] kernel. For my research I am using the ARM morello
+which is a 128bit ARMv8 processor. At the moment Go programs
+can cannot compile and run inside the CPU. This means I cannot
+run P2PRC at the moment inside the ARM morello to remotely access
+it when it's behind NAT using P2PRC. This would indeed be a common
+problem when running against various Architectures that do not
+support running P2PRC. As you will see soon this also creates
+oppurtunity space to scale faster to nodes in a local network
+and would introduce a new layer fault tolerance within a local
+network nodes.
+
+*** Assumptions:
+       - I have a Morello board that cannot run P2PRC
+       - The Morello has a local IP address (ex: 192.168.0.10)
+       - I have 2 laptops running P2PRC in that local network.
+       - This means I have 2 ways to access the Morello board: Which is to SSH
+	 into either 2 laptops and then SSH into 192.168.0.10 to gain access
+	 to the board. Wouldn't it be great to automate this whole layer and
+	 as well look into custom tasks into the hetrogenous hardware.
+*** Set of interesting possible:
+     We build a cool set possibilities before and use this to build up the implementation
+     plan.
+       - We can use P2PRC access the morello board remotely in a single command.
+       - We can use the P2PRC protocol to run servers inside the morello board via traversed
+	 node locally which can access that Node.
+       - Spin servers on node not running P2PRC using the P2PRC standard abstractions.
+       - Auto-setup P2PRC nodes with just SSH access via potencially a DSL.
+       - A neat use case for CHERI for instance would be use the architecture to run light
+	 weight hypervisors. 
+*** Implementation
+     - To use implementations similar to [[https://linux.die.net/man/1/socat][socat]] to ensure we can bind address of local
+       nodes to a node running P2PRC and the node running P2PRC can do a local map port.
+     - We are working on hardening the implementation of the --mp (Map port) to even
+       map ports to machines which remotely running P2PRC. This means of instance I
+       can issue a command to the Morello board without the morello board being in
+       my local network.
+     - We would want to implement the exsisting P2PRC public key mechanism as well so that
+       other nodes can access the Morello board who have permission access.
+
+#+CAPTION: Implementation idea (To be improved upon)
+ [[./images/P2PRCRemoteNodes.png]]
