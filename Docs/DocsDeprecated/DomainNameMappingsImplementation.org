@@ -1,0 +1,6 @@
+* Domain name mappings
+:PROPERTIES:
+:CUSTOM_ID: domain-name-mappings
+:END:
+
+Todo be written.

@@ -1,0 +1,26 @@
+* Design Architecture
+:PROPERTIES:
+:CUSTOM_ID: design-architecture
+:END:
+This chapter focuses on architecture of the dissertation. The objective
+would be to have a good understanding on the purpose of each module and
+how they interact with each other. The design architecture was inspired
+and based on the linux kernel design. The project is segmented into
+various modules. Each module is responsible for certain tasks in the
+project. The modules are highly dependent on each other hence the entire
+codebase can be considered as a huge monolithic chuck which acts as its
+own library. The following sub topics below talk about the main modules
+and how they function with appropriate diagrams.
+
+*** 1. [[file:ClientArchitecture.md][Client Module]]
+:PROPERTIES:
+:CUSTOM_ID: client-module
+:END:
+*** 2. [[file:P2PArchitecture.md][P2P Module]]
+:PROPERTIES:
+:CUSTOM_ID: p2p-module
+:END:
+*** 3. [[file:ServerArchitecture.md][Server Module]]
+:PROPERTIES:
+:CUSTOM_ID: server-module
+:END:
