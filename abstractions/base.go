@@ -52,8 +52,8 @@ func Start() (*gin.Engine, error) {
 }
 
 // MapPort Creates a reverse proxy connection and maps the appropriate port
-func MapPort(port string, domainName string, serverAddress string) (entireAddress string, mapPort string, err error) {
-	entireAddress, mapPort, err = server.MapPort(port, domainName, serverAddress)
+func MapPort(port string, domainName string, serverAddress string) (response *client.ResponseMAPPort, err error) {
+	response, err = client.MAPPort(port, domainName, serverAddress)
 	return
 }
 

@@ -30,6 +30,7 @@ var (
 	RemoveContainerGroup bool
 	RemoveGroup          string
 	MAPPort              string
+	RemoteAddress        string
 	DomainName           string
 	//FRPProxy             bool
 	// Generate only allowed in dev release
@@ -43,7 +44,6 @@ var (
 )
 
 var AppConfigFlags = []cli.Flag{
-	// Deprecated to be implemented using GRPC
 	&cli.BoolFlag{
 		Name:        "Server",
 		Aliases:     []string{"s"},
@@ -212,6 +212,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Maps port for a specific port provided as the parameter",
 		EnvVars:     []string{"MAPPORT"},
 		Destination: &MAPPort,
+	},
+	&cli.StringFlag{
+		Name:        "RemoteAddress",
+		Aliases:     []string{"ra"},
+		Usage:       "Parameter for Map port for a remote address",
+		EnvVars:     []string{"REMOTEADDRESS"},
+		Destination: &RemoteAddress,
 	},
 	&cli.StringFlag{
 		Name:        "DomainName",
