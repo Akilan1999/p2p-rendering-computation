@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2025-01-21 Tue 21:04 -->
+<!-- 2025-01-24 Fri 15:22 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
 <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
 <link rel="stylesheet" type="text/css" href="src/readtheorg_theme/css/search.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
 <script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/search.js"></script>
@@ -70,7 +70,7 @@
 <li><a href="#pulling-plugin-from-a-remote-repo">3.0.17. Pulling plugin from a remote repo</a></li>
 <li><a href="#deleting-plugin-from-the-plugin-directory">3.0.18. Deleting plugin from the plugin directory</a></li>
 <li><a href="#added-custom-metadata-about-the-current-node">3.0.19. Added custom metadata about the current node</a></li>
-<li><a href="#org4d721f8">3.0.20. MapPort and link to domain name</a></li>
+<li><a href="#orgb855f23">3.0.20. MapPort and link to domain name</a></li>
 </ul>
 </li>
 </ul>
@@ -100,7 +100,8 @@
 </li>
 <li><a href="#current-languages-supported">5.3. Current languages supported</a>
 <ul>
-<li><a href="#build-sample-python-program">5.3.1. Build sample python program</a></li>
+<li><a href="#orgf92e89c">5.3.1. Python</a></li>
+<li><a href="#orge1fbb06">5.3.2. Haskell</a></li>
 </ul>
 </li>
 </ul>
@@ -117,13 +118,13 @@
 </ul>
 </li>
 <li><a href="#client-mode">9. Client mode</a></li>
-<li><a href="#org7d101da">10. Ideas for future potencial features</a>
+<li><a href="#org69c4bb8">10. Ideas for future potencial features</a>
 <ul>
-<li><a href="#org06835d7">10.1. To support hetrogenous set of Nodes that cannot run P2PRC</a>
+<li><a href="#org28b6a88">10.1. To support hetrogenous set of Nodes that cannot run P2PRC</a>
 <ul>
-<li><a href="#org4567f0b">10.1.1. Assumptions:</a></li>
-<li><a href="#orgc9b25fd">10.1.2. Set of interesting possible:</a></li>
-<li><a href="#org2d3c880">10.1.3. Implementation</a></li>
+<li><a href="#org9828db6">10.1.1. Assumptions:</a></li>
+<li><a href="#org8d83427">10.1.2. Set of interesting possible:</a></li>
+<li><a href="#orgf69dcfb">10.1.3. Implementation</a></li>
 </ul>
 </li>
 </ul>
@@ -142,18 +143,18 @@
 <h3 id="abstract"><span class="section-number-3">1.1.</span> Abstract</h3>
 <div class="outline-text-3" id="text-abstract">
 <p>
-This project focuses on creating a framework for running heavy computational tasks that a regular
-computer cannot handle easily. These tasks may include graphically demanding video games, rendering
-3D animations, and performing complex protein folding simulations. The major focus of this project
-is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P)
-network to decentralise task execution and increase the computational bandwidth available for
+This project focuses on creating a framework for running heavy computational tasks that a regular 
+computer cannot handle easily. These tasks may include graphically demanding video games, rendering 
+3D animations, and performing complex protein folding simulations. The major focus of this project 
+is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P) 
+network to decentralise task execution and increase the computational bandwidth available for 
 such tasks.
 </p>
 
 <p>
-The P2PRC framework serves as a foundation for decentralised rendering and computation,
-providing insights into how tasks can be distributed efficiently across a network of peers.
-Leveraging the P2PRC approach, this project extends its capabilities to handle a
+The P2PRC framework serves as a foundation for decentralised rendering and computation, 
+providing insights into how tasks can be distributed efficiently across a network of peers. 
+Leveraging the P2PRC approach, this project extends its capabilities to handle a 
 wider range of computationally intensive tasks.
 </p>
 </div>
@@ -230,7 +231,7 @@ Go API to create and interact with the containers.
 to install docker GPU</a>
 </p>
 
-<pre class="example" id="org2b9a835">
+<pre class="example" id="orgc21d8e1">
 // Do ensure that the docker command does not need sudo to run
 sudo chmod 666 /var/run/docker.sock
 </pre>
@@ -245,7 +246,7 @@ To set up the internal dependencies and build the entire go code into a
 single binary
 </p>
 
-<pre class="example" id="org3848c1f">
+<pre class="example" id="org0a24712">
 make install
 </pre>
 </div>
@@ -258,7 +259,7 @@ To set up P2PRC on Windows, simply run this batch file. <b>Make sure you
 are not in admin mode when running this.</b>
 </p>
 
-<pre class="example" id="orgfa94624">
+<pre class="example" id="org16c6fc1">
 .\install.bat
 </pre>
 </div>
@@ -269,7 +270,7 @@ are not in admin mode when running this.</b>
 <div id="outline-container-add-appropriate-paths-to-.bashrc" class="outline-4">
 <h4 id="add-appropriate-paths-to-.bashrc"><span class="section-number-4">2.2.4.</span> Add appropriate paths to <code>.bashrc</code></h4>
 <div class="outline-text-4" id="text-add-appropriate-paths-to-.bashrc">
-<pre class="example" id="orgb5d26ac">
+<pre class="example" id="org2b22546">
 export P2PRC=/&lt;PATH&gt;/p2p-rendering-computation
 export PATH=/&lt;PATH&gt;/p2p-rendering-computation:${PATH}
 </pre>
@@ -279,8 +280,8 @@ export PATH=/&lt;PATH&gt;/p2p-rendering-computation:${PATH}
 <div id="outline-container-set-up-configuration-file" class="outline-4">
 <h4 id="set-up-configuration-file"><span class="section-number-4">2.2.5.</span> Set up configuration file</h4>
 <div class="outline-text-4" id="text-set-up-configuration-file">
-<pre class="example" id="org2c31c8d">
-make configfile
+<pre class="example" id="org9d41273">
+make configfile 
 </pre>
 
 <p>
@@ -293,7 +294,7 @@ one.
 <div id="outline-container-test-if-binary-works" class="outline-4">
 <h4 id="test-if-binary-works"><span class="section-number-4">2.2.6.</span> Test if binary works</h4>
 <div class="outline-text-4" id="text-test-if-binary-works">
-<pre class="example" id="orga8c9dc7">
+<pre class="example" id="orgd762c0d">
 p2prc --help
 </pre>
 </div>
@@ -301,7 +302,7 @@ p2prc --help
 <ol class="org-ol">
 <li><a id="output"></a>Output:<br />
 <div class="outline-text-5" id="text-output">
-<pre class="example" id="org43fa70b">
+<pre class="example" id="org02ab2e2">
 NAME:
    p2p-rendering-computation - p2p cli application to create and access VMs in other servers
 
@@ -364,8 +365,8 @@ GLOBAL OPTIONS:
 <div id="outline-container-start-as-a-server" class="outline-4">
 <h4 id="start-as-a-server"><span class="section-number-4">3.0.1.</span> Start as a server</h4>
 <div class="outline-text-4" id="text-start-as-a-server">
-<pre class="example" id="org2bd2f86">
-p2prc -s
+<pre class="example" id="orgc846811">
+p2prc -s 
 </pre>
 </div>
 </div>
@@ -373,7 +374,7 @@ p2prc -s
 <div id="outline-container-view-server-specification" class="outline-4">
 <h4 id="view-server-specification"><span class="section-number-4">3.0.2.</span> View server Specification</h4>
 <div class="outline-text-4" id="text-view-server-specification">
-<pre class="example" id="org7c931ca">
+<pre class="example" id="org019088b">
 p2prc --specs=&lt;ip address&gt;
 </pre>
 </div>
@@ -386,7 +387,7 @@ p2prc --specs=&lt;ip address&gt;
 use the <code>--gpu</code> if you know the other machine has a gpu.
 </p>
 
-<pre class="example" id="org2d6ca33">
+<pre class="example" id="org7085fb8">
 p2prc --touch=&lt;server ip address&gt; -p &lt;number of ports&gt; --gpu
 </pre>
 </div>
@@ -399,8 +400,8 @@ p2prc --touch=&lt;server ip address&gt; -p &lt;number of ports&gt; --gpu
 The docker id is present in the output where you create a container
 </p>
 
-<pre class="example" id="orgbb6bc6f">
-p2prc --rm=&lt;server ip address&gt; --id=&lt;docker container id&gt;
+<pre class="example" id="orge995039">
+p2prc --rm=&lt;server ip address&gt; --id=&lt;docker container id&gt; 
 </pre>
 </div>
 </div>
@@ -408,8 +409,8 @@ p2prc --rm=&lt;server ip address&gt; --id=&lt;docker container id&gt;
 <div id="outline-container-adding-servers-to-ip-table" class="outline-4">
 <h4 id="adding-servers-to-ip-table"><span class="section-number-4">3.0.5.</span> Adding servers to ip table</h4>
 <div class="outline-text-4" id="text-adding-servers-to-ip-table">
-<pre class="example" id="org170cd43">
-p2prc --as=&lt;server ip address you want to add&gt;
+<pre class="example" id="org598fea7">
+p2prc --as=&lt;server ip address you want to add&gt; 
 </pre>
 </div>
 </div>
@@ -417,8 +418,8 @@ p2prc --as=&lt;server ip address you want to add&gt;
 <div id="outline-container-update-ip-table" class="outline-4">
 <h4 id="update-ip-table"><span class="section-number-4">3.0.6.</span> Update ip table</h4>
 <div class="outline-text-4" id="text-update-ip-table">
-<pre class="example" id="org876e38e">
-p2prc --us
+<pre class="example" id="org3f5c136">
+p2prc --us 
 </pre>
 </div>
 </div>
@@ -426,8 +427,8 @@ p2prc --us
 <div id="outline-container-list-servers" class="outline-4">
 <h4 id="list-servers"><span class="section-number-4">3.0.7.</span> List Servers</h4>
 <div class="outline-text-4" id="text-list-servers">
-<pre class="example" id="orgdd0eeb2">
-p2prc --ls
+<pre class="example" id="org5fd6ddf">
+p2prc --ls 
 </pre>
 </div>
 </div>
@@ -435,7 +436,7 @@ p2prc --ls
 <div id="outline-container-view-network-interfaces" class="outline-4">
 <h4 id="view-network-interfaces"><span class="section-number-4">3.0.8.</span> View Network interfaces</h4>
 <div class="outline-text-4" id="text-view-network-interfaces">
-<pre class="example" id="org243ab03">
+<pre class="example" id="org58324dd">
 p2prc --ni
 </pre>
 </div>
@@ -444,7 +445,7 @@ p2prc --ni
 <div id="outline-container-viewing-containers-created-client-side" class="outline-4">
 <h4 id="viewing-containers-created-client-side"><span class="section-number-4">3.0.9.</span> Viewing Containers created Client side</h4>
 <div class="outline-text-4" id="text-viewing-containers-created-client-side">
-<pre class="example" id="org8af9ef6">
+<pre class="example" id="org4220438">
 p2prc --tc
 </pre>
 </div>
@@ -453,7 +454,7 @@ p2prc --tc
 <div id="outline-container-running-plugin" class="outline-4">
 <h4 id="running-plugin"><span class="section-number-4">3.0.10.</span> Running plugin</h4>
 <div class="outline-text-4" id="text-running-plugin">
-<pre class="example" id="orgbff8598">
+<pre class="example" id="org77295aa">
 p2prc --plugin &lt;plugin name&gt; --id &lt;container id or group id&gt;
 </pre>
 </div>
@@ -462,7 +463,7 @@ p2prc --plugin &lt;plugin name&gt; --id &lt;container id or group id&gt;
 <div id="outline-container-create-group" class="outline-4">
 <h4 id="create-group"><span class="section-number-4">3.0.11.</span> Create group</h4>
 <div class="outline-text-4" id="text-create-group">
-<pre class="example" id="org632e74b">
+<pre class="example" id="org86fcb74">
 p2prc --cgroup
 </pre>
 </div>
@@ -471,7 +472,7 @@ p2prc --cgroup
 <div id="outline-container-add-container-to-group" class="outline-4">
 <h4 id="add-container-to-group"><span class="section-number-4">3.0.12.</span> Add container to group</h4>
 <div class="outline-text-4" id="text-add-container-to-group">
-<pre class="example" id="orga449f41">
+<pre class="example" id="org564f6e3">
 p2prc --group &lt;group id&gt; --id &lt;container id&gt;
 </pre>
 </div>
@@ -480,7 +481,7 @@ p2prc --group &lt;group id&gt; --id &lt;container id&gt;
 <div id="outline-container-view-groups" class="outline-4">
 <h4 id="view-groups"><span class="section-number-4">3.0.13.</span> View groups</h4>
 <div class="outline-text-4" id="text-view-groups">
-<pre class="example" id="orgd9b0b62">
+<pre class="example" id="org9e4cebf">
 p2prc --groups
 </pre>
 </div>
@@ -489,7 +490,7 @@ p2prc --groups
 <div id="outline-container-view-specific-group" class="outline-4">
 <h4 id="view-specific-group"><span class="section-number-4">3.0.14.</span> View specific group</h4>
 <div class="outline-text-4" id="text-view-specific-group">
-<pre class="example" id="org830d644">
+<pre class="example" id="org96be349">
 p2prc --group &lt;group id&gt;
 </pre>
 </div>
@@ -498,8 +499,8 @@ p2prc --group &lt;group id&gt;
 <div id="outline-container-delete-container-from-group" class="outline-4">
 <h4 id="delete-container-from-group"><span class="section-number-4">3.0.15.</span> Delete container from group</h4>
 <div class="outline-text-4" id="text-delete-container-from-group">
-<pre class="example" id="orgbd4b1bd">
-p2prc --rmcgroup --group &lt;group id&gt; --id &lt;container id&gt;
+<pre class="example" id="org4760913">
+p2prc --rmcgroup --group &lt;group id&gt; --id &lt;container id&gt; 
 </pre>
 </div>
 </div>
@@ -507,7 +508,7 @@ p2prc --rmcgroup --group &lt;group id&gt; --id &lt;container id&gt;
 <div id="outline-container-delete-entire-group" class="outline-4">
 <h4 id="delete-entire-group"><span class="section-number-4">3.0.16.</span> Delete entire group</h4>
 <div class="outline-text-4" id="text-delete-entire-group">
-<pre class="example" id="org51c6a57">
+<pre class="example" id="orgf7d1f9f">
 p2prc --rmgroup &lt;group id&gt;
 </pre>
 </div>
@@ -516,7 +517,7 @@ p2prc --rmgroup &lt;group id&gt;
 <div id="outline-container-pulling-plugin-from-a-remote-repo" class="outline-4">
 <h4 id="pulling-plugin-from-a-remote-repo"><span class="section-number-4">3.0.17.</span> Pulling plugin from a remote repo</h4>
 <div class="outline-text-4" id="text-pulling-plugin-from-a-remote-repo">
-<pre class="example" id="org3fbde07">
+<pre class="example" id="org0e04637">
 p2prc --pp &lt;repo link&gt;
 </pre>
 </div>
@@ -525,8 +526,8 @@ p2prc --pp &lt;repo link&gt;
 <div id="outline-container-deleting-plugin-from-the-plugin-directory" class="outline-4">
 <h4 id="deleting-plugin-from-the-plugin-directory"><span class="section-number-4">3.0.18.</span> Deleting plugin from the plugin directory</h4>
 <div class="outline-text-4" id="text-deleting-plugin-from-the-plugin-directory">
-<pre class="example" id="org82c6951">
-p2prc --rp &lt;plugin name&gt;
+<pre class="example" id="orgcaad077">
+p2prc --rp &lt;plugin name&gt; 
 </pre>
 </div>
 </div>
@@ -534,16 +535,16 @@ p2prc --rp &lt;plugin name&gt;
 <div id="outline-container-added-custom-metadata-about-the-current-node" class="outline-4">
 <h4 id="added-custom-metadata-about-the-current-node"><span class="section-number-4">3.0.19.</span> Added custom metadata about the current node</h4>
 <div class="outline-text-4" id="text-added-custom-metadata-about-the-current-node">
-<pre class="example" id="org99a9b6f">
+<pre class="example" id="org19ce94c">
 p2prc --amd "custom metadata"
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org4d721f8" class="outline-4">
-<h4 id="org4d721f8"><span class="section-number-4">3.0.20.</span> MapPort and link to domain name</h4>
+<div id="outline-container-orgb855f23" class="outline-4">
+<h4 id="orgb855f23"><span class="section-number-4">3.0.20.</span> MapPort and link to domain name</h4>
 <div class="outline-text-4" id="text-3-0-20">
-<pre class="example" id="org5df74b1">
+<pre class="example" id="orgcb5f862">
 p2prc --mp &lt;port no to map&gt; --dn &lt;domain name to link Mapped port against&gt;
 </pre>
 
@@ -556,15 +557,15 @@ p2prc --mp &lt;port no to map&gt; --dn &lt;domain name to link Mapped port again
 <h2 id="p2p-module-implementation"><span class="section-number-2">4.</span> P2P Module Implementation</h2>
 <div class="outline-text-2" id="text-p2p-module-implementation">
 <p>
-The P2P module is for managing server information within the network.
-It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing
-entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers
-to determine upload and download speeds. This valuable information enables users to identify nearby
+The P2P module is for managing server information within the network. 
+It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing 
+entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers 
+to determine upload and download speeds. This valuable information enables users to identify nearby 
 servers with optimal performance, enhancing their overall network experience.
 </p>
 
 
-<div id="orgbc346b6" class="figure">
+<div id="org7def4d5" class="figure">
 <p><img src="images/p2pmoduleArch.png" alt="p2pmoduleArch.png" />
 </p>
 <p><span class="figure-number">Figure 1: </span>UML diagram of P2P module</p>
@@ -612,7 +613,7 @@ configuration module.
                         "NAT": "&lt;boolean representing if the node is behind NAT or not&gt;",
                         "EscapeImplementation": "&lt;NAT traversal implementation&gt;",
                         "ProxyServer": "&lt;If the node listed is acting as a proxy server&gt;",
-                        "UnSafeMode": &lt;Unsafe mode if turned on will allow all nodes in the network public keys to be
+                        "UnSafeMode": &lt;Unsafe mode if turned on will allow all nodes in the network public keys to be 
       added to that particular node&gt;",
                         "PublicKey": "&lt;Public key of that particular node&gt;",
                         "CustomInformation": "&lt;custom information passed in through all the nodes in the network&gt;"
@@ -665,7 +666,7 @@ from the TURN server. The flow below describes the workflow.
 <li>Call <code>/FRPPort</code></li>
 </ul>
 
-<pre class="example" id="org43a6567">
+<pre class="example" id="orgdf194ca">
 http://&lt;turn server ip&gt;:&lt;server port no&gt;/FRPport
 </pre>
 
@@ -759,11 +760,11 @@ p2prc.h p2prc.so
 Below are a sample set of commands to open the bindings implementation.
 </p>
 
-<pre class="example" id="orgbf9803e">
+<pre class="example" id="orgad17e1e">
 # run
 cd Bindings/
 # list files
-ls
+ls 
 # search for file
 Client.go
 </pre>
@@ -853,7 +854,7 @@ that convert a go object to JSON string initially and converts it to
 
 <li><a id="a-pseudo-code-to-refer-to-the-common-function-implementation-shape-could-be-represented-as"></a>A Pseudo code to refer to the common function implementation shape could be represented as:<br />
 <div class="outline-text-5" id="text-a-pseudo-code-to-refer-to-the-common-function-implementation-shape-could-be-represented-as">
-<pre class="example" id="org125b0a6">
+<pre class="example" id="org1b91e81">
 func &lt;Function name&gt; (output *C.char) {
       &lt;response&gt;,&lt;error&gt; := &lt;P2PRC function name&gt;(&lt;parameters if needed&gt;)
       if &lt;error&gt; != nil {
@@ -871,14 +872,14 @@ func &lt;Function name&gt; (output *C.char) {
 <div id="outline-container-current-languages-supported" class="outline-3">
 <h3 id="current-languages-supported"><span class="section-number-3">5.3.</span> Current languages supported</h3>
 <div class="outline-text-3" id="text-current-languages-supported">
-<ul class="org-ul">
-<li>Python</li>
-</ul>
 </div>
-
-<div id="outline-container-build-sample-python-program" class="outline-4">
-<h4 id="build-sample-python-program"><span class="section-number-4">5.3.1.</span> Build sample python program</h4>
-<div class="outline-text-4" id="text-build-sample-python-program">
+<div id="outline-container-orgf92e89c" class="outline-4">
+<h4 id="orgf92e89c"><span class="section-number-4">5.3.1.</span> Python</h4>
+<div class="outline-text-4" id="text-5-3-1">
+</div>
+<ol class="org-ol">
+<li><a id="build-sample-python-program"></a>Build sample python program<br />
+<div class="outline-text-5" id="text-build-sample-python-program">
 <p>
 The easier way
 </p>
@@ -907,10 +908,25 @@ scripted or used a reference point as proof of concept that P2PRC can be
 called from other programming languages.
 </p>
 </div>
-</div>
-</div>
+</li>
+</ol>
 </div>
 
+<div id="outline-container-orge1fbb06" class="outline-4">
+<h4 id="orge1fbb06"><span class="section-number-4">5.3.2.</span> Haskell</h4>
+<div class="outline-text-4" id="text-5-3-2">
+<p>
+P2PRC officially supports Haskell bindings and will further support
+project using Haskell to build orchestrators on top of P2PRC.
+</p>
+
+<p>
+<a href="https://p2prc.akilan.io/Docs/haskell">Read more&#x2026;</a>
+</p>
+</div>
+</div>
+</div>
+</div>
 
 <div id="outline-container-config-implementation" class="outline-2">
 <h2 id="config-implementation"><span class="section-number-2">6.</span> Config Implementation</h2>
@@ -1015,7 +1031,7 @@ from the TURN server. The flow below describes the workflow.
 <li>Call <code>/FRPPort</code></li>
 </ul>
 
-<pre class="example" id="orgde2b494">
+<pre class="example" id="org211622f">
 http://&lt;turn server ip&gt;:&lt;server port no&gt;/FRPport
 </pre>
 
@@ -1051,8 +1067,8 @@ func main() {
 
 
 
-<div id="outline-container-org7d101da" class="outline-2">
-<h2 id="org7d101da"><span class="section-number-2">10.</span> Ideas for future potencial features</h2>
+<div id="outline-container-org69c4bb8" class="outline-2">
+<h2 id="org69c4bb8"><span class="section-number-2">10.</span> Ideas for future potencial features</h2>
 <div class="outline-text-2" id="text-10">
 <p>
 Consists of personal loideas for the future of P2PRC.
@@ -1060,8 +1076,8 @@ At moment only has main contributors writiing to this.
 </p>
 </div>
 
-<div id="outline-container-org06835d7" class="outline-3">
-<h3 id="org06835d7"><span class="section-number-3">10.1.</span> To support hetrogenous set of Nodes that cannot run P2PRC</h3>
+<div id="outline-container-org28b6a88" class="outline-3">
+<h3 id="org28b6a88"><span class="section-number-3">10.1.</span> To support hetrogenous set of Nodes that cannot run P2PRC</h3>
 <div class="outline-text-3" id="text-10-1">
 <p>
 This stems from a personal issue I have when doing research
@@ -1078,8 +1094,8 @@ network nodes.
 </p>
 </div>
 
-<div id="outline-container-org4567f0b" class="outline-4">
-<h4 id="org4567f0b"><span class="section-number-4">10.1.1.</span> Assumptions:</h4>
+<div id="outline-container-org9828db6" class="outline-4">
+<h4 id="org9828db6"><span class="section-number-4">10.1.1.</span> Assumptions:</h4>
 <div class="outline-text-4" id="text-10-1-1">
 <ul class="org-ul">
 <li>I have a Morello board that cannot run P2PRC</li>
@@ -1092,8 +1108,8 @@ as well look into custom tasks into the hetrogenous hardware.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgc9b25fd" class="outline-4">
-<h4 id="orgc9b25fd"><span class="section-number-4">10.1.2.</span> Set of interesting possible:</h4>
+<div id="outline-container-org8d83427" class="outline-4">
+<h4 id="org8d83427"><span class="section-number-4">10.1.2.</span> Set of interesting possible:</h4>
 <div class="outline-text-4" id="text-10-1-2">
 <p>
 We build a cool set possibilities before and use this to build up the implementation
@@ -1110,8 +1126,8 @@ weight hypervisors.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org2d3c880" class="outline-4">
-<h4 id="org2d3c880"><span class="section-number-4">10.1.3.</span> Implementation</h4>
+<div id="outline-container-orgf69dcfb" class="outline-4">
+<h4 id="orgf69dcfb"><span class="section-number-4">10.1.3.</span> Implementation</h4>
 <div class="outline-text-4" id="text-10-1-3">
 <ul class="org-ul">
 <li>To use implementations similar to <a href="https://linux.die.net/man/1/socat">socat</a> to ensure we can bind address of local
@@ -1125,7 +1141,7 @@ other nodes can access the Morello board who have permission access.</li>
 </ul>
 
 
-<div id="org2359681" class="figure">
+<div id="org0c416ff" class="figure">
 <p><img src="./images/P2PRCRemoteNodes.png" alt="P2PRCRemoteNodes.png" />
 </p>
 <p><span class="figure-number">Figure 2: </span>Implementation idea (To be improved upon)</p>
@@ -1137,7 +1153,7 @@ other nodes can access the Morello board who have permission access.</li>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Akilan</p>
-<p class="date">Created: 2025-01-21 Tue 21:04</p>
+<p class="date">Created: 2025-01-24 Fri 15:22</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

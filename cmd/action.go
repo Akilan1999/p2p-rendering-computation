@@ -283,7 +283,7 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 
 	if MAPPort != "" {
-		address, err := client.MAPPort(MAPPort, DomainName)
+		address, err := client.MAPPort(MAPPort, DomainName, RemoteAddress)
 		if err != nil {
 			return err
 		}

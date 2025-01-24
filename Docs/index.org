@@ -351,8 +351,14 @@ p2prc --amd "custom metadata"
 #+end_example
 
 *** MapPort and link to domain name
+Allows to expose remote ports from a machine in the P2P network. 
 #+begin_example
 p2prc --mp <port no to map> --dn <domain name to link Mapped port against>
+#+end_example
+**** MapPort in remote machine
+This is to ensure ports on remote machines on the P2PRC can be easily opened. 
+#+begin_example
+p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra <remote server address>
 #+end_example
 
 --------------
@@ -628,9 +634,9 @@ func <Function name> (output *C.char) {
 :PROPERTIES:
 :CUSTOM_ID: current-languages-supported
 :END:
-- Python
+*** Python
 
-*** Build sample python program
+**** Build sample python program
 :PROPERTIES:
 :CUSTOM_ID: build-sample-python-program
 :END:
@@ -657,6 +663,11 @@ folder can copied and created as a new git repo for P2PRC extensions
 scripted or used a reference point as proof of concept that P2PRC can be
 called from other programming languages.
 
+*** Haskell
+P2PRC officially supports Haskell bindings and will further support
+project using Haskell to build orchestrators on top of P2PRC.
+
+[[https://p2prc.akilan.io/Docs/haskell][Read more...]]
 
 * Config Implementation
 :PROPERTIES:

@@ -11,9 +11,7 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
-	"io"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"os/user"
 	"strconv"
@@ -195,7 +193,7 @@ func Server() (*gin.Engine, error) {
 	r.GET("/MAPPort", func(c *gin.Context) {
 		Ports := c.DefaultQuery("port", "0")
 		DomainName := c.DefaultQuery("domain_name", "")
-		url, _, err := MapPort(Ports, DomainName, "")
+		url, _, err := MapPort(Ports, DomainName)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
@@ -298,7 +296,7 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
 			if config.BareMetal {
-				_, SSHPort, err := MapPort("22", "", "")
+				_, SSHPort, err := MapPort("22", "")
 				if err != nil {
 					return nil, err
 				}
@@ -375,33 +373,33 @@ func Server() (*gin.Engine, error) {
 	return r, nil
 }
 
-func MapPort(port string, domainName string, serverAddress string) (string, string, error) {
+func MapPort(port string, domainName string) (string, string, error) {
 
 	// if server address is provided to do call RESTAPI to remotely open port.
-	if serverAddress != "" {
-		requestURL := fmt.Sprintf("http://%v/MAPPort?port=%v&domain_name=%v", serverAddress, port, domainName)
-		req, err := http.NewRequest(http.MethodGet, requestURL, nil)
-		if err != nil {
-			return "", "", err
-		}
-
-		res, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return "", "", err
-		}
-
-		resBody, err := io.ReadAll(res.Body)
-		if err != nil {
-			return "", "", err
-		}
-
-		_, Exposedport, err := net.SplitHostPort(string(resBody))
-		if err != nil {
-			return "", "", err
-		}
-
-		return string(resBody), Exposedport, nil
-	}
+	//if serverAddress != "" {
+	//	requestURL := fmt.Sprintf("http://%v/MAPPort?port=%v&domain_name=%v", serverAddress, port, domainName)
+	//	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	//	if err != nil {
+	//		return "", "", err
+	//	}
+	//
+	//	res, err := http.DefaultClient.Do(req)
+	//	if err != nil {
+	//		return "", "", err
+	//	}
+	//
+	//	resBody, err := io.ReadAll(res.Body)
+	//	if err != nil {
+	//		return "", "", err
+	//	}
+	//
+	//	_, Exposedport, err := net.SplitHostPort(string(resBody))
+	//	if err != nil {
+	//		return "", "", err
+	//	}
+	//
+	//	return string(resBody), Exposedport, nil
+	//}
 
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
