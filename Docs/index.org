@@ -93,7 +93,7 @@ To set up the internal dependencies and build the entire go code into a
 single binary
 
 #+begin_example
-make install
+make
 #+end_example
 
 **** For Windows
@@ -115,17 +115,6 @@ are not in admin mode when running this.*
 export P2PRC=/<PATH>/p2p-rendering-computation
 export PATH=/<PATH>/p2p-rendering-computation:${PATH}
 #+end_example
-
-*** Set up configuration file
-:PROPERTIES:
-:CUSTOM_ID: set-up-configuration-file
-:END:
-#+begin_example
-make configfile 
-#+end_example
-
-Open the config file =config.json= and add the IPv6 address if you have
-one.
 
 *** Test if binary works
 :PROPERTIES:
@@ -785,6 +774,79 @@ func main() {
 
 
 
+
+* Blog posts
+** Self host within 5 minutes any program
+This is a fun expirement for anyone to try to quickly run a server and
+quickly do a map port and domain name mapping in a single command.
+
+*** 1. Find a program you want to run
+       Let's try to setup a really easy program (Let's do with Linkwarden
+       with docker compose :) ). This is under the assumption you have docker
+       compose installed on your local machine.
+       
+**** Let's run Linkwarden using docker compose and P2PRC
+       [[https://docs.linkwarden.app/self-hosting/installation][Installation instrutions]]:
+       #+BEGIN_SRC
+mkdir linkwarden && cd linkwarden
+curl -O https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/docker-compose.yml
+curl -L https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/.env.sample -o ".env"
+       #+END_SRC
+
+       Environment configuration
+       #+BEGIN_SRC
+vim .env
+
+# Change values
+NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+NEXTAUTH_SECRET=VERY_SENSITIVE_SECRET
+POSTGRES_PASSWORD=CUSTOM_POSTGRES_PASSWORD
+       #+END_SRC
+       Run linkwarden!
+       #+BEGIN_SRC
+docker compose up
+       #+END_SRC
+
+       If setup correctly linkwarden should
+       be running.
+       Local link: http://localhost:3000
+
+     Time to setup P2PRC
+     [[https://p2prc.akilan.io/Docs/#build-project-and-install-project][Installation Instructions]]
+
+     Run p2prc as a background
+      #+BEGIN_SRC
+p2prc -s &
+      #+END_SRC
+
+     Run map port and domain mapping
+     #+BEGIN_SRC
+p2prc --mp 3000 --dn ldt.akilan.io
+     #+END_SRC
+
+     Sample response
+     #+BEGIN_SRC
+ {
+	"IPAddress": "217.76.63.222",
+	"PortNo": "61582",
+	"EntireAddress": "217.76.63.222:61582"
+}
+     #+END_SRC
+
+     Add DNS entry
+     #+BEGIN_SRC
+A entry 217.76.63.222
+     #+END_SRC
+
+     Your done now just head to ldt.akilan.io (Or your domain name you added)
+   
+       
+       
+
+       
+       
+       
+       
 
 
 * Ideas for future potencial features
