@@ -85,9 +85,9 @@ Users acting as clients retain full control over how tasks are batched and assig
 <br>
 ## Documentation
 We have documented to our best effort the basics of p2prc:
-Link: https://p2prc.akilan.io/Docs/
+## Link: https://p2prc.akilan.io/Docs/
 
-<!-- 
+<!--
 ## Introduction
 This project aims to create a peer to peer (p2p) network, where a user can use the p2p network to act as a client (i.e sending tasks) or the server (i.e executing the tasks). A prototype application will be developed, which comes bundled with a p2p module and possible to execute docker containers or virtual environments across selected nodes.
 

@@ -777,6 +777,14 @@ func main() {
 
 * Blog posts
 ** Self host within 5 minutes any program
+
+ - Author: [[http://akilan.io/][Akilan Selvacoumar]]
+ - Date: 28-01-2025
+
+   
+ - Video tutorial:
+ [[https://youtu.be/rN4SiVowg5E][https://i3.ytimg.com/vi/rN4SiVowg5E/maxresdefault.jpg]]
+
 This is a fun expirement for anyone to try to quickly run a server and
 quickly do a map port and domain name mapping in a single command.
 
@@ -786,7 +794,7 @@ quickly do a map port and domain name mapping in a single command.
        compose installed on your local machine.
        
 **** Let's run Linkwarden using docker compose and P2PRC
-       [[https://docs.linkwarden.app/self-hosting/installation][Installation instrutions]]:
+       [[https://docs.linkwarden.app/self-hosting/installation][Installation instructions]]:
        #+BEGIN_SRC
 mkdir linkwarden && cd linkwarden
 curl -O https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/docker-compose.yml
@@ -798,7 +806,7 @@ curl -L https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/
 vim .env
 
 # Change values
-NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+NEXTAUTH_URL=https://<DOMAIN NAME>/api/v1/auth
 NEXTAUTH_SECRET=VERY_SENSITIVE_SECRET
 POSTGRES_PASSWORD=CUSTOM_POSTGRES_PASSWORD
        #+END_SRC
@@ -821,7 +829,7 @@ p2prc -s &
 
      Run map port and domain mapping
      #+BEGIN_SRC
-p2prc --mp 3000 --dn ldt.akilan.io
+p2prc --mp 3000 --dn <DOMAIN NAME>
      #+END_SRC
 
      Sample response
@@ -838,7 +846,8 @@ p2prc --mp 3000 --dn ldt.akilan.io
 A entry 217.76.63.222
      #+END_SRC
 
-     Your done now just head to ldt.akilan.io (Or your domain name you added)
+     Your done now just head to the DOMAIN NAME you added.
+     ex: https://linkwarden.akilan.io
    
        
        
