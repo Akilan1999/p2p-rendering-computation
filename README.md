@@ -52,6 +52,12 @@ Users acting as clients retain full control over how tasks are batched and assig
 
 <br>
 
+## Documentation
+
+### We have documented to our best effort the basics of p2prc:
+
+## Link: https://p2prc.akilan.io/Docs/
+
 <!-- ## Table of contents in the current README -->
 <!-- 1. [Introduction](#Introduction)
 2. [Installation](#extend-your-application-with-p2prc)
@@ -83,9 +89,6 @@ Users acting as clients retain full control over how tasks are batched and assig
 5. [Problems](https://github.com/Akilan1999/p2p-rendering-computation/issues)    -->
 
 <br>
-## Documentation
-We have documented to our best effort the basics of p2prc:
-## Link: https://p2prc.akilan.io/Docs/
 
 <!--
 ## Introduction
