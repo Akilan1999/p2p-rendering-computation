@@ -47,14 +47,14 @@ Networking details are completely abstracted, enabling users to focus on develop
 ### Flexible Task Distribution
 Users acting as clients retain full control over how tasks are batched and assigned to nodes, creating endless possibilities for optimising performance based on specific use cases.
 
-### 1 line setup with Nix
+## Setup with Nix
 - Ensure you have the nix package manager installed.
 - Add the following to your .bashrc file.
-```
+```bash
 alias p2prc='env P2PRC=<path you want the configs to exist in> nix run github:akilan1999/p2p-rendering-computation --'
 ```
 - Check if it's successful
-```
+```bash
 p2prc -h
 ```
 Read more on command usage: https://p2prc.akilan.io/Docs/#using-basic-commands
@@ -116,7 +116,7 @@ This project aims to create a peer to peer (p2p) network, where a user can use t
 
 <!-- <br> -->
 
-## Extend your application with P2PRC
+<!-- ## Extend your application with P2PRC
 ```go
 package main
 
@@ -145,7 +145,7 @@ func main() {
 	}
 }
 
-```
+``` -->
 
 <!-- ### Export once this is added export P2PRC as environment paths
 ```
@@ -208,4 +208,4 @@ The programming language used for this project was Golang. The reason Go lang wa
 As we are working on the open source project p2prc (i.e  p2p network designed for computation).If you are interested in participating as a contributor
 or just providing feedback on new features to build or even just curious about new features added to the project do file an Issue or send an email to me@akilan.io.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain)
+<!-- [![Star History Chart](https://api.star-history.com/svg?repos=Akilan1999/p2p-rendering-computation&type=Date)](https://github.com/Gaurav-Gosain) -->
