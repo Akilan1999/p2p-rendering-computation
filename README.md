@@ -47,6 +47,18 @@ Networking details are completely abstracted, enabling users to focus on develop
 ### Flexible Task Distribution
 Users acting as clients retain full control over how tasks are batched and assigned to nodes, creating endless possibilities for optimising performance based on specific use cases.
 
+### 1 line setup with Nix
+- Ensure you have the nix package manager installed.
+- Add the following to your .bashrc file.
+```
+alias p2prc='env P2PRC=<path you want the configs to exist in> nix run github:akilan1999/p2p-rendering-computation --'
+```
+- Check if it's successful
+```
+p2prc -h
+```
+Read more on command usage: https://p2prc.akilan.io/Docs/#using-basic-commands
+
 ## Latest tutorial
 [![IMAGE ALT TEXT](https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg)](https://www.youtube.com/watch?v=OMwCpedu5cs")
 
