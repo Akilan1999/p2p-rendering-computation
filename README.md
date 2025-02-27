@@ -66,9 +66,7 @@ Read more on command usage: https://p2prc.akilan.io/Docs/#using-basic-commands
 
 ## Documentation
 
-### We have documented to our best effort the basics of p2prc:
-
-## Link: https://p2prc.akilan.io/Docs/
+### We have documented to our best effort the basics of p2prc: [Link](https://p2prc.akilan.io/Docs/)
 
 <!-- ## Table of contents in the current README -->
 <!-- 1. [Introduction](#Introduction)
