@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os/user"
+	"strconv"
+	"time"
+
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
-	"net/http"
-	"os/user"
-	"strconv"
-	"time"
+	"github.com/phayes/freeport"
 )
 
 type ReverseProxy struct {
@@ -178,6 +180,16 @@ func Server() (*gin.Engine, error) {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 		c.JSON(http.StatusOK, resp)
+	})
+
+	r.GET("/FreePort", func(c *gin.Context) {
+		openports, err := freeport.GetFreePorts(1)
+
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+		}
+
+		c.String(http.StatusOK, strconv.Itoa(openports[0]))
 	})
 
 	// Request for port no from Server with address

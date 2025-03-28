@@ -41,6 +41,7 @@ var (
 	PullPlugin   string
 	RemovePlugin string
 	AddMetaData  string
+	PluginArgs   cli.StringSlice
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -271,5 +272,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Adds metadata about the current node in the p2p network which is then propagated through the network",
 		EnvVars:     []string{"ADDMETADATA"},
 		Destination: &AddMetaData,
+	},
+	&cli.StringSliceFlag{
+		Name:        "PluginArgs",
+		Aliases:     []string{"pArgs"},
+		Usage:       "Args for plugin to be executed",
+		EnvVars:     []string{"PLUGINARGS"},
+		Destination: &PluginArgs,
 	},
 }

@@ -1,16 +1,19 @@
 package abstractions
 
-import "C"
+// import "C"
 import (
+	"net/http"
+	"os"
+
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	Config "github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
+	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
-	"os"
 )
 
 // Init Initialises p2prc
@@ -58,8 +61,8 @@ func MapPort(port string, domainName string, serverAddress string) (response *cl
 }
 
 // StartContainer Starts docker container on the remote machine
-func StartContainer(IP string) (container *docker.DockerVM, err error) {
-	container, err = client.StartContainer(IP, 0, false, "", "")
+func StartContainer(IP string, NumPorts int, ContainerName string, BaseImage string) (container *docker.DockerVM, err error) {
+	container, err = client.StartContainer(IP, NumPorts, false, ContainerName, BaseImage)
 	return
 }
 
@@ -85,4 +88,16 @@ func ViewIPTable() (table *p2p.IpAddresses, err error) {
 // new nodes discovered in the network
 func UpdateIPTable() (err error) {
 	return clientIPTable.UpdateIpTableListClient()
+}
+
+func UploadFile(cli http.Client, uri, key, path string) ([]byte, error) {
+	return clientIPTable.UploadMultipartFile(cli, uri, key, path)
+}
+
+func ExecutePlugin(PluginName string, ContainerID string, PluginArgs []string) error {
+	return plugin.CheckRunPlugin(PluginName, ContainerID, PluginArgs)
+}
+
+func PullPlugin(url string) (string, error) {
+	return plugin.DownloadPlugin(url)
 }
