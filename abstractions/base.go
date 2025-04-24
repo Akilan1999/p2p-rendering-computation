@@ -87,6 +87,9 @@ func UpdateIPTable() (err error) {
     return clientIPTable.UpdateIpTableListClient()
 }
 
+// AddCustomInformation allows to pass custom information
+// through the network to which can be listened on
+// all peers in the network to execute a task.
 func AddCustomInformation(information string) error {
     return clientIPTable.AddCustomInformationToIPTable(information)
 }
