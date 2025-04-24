@@ -97,6 +97,18 @@ def ListNodes():
     ipTableObject = json.loads((str(ipTable).strip("b'")))
     dat: IPAddress = dacite.from_dict(IPAddress,ipTableObject)
     return dat
+
+# python function to pass-through custom
+# information to interpret which can be
+# interpreted as a DSL.
+def AddCustomInformation(message="") -> bool:
+    message = go_string(c_char_p(message.encode('utf-8')), len(message))
+
+    p2prc.CustomInformation.restype = c_char_p
+    status = p2prc.CustomInformation(message)
+    if str(status).strip("b'") == "Success":
+        return True
+    return False
     
 
  
