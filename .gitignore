@@ -43,6 +43,9 @@ p2prc.PublicKeyBareMetal
 # Ignore pem files
 *.pem
 
+# ignore virtual env file
+venv
+
 # Nix and Nix flake files
 result
 result-*
