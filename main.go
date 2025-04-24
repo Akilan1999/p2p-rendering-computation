@@ -34,10 +34,6 @@ func getFireSignalsChannel() chan os.Signal {
 
 }
 
-func exit() {
-	syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
-}
-
 func main() {
 	app := cli.NewApp()
 	app.Name = "p2p-rendering-computation"
