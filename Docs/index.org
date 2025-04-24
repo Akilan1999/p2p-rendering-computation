@@ -641,7 +641,7 @@ cd Bindings/python/export/
 # list files
 ls
 # Expected output
-SharedObjects/  p2prc.py
+SharedObjects/  library.py requirements.txt 
 #+end_src
 
 Above shows a generated folder which consists of a folder called
