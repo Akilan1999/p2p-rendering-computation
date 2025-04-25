@@ -49,7 +49,7 @@ module P2PRC
     -- ** Interface data types
     -- | This section gives an overview on the runtime and host machine interfaces.
   , P2PRCapi(..)
-  , P2prcConfig(..)
+  , P2PRCConfig(..)
   , MapPortRequest(..)
   , MapPortResponse(..)
 
@@ -76,7 +76,7 @@ import JSON
   , ServerInfo(..)
   , IPAddress(..)
   , MapPortResponse(..)
-  , P2prcConfig(..)
+  , P2PRCConfig(..)
   )
 
 import API
