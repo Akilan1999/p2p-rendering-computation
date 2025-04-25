@@ -3,6 +3,8 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/search.css"/>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
+#+attr_html: :width 300px
+[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
 
 * Introduction
 :PROPERTIES:
