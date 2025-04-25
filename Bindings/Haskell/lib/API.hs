@@ -33,6 +33,8 @@ import CLI
   , spawnProcP2PRC
   )
 
+import System.Environment (lookupEnv)
+
 
 
 -- | Lower level P2PRC Haskell api that exposes basic functionality necessary to joint the network.
@@ -41,7 +43,7 @@ data P2PRCapi
   = MkP2PRCapi
     { startServer       :: IOEitherError ProcessHandle
       -- ^ Start server
-    , execInitConfig    :: IOEitherError P2PRCConfig
+    -- , execInitConfig    :: IOEitherError P2PRCConfig
       -- ^ Instantiate server configuration
     , execListServers   :: IOEitherError IPAddressTable
       -- ^ List servers in network
@@ -113,27 +115,29 @@ p2prcAPI =
           ]
           MkEmptyStdInput
 
-    , execInitConfig = do
+    -- , execInitConfig = do
 
-      confInitRes <- execProcP2PRC [ MkOptAtomic "--dc" ] MkEmptyStdInput
+    --   confInitRes <- execProcP2PRC [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
-      case confInitRes of
-        (Right _) -> do
+    --   case confInitRes of
+    --     (Right _) -> do
 
-          -- TODO: get config file name dynamically
-          --
-          currDirectory <- getCurrentDirectory
+    --       maybeValue <- lookupEnv "P2PRC"
 
-          -- TODO: change values before loading file
-          let fname = currDirectory ++ "/config.json" :: FilePath
+    --       -- TODO: get config file name dynamically
+    --       --
+    --       currDirectory <- getCurrentDirectory
+
+    --       -- TODO: change values before loading file
+    --       let fname = currDirectory ++ "/config.json" :: FilePath
 
 
-          -- TODO: read config check if file exists
-          configContent <- readFile fname
+    --       -- TODO: read config check if file exists
+    --       configContent <- readFile fname
 
-          pure $ eitherErrDecode configContent
+    --       pure $ eitherErrDecode configContent
 
-        (Left err) -> pure $ Left err
+    --     (Left err) -> pure $ Left err
 
     }
 
@@ -147,5 +151,5 @@ p2prcAPI =
   execProcP2PRCParser = eitherExecProcessParser p2prcCmdName
   -- TODO: GHC question, why does it scope down instead staying generic
 
-  execProcP2PRC = eitherExecProcess p2prcCmdName
+  -- execProcP2PRC = eitherExecProcess p2prcCmdName
 
