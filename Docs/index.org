@@ -4,7 +4,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
 #+attr_html: :width 300px
-[[./artwork/p2prc-logos/Colored-On-Light-Image.png]]
+[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
 
 * Guide through video
 *** The video below shows the setup and usage of P2PRC.
@@ -367,7 +367,7 @@ to determine upload and download speeds. This valuable information enables users
 servers with optimal performance, enhancing their overall network experience.
 
 #+caption: UML diagram of P2P module
-[[file:Docs/images/p2pmoduleArch.png]
+[[file:./images/p2pmoduleArch.png]
 
 The peer to peer implementation was built from scratch. This is because
 other peer to peer libraries were on the implementation of the
@@ -909,4 +909,4 @@ network nodes.
        other nodes can access the Morello board who have permission access.
 
 #+CAPTION: Implementation idea (To be improved upon)
- [[./Docs/images/P2PRCRemoteNodes.png]]
+ [[./images/P2PRCRemoteNodes.png]]
