@@ -33,7 +33,7 @@ import CLI
   , spawnProcP2PRC
   )
 
-import System.Environment (lookupEnv)
+-- import System.Environment (lookupEnv)
 
 
 
