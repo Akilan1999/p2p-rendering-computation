@@ -1,1 +1,1 @@
-python3 -m http.server 8083 &
+go run staticServer.go &
