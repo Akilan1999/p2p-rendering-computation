@@ -87,8 +87,8 @@ optsToCLI = concatMap _optToCLI
   _optToCLI (MkOptTuple (o, v)) = [o, v]
 
 
-spawnProcP2Prc :: CLICmd -> [CLIOpt] -> IOEitherError ProcessHandle
-spawnProcP2Prc cmd opts =
+spawnProcP2PRC :: CLICmd -> [CLIOpt] -> IOEitherError ProcessHandle
+spawnProcP2PRC cmd opts =
   do
     let prc = proc cmd $ optsToCLI opts
 
@@ -115,6 +115,6 @@ eitherErrorDecode esa =
 
 -- assumes the program is ran inside the haskell module in p2prc's repo
 -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
-p2PrcCmdName :: String
-p2PrcCmdName = "p2p-rendering-computation"
+p2prcCmdName :: String
+p2prcCmdName = "p2p-rendering-computation"
 
