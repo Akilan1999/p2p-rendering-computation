@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module JSON
-  ( P2prcConfig(..)
+  ( P2PRCConfig(..)
   , IPAddressTable(..)
   , IPAddress(..)
   , ServerInfo(..)
@@ -38,11 +38,11 @@ instance FromJSON MapPortResponse where
 
 
 
-{-# WARNING P2prcConfig "This type is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
+{-# WARNING P2PRCConfig "This type is unstable at the moment due to the P2PRC's library error handling bug. For more information visit: https://github.com/Akilan1999/p2p-rendering-computation/issues/114#issuecomment-2474737015" #-}
 
 -- | This represents the server configuration that defines its attributes and behaviours in the network, as well as, the location of the runtime persistence artifacts.
-newtype P2prcConfig
-  = MkP2prConfig
+newtype P2PRCConfig
+  = MkP2PRCConfig
     { machineName               :: String     -- ^ Machine Name
     } deriving Show
 
@@ -96,13 +96,13 @@ newtype P2prcConfig
     -- to have a dedicated port field
 
 
-instance FromJSON P2prcConfig where
+instance FromJSON P2PRCConfig where
   parseJSON (Object o) = do
 
     machineName <- o .: "MachineName"
 
     pure
-      $ MkP2prConfig
+      $ MkP2PRCConfig
         { machineName=machineName
         }
 

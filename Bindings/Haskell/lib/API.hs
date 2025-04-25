@@ -20,17 +20,17 @@ import Error
 import JSON
   ( IPAddressTable(..)
   , MapPortResponse(..)
-  , P2prcConfig
+  , P2PRCConfig
   )
 
 import CLI
   ( StdInput(..)
   , CLIOpt(..)
   , eitherErrDecode
-  , p2PrcCmdName
+  , p2prcCmdName
   , eitherExecProcess
   , eitherExecProcessParser
-  , spawnProcP2Prc
+  , spawnProcP2PRC
   )
 
 
@@ -41,7 +41,7 @@ data P2PRCapi
   = MkP2PRCapi
     { startServer       :: IOEitherError ProcessHandle
       -- ^ Start server
-    , execInitConfig    :: IOEitherError P2prcConfig
+    , execInitConfig    :: IOEitherError P2PRCConfig
       -- ^ Instantiate server configuration
     , execListServers   :: IOEitherError IPAddressTable
       -- ^ List servers in network
@@ -94,14 +94,14 @@ main =
 p2prcAPI :: P2PRCapi
 p2prcAPI =
   MkP2PRCapi
-    { startServer = spawnProcP2Prc p2PrcCmdName [ MkOptAtomic "--s" ]
+    { startServer = spawnProcP2PRC p2prcCmdName [ MkOptAtomic "--s" ]
 
     , execListServers =
-      execProcP2PrcParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
+      execProcP2PRCParser [ MkOptAtomic "--ls" ] MkEmptyStdInput
 
     , execMapPort =
       \ (MkMapPortRequest portNumber domainName) ->
-        execProcP2PrcParser
+        execProcP2PRCParser
           [ MkOptTuple
             ( "--mp"
             , show portNumber
@@ -115,7 +115,7 @@ p2prcAPI =
 
     , execInitConfig = do
 
-      confInitRes <- execProcP2Prc [ MkOptAtomic "--dc" ] MkEmptyStdInput
+      confInitRes <- execProcP2PRC [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
       case confInitRes of
         (Right _) -> do
@@ -140,12 +140,12 @@ p2prcAPI =
 
   where
 
-  execProcP2PrcParser ::
+  execProcP2PRCParser ::
     FromJSON a =>
       [CLIOpt] -> StdInput -> IOEitherError a
 
-  execProcP2PrcParser = eitherExecProcessParser p2PrcCmdName
+  execProcP2PRCParser = eitherExecProcessParser p2prcCmdName
   -- TODO: GHC question, why does it scope down instead staying generic
 
-  execProcP2Prc = eitherExecProcess p2PrcCmdName
+  execProcP2PRC = eitherExecProcess p2prcCmdName
 
