@@ -1,0 +1,912 @@
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/search.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
+
+#+attr_html: :width 300px
+[[./artwork/p2prc-logos/Colored-On-Light-Image.png]]
+
+* Guide through video
+*** The video below shows the setup and usage of P2PRC.
+#+attr_html: :class video
+[[https://www.youtube.com/watch?v=OMwCpedu5cs][https://i3.ytimg.com/vi/OMwCpedu5cs/maxresdefault.jpg]]
+
+*** Source code: https://github.com/Akilan1999/p2p-rendering-computation
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: chapter1-introduction
+:END:
+This project focuses on creating a framework for running heavy computational tasks that a regular 
+computer cannot handle easily. These tasks may include graphically demanding video games, rendering 
+3D animations, and performing complex protein folding simulations. The major focus of this project 
+is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P) 
+network to decentralise task execution and increase the computational bandwidth available for 
+such tasks.
+
+The P2PRC framework serves as a foundation for decentralised rendering and computation, 
+providing insights into how tasks can be distributed efficiently across a network of peers. 
+Leveraging the P2PRC approach, this project extends its capabilities to handle a 
+wider range of computationally intensive tasks.
+
+** Motivation
+:PROPERTIES:
+:CUSTOM_ID: motivation
+:END:
+Many of the users rely on our PC / Laptop or servers that belong to a
+server farm to run heavy tasks and with the demand of high creativity
+requires higher computing power. Buying a powerful computer every few
+years to run a bunch of heavy tasks which are not executed as frequently
+to reap the benefits can be inefficient utilization of hardware. On the
+other end, renting servers to run these heavy tasks can be really
+useful. Ethically speaking this is leading to monopolisation of
+computing power similar to what is happening in the web server area. By
+using peer to peer principles it is possible to remove the
+monopolisation factor and increase the bandwidth between the client and
+server.
+
+* Installation
+:PROPERTIES:
+:CUSTOM_ID: installation
+:END:
+
+Over here we will cover the basic steps to get the server and client
+side running.
+
+** Latest release install
+:PROPERTIES:
+:CUSTOM_ID: latest-release-install
+:END:
+https://github.com/Akilan1999/p2p-rendering-computation/releases
+
+** Install from Github master branch
+:PROPERTIES:
+:CUSTOM_ID: install-from-github-master-branch
+:END:
+*** Install Go lang
+:PROPERTIES:
+:CUSTOM_ID: install-go-lang
+:END:
+The entire the implementation of this project is done using Go lang.
+Thus, we need go lang to compile to code to a binary file.
+[[https://golang.org/doc/install][Instructions to install Go lang]]
+
+*** Install Docker
+:PROPERTIES:
+:CUSTOM_ID: install-docker
+:END:
+In this project the choice of virtualization is Docker due to it's wide
+usage in the developer community. In the server module we use the Docker
+Go API to create and interact with the containers.
+
+[[https://docs.docker.com/get-docker/][Instructions to install docker]]
+
+[[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker][Instructions
+to install docker GPU]]
+
+#+begin_example
+// Do ensure that the docker command does not need sudo to run
+sudo chmod 666 /var/run/docker.sock
+#+end_example
+
+*** Build Project and install project
+:PROPERTIES:
+:CUSTOM_ID: build-project-and-install-project
+:END:
+To set up the internal dependencies and build the entire go code into a
+single binary
+
+#+begin_example
+make
+#+end_example
+
+**** For Windows
+:PROPERTIES:
+:CUSTOM_ID: for-windows
+:END:
+To set up P2PRC on Windows, simply run this batch file. *Make sure you
+are not in admin mode when running this.*
+
+#+begin_example
+.\install.bat
+#+end_example
+
+*** Add appropriate paths to =.bashrc=
+:PROPERTIES:
+:CUSTOM_ID: add-appropriate-paths-to-.bashrc
+:END:
+#+begin_example
+export P2PRC=/<PATH>/p2p-rendering-computation
+export PATH=/<PATH>/p2p-rendering-computation:${PATH}
+#+end_example
+
+*** Test if binary works
+:PROPERTIES:
+:CUSTOM_ID: test-if-binary-works
+:END:
+#+begin_example
+p2prc --help
+#+end_example
+
+**** Output:
+:PROPERTIES:
+:CUSTOM_ID: output
+:END:
+#+begin_example
+NAME:
+   p2p-rendering-computation - p2p cli application to create and access VMs in other servers
+
+USAGE:
+   p2prc [global options] command [command options] [arguments...]
+
+VERSION:
+   2.0.0
+
+COMMANDS:
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --Server, -s                           Starts server (default: false) [$SERVER]
+   --UpdateServerList, --us               Update List of Server available based on servers iptables (default: false) [$UPDATE_SERVER_LIST]
+   --ListServers, --ls                    List servers which can render tasks (default: false) [$LIST_SERVERS]
+   --AddServer value, --as value          Adds server IP address to iptables [$ADD_SERVER]
+   --ViewImages value, --vi value         View images available on the server IP address [$VIEW_IMAGES]
+   --CreateVM value, --touch value        Creates Docker container on the selected server [$CREATE_VM]
+   --ContainerName value, --cn value      Specifying the container run on the server side [$CONTAINER_NAME]
+   --BaseImage value, --bi value          Specifying the docker base image to template the dockerfile [$CONTAINER_NAME]
+   --RemoveVM value, --rm value           Stop and Remove Docker container (IP:port) accompanied by container ID via --ID or --id [$REMOVE_VM]
+   --ID value, --id value                 Docker Container ID [$ID]
+   --Ports value, -p value                Number of ports to open for the Docker Container [$NUM_PORTS]
+   --GPU, --gpu                           Create Docker Containers to access GPU (default: false) [$USE_GPU]
+   --Specification value, --specs value   Specs of the server node [$SPECS]
+   --SetDefaultConfig, --dc               Sets a default configuration file (default: false) [$SET_DEFAULT_CONFIG]
+   --NetworkInterfaces, --ni              Shows the network interface in your computer (default: false) [$NETWORK_INTERFACE]
+   --ViewPlugins, --vp                    Shows plugins available to be executed (default: false) [$VIEW_PLUGIN]
+   --TrackedContainers, --tc              View (currently running) containers which have been created from the client side  (default: false) [$TRACKED_CONTAINERS]
+   --ExecutePlugin value, --plugin value  Plugin which needs to be executed [$EXECUTE_PLUGIN]
+   --CreateGroup, --cgroup                Creates a new group (default: false) [$CREATE_GROUP]
+   --Group value, --group value           group flag with argument group ID [$GROUP]
+   --Groups, --groups                     View all groups (default: false) [$GROUPS]
+   --RemoveContainerGroup, --rmcgroup     Remove specific container in the group (default: false) [$REMOVE_CONTAINER_GROUP]
+   --RemoveGroup value, --rmgroup value   Removes the entire group [$REMOVE_GROUP]
+   --MAPPort value, --mp value            Maps port for a specific port provided as the parameter [$MAPPORT]
+   --DomainName value, --dn value         While mapping ports allows to set a domain name to create a mapping in the proxy server [$DOMAINNAME]
+   --Generate value, --gen value          Generates a new copy of P2PRC which can be modified based on your needs [$GENERATE]
+   --ModuleName value, --mod value        New go project module name [$MODULENAME]
+   --PullPlugin value, --pp value         Pulls plugin from git repos [$PULLPLUGIN]
+   --RemovePlugin value, --rp value       Removes plugin [$REMOVEPLUGIN]
+   --AddMetaData value, --amd value       Adds metadata about the current node in the p2p network which is then propagated through the network [$ADDMETADATA]
+   --help, -h                             show help (default: false)
+   --version, -v                          print the version (default: false)
+#+end_example
+
+--------------
+
+* Using basic commands
+:PROPERTIES:
+:CUSTOM_ID: using-basic-commands
+:END:
+*** Start as a server
+:PROPERTIES:
+:CUSTOM_ID: start-as-a-server
+:END:
+
+#+begin_example
+p2prc -s 
+#+end_example
+
+*** View server Specification
+:PROPERTIES:
+:CUSTOM_ID: view-server-specification
+:END:
+#+begin_example
+p2prc --specs=<ip address>
+#+end_example
+
+*** Run container
+:PROPERTIES:
+:CUSTOM_ID: run-container
+:END:
+use the =--gpu= if you know the other machine has a gpu.
+
+#+begin_example
+p2prc --touch=<server ip address> -p <number of ports> --gpu
+#+end_example
+
+*** Remove container
+:PROPERTIES:
+:CUSTOM_ID: remove-container
+:END:
+The docker id is present in the output where you create a container
+
+#+begin_example
+p2prc --rm=<server ip address> --id=<docker container id> 
+#+end_example
+
+*** Adding servers to ip table
+:PROPERTIES:
+:CUSTOM_ID: adding-servers-to-ip-table
+:END:
+#+begin_example
+p2prc --as=<server ip address you want to add> 
+#+end_example
+
+*** Update ip table
+:PROPERTIES:
+:CUSTOM_ID: update-ip-table
+:END:
+#+begin_example
+p2prc --us 
+#+end_example
+
+*** List Servers
+:PROPERTIES:
+:CUSTOM_ID: list-servers
+:END:
+#+begin_example
+p2prc --ls 
+#+end_example
+
+*** View Network interfaces
+:PROPERTIES:
+:CUSTOM_ID: view-network-interfaces
+:END:
+#+begin_example
+p2prc --ni
+#+end_example
+
+*** Viewing Containers created Client side
+:PROPERTIES:
+:CUSTOM_ID: viewing-containers-created-client-side
+:END:
+#+begin_example
+p2prc --tc
+#+end_example
+
+*** Running plugin
+:PROPERTIES:
+:CUSTOM_ID: running-plugin
+:END:
+#+begin_example
+p2prc --plugin <plugin name> --id <container id or group id>
+#+end_example
+
+*** Create group
+:PROPERTIES:
+:CUSTOM_ID: create-group
+:END:
+#+begin_example
+p2prc --cgroup
+#+end_example
+
+*** Add container to group
+:PROPERTIES:
+:CUSTOM_ID: add-container-to-group
+:END:
+#+begin_example
+p2prc --group <group id> --id <container id>
+#+end_example
+
+*** View groups
+:PROPERTIES:
+:CUSTOM_ID: view-groups
+:END:
+#+begin_example
+p2prc --groups
+#+end_example
+
+*** View specific group
+:PROPERTIES:
+:CUSTOM_ID: view-specific-group
+:END:
+#+begin_example
+p2prc --group <group id>
+#+end_example
+
+*** Delete container from group
+:PROPERTIES:
+:CUSTOM_ID: delete-container-from-group
+:END:
+#+begin_example
+p2prc --rmcgroup --group <group id> --id <container id> 
+#+end_example
+
+*** Delete entire group
+:PROPERTIES:
+:CUSTOM_ID: delete-entire-group
+:END:
+#+begin_example
+p2prc --rmgroup <group id>
+#+end_example
+
+*** Pulling plugin from a remote repo
+:PROPERTIES:
+:CUSTOM_ID: pulling-plugin-from-a-remote-repo
+:END:
+#+begin_example
+p2prc --pp <repo link>
+#+end_example
+
+*** Deleting plugin from the plugin directory
+:PROPERTIES:
+:CUSTOM_ID: deleting-plugin-from-the-plugin-directory
+:END:
+#+begin_example
+p2prc --rp <plugin name> 
+#+end_example
+
+*** Added custom metadata about the current node
+:PROPERTIES:
+:CUSTOM_ID: added-custom-metadata-about-the-current-node
+:END:
+#+begin_example
+p2prc --amd "custom metadata"
+#+end_example
+
+*** MapPort and link to domain name
+Allows to expose remote ports from a machine in the P2P network. 
+#+begin_example
+p2prc --mp <port no to map> --dn <domain name to link Mapped port against>
+#+end_example
+**** MapPort in remote machine
+This is to ensure ports on remote machines on the P2PRC can be easily opened. 
+#+begin_example
+p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra <remote server address>
+#+end_example
+
+--------------
+
+* P2P Module Implementation
+:PROPERTIES:
+:CUSTOM_ID: p2p-module-implementation
+:END:
+The P2P module is for managing server information within the network. 
+It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing 
+entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers 
+to determine upload and download speeds. This valuable information enables users to identify nearby 
+servers with optimal performance, enhancing their overall network experience.
+
+#+caption: UML diagram of P2P module
+[[file:Docs/images/p2pmoduleArch.png]
+
+The peer to peer implementation was built from scratch. This is because
+other peer to peer libraries were on the implementation of the
+Distributed hash table. At the current moment all those heavy features
+are not needed because the objective is to search and list all possible
+servers available. The limitation being that to be a part of the network
+the user has to know at least 1 server. The advantage of building from
+scratch makes the module super light and possibility for custom
+functions and structs. The sub topics below will mention the
+implementations of each functionality in depth.
+
+** IP Table
+:PROPERTIES:
+:CUSTOM_ID: ip-table
+:END:
+The ip table file is a json as the format with a list of servers ip
+addresses, latencies, downloads and uploads speeds. The functions
+implemented include read file, write file and remove duplicate IP
+addresses. The remove duplicate IP address function exists because
+sometimes servers IP tables can have the same ip addresses as what the
+client has. The path of the IP table json file is received from the
+configuration module.
+
+#+begin_src json
+{
+  "ip_address": [
+    {
+			"Name": "<hostname of the machine>",
+			"MachineUsername": "<machine username>",
+			"IPV4": "<ipv4 address>",
+			"IPV6": "<ipv6 address (Not used)>",
+			"Latency": <latency to the server>,
+			"Download": <download speed (Not used)>,
+			"Upload": <upload speed (Not used)>,
+			"ServerPort": "<server port no>",
+			"BareMetalSSHPort": "<Baremetal ssh port no>",
+			"NAT": "<boolean representing if the node is behind NAT or not>",
+			"EscapeImplementation": "<NAT traversal implementation>",
+			"ProxyServer": "<If the node listed is acting as a proxy server>",
+			"UnSafeMode": <Unsafe mode if turned on will allow all nodes in the network public keys to be 
+      added to that particular node>",
+			"PublicKey": "<Public key of that particular node>",
+			"CustomInformation": "<custom information passed in through all the nodes in the network>"
+		}
+  ]
+}
+#+end_src
+
+*** Latency
+:PROPERTIES:
+:CUSTOM_ID: latency
+:END:
+The latency is measured in milliseconds. The route /server_info is
+called from the server and time it takes to provide a json response is
+recorded.
+
+** NAT Traversal
+:PROPERTIES:
+:CUSTOM_ID: nat-traversal
+:END:
+P2PRC currently supports TURN for NAT traversal.
+
+** TURN
+:PROPERTIES:
+:CUSTOM_ID: turn
+:END:
+The current TURN implementation used is FRP. The TURN server is also
+required when a P2PRC node is acting as a Server. The TURN server is
+determined based on the Node with the least amount of latency based on
+the Nodes available on the IPTable. Once a TURN server is determined
+there are 2 actions performed. The first one is =/FRPPort= to the TURN
+server to receive a port which is used to generate the external port
+from the TURN server. The flow below describes the workflow.
+
+*** Client mode
+:PROPERTIES:
+:CUSTOM_ID: client-mode
+:END:
+- Call =/FRPPort=
+
+#+begin_example
+http://<turn server ip>:<server port no>/FRPport
+#+end_example
+
+- Call the TURN server in the following manner. The following is a
+  sample code snippet below.
+
+#+begin_src go
+import (
+    "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
+)
+
+func main() {
+  serverPort, err := frp.GetFRPServerPort("http://" + <lowestLatencyIpAddress.Ipv4> + ":" + lowestLatencyIpAddress.ServerPort)
+   if err != nil {
+    return nil, err
+   }
+   // Create 1 second delay to allow FRP server to start
+   time.Sleep(1 * time.Second)
+   // Starts FRP as a client with
+   proxyPort, err := frp.StartFRPClientForServer(<lowestLatencyIpAddress.Ipv4>, serverPort, <the port you want to expose externally>)
+   if err != nil {
+     return nil, err
+   }
+}
+#+end_src
+
+* Language Bindings
+:PROPERTIES:
+:CUSTOM_ID: language-bindings
+:END:
+[[https://en.wikipedia.org/wiki/Language_binding][Language bindings]]
+refers to wrappers to bridge 2 programming languages. This is used in
+P2PRC to extend calling P2PRC functions in other programming languages.
+Currently this is done by generating =.so= and =.h= from the Go
+compiler.
+
+** How to build shared object files
+:PROPERTIES:
+:CUSTOM_ID: how-to-build-shared-object-files
+:END:
+**** The easier way
+:PROPERTIES:
+:CUSTOM_ID: the-easier-way
+:END:
+#+begin_src sh
+# Run
+make sharedObjects
+#+end_src
+
+**** Or the direct way
+:PROPERTIES:
+:CUSTOM_ID: or-the-direct-way
+:END:
+#+begin_src sh
+# Run
+cd Bindings && go build -buildmode=c-shared -o p2prc.so
+#+end_src
+
+**** If successfully built:
+:PROPERTIES:
+:CUSTOM_ID: if-successfully-built
+:END:
+#+begin_src sh
+# Enter into the Bindings directory
+cd Bindings
+# List files
+ls
+# Find files
+p2prc.h p2prc.so
+#+end_src
+
+** Workings under the hood
+:PROPERTIES:
+:CUSTOM_ID: workings-under-the-hood
+:END:
+Below are a sample set of commands to open the bindings implementation.
+
+#+begin_example
+# run
+cd Bindings/
+# list files
+ls 
+# search for file
+Client.go
+#+end_example
+
+*** In Client go
+:PROPERTIES:
+:CUSTOM_ID: in-client-go
+:END:
+There a few things to notice which are different from your standard Go
+programs:
+
+**** 1. We import "C" which means [[https://pkg.go.dev/cmd/cgo][Cgo]] is required.
+:PROPERTIES:
+:CUSTOM_ID: we-import-c-which-means-cgo-is-required.
+:END:
+#+begin_src go
+import "C"
+#+end_src
+
+**** 2. All functions which are required to be called from other programming languages have comment such as.
+:PROPERTIES:
+:CUSTOM_ID: all-functions-which-are-required-to-be-called-from-other-programming-languages-have-comment-such-as.
+:END:
+#+begin_src go
+//export <function name>
+
+// ------------ Example ----------------
+// The function below allows to externally
+// to call the P2PRC function to start containers
+// in a specific node in the know list of nodes
+// in the p2p network.
+// Note: the comment "//export StartContainer".
+
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+ }
+#+end_src
+
+**** 3. While looking through the file (If 2 files are compared it is pretty trivial to notice a common structure).
+:PROPERTIES:
+:CUSTOM_ID: while-looking-through-the-file-if-2-files-are-compared-it-is-pretty-trivial-to-notice-a-common-structure.
+:END:
+#+begin_src go
+// --------- Example ------------
+
+//export StartContainer
+func StartContainer(IP string) (output *C.char) {
+     container, err := client.StartContainer(IP, 0, false, "", "")
+     if err != nil {
+         return C.CString(err.Error())
+     }
+     return ConvertStructToJSONString(container)
+}
+
+//export ViewPlugin
+func ViewPlugin() (output *C.char) {
+    plugins, err := plugin.DetectPlugins()
+    if err != nil {
+        return C.CString(err.Error())
+    }
+    return ConvertStructToJSONString(plugins)
+}
+#+end_src
+
+**** It is easy to notice that:
+:PROPERTIES:
+:CUSTOM_ID: it-is-easy-to-notice-that
+:END:
+- =ConvertStructToJSONString(<go object>)=: This is a helper function
+  that convert a go object to JSON string initially and converts it to
+  =CString=.
+- =(output *C.char)=: This is the return type for most of the functions.
+
+**** A Pseudo code to refer to the common function implementation shape could be represented as:
+:PROPERTIES:
+:CUSTOM_ID: a-pseudo-code-to-refer-to-the-common-function-implementation-shape-could-be-represented-as
+:END:
+#+begin_example
+func <Function name> (output *C.char) {
+      <response>,<error> := <P2PRC function name>(<parameters if needed>)
+      if <error> != nil {
+          return C.CString(<error>.Error())
+      }
+      return ConvertStructToJSONString(<response>)
+}
+#+end_example
+
+** Current languages supported
+:PROPERTIES:
+:CUSTOM_ID: current-languages-supported
+:END:
+*** Python
+
+**** Build sample python program
+:PROPERTIES:
+:CUSTOM_ID: build-sample-python-program
+:END:
+The easier way
+
+#+begin_src sh
+# Run
+make python
+# Expected ouput
+Output is in the Directory Bindings/python/export/
+# Run
+cd Bindings/python/export/
+# list files
+ls
+# Expected output
+SharedObjects/  library.py requirements.txt 
+#+end_src
+
+Above shows a generated folder which consists of a folder called
+"SharedObjects/" which consists of =p2prc.so= and =p2prc.h= files.
+=p2prc.py= refers to a sample python script calling P2PRC go functions.
+To start an any project to extend P2PRC with python, This generated
+folder can copied and created as a new git repo for P2PRC extensions
+scripted or used a reference point as proof of concept that P2PRC can be
+called from other programming languages.
+
+*** Haskell
+P2PRC officially supports Haskell bindings and will further support
+project using Haskell to build orchestrators on top of P2PRC.
+
+[[https://p2prc.akilan.io/Docs/haskell][Read more...]]
+
+* Config Implementation
+:PROPERTIES:
+:CUSTOM_ID: config-implementation
+:END:
+The configuration module is responsible to store basic information of
+absolute paths of files being called in the Go code. In a full-fledged
+Cli the configuration file can be found in the directory /etc/ and from
+there points to location such as where the IP table file is located. In
+the future implementation the config file will have information such as
+number of hops and other parameters to tweak and to improve the
+effectiveness of the peer to peer network. The configuration module was
+implemented using the library Viper. The Viper library automates
+features such as searching in default paths to find out if the
+configuration file is present. If the configuration file is not present
+in the default paths then it auto generates the configuration file. The
+configurations file can be in any format. In this project the
+configuration file was generated using JSON format.
+
+#+begin_src json
+{
+ "MachineName": "pc-74-120.customer.ask4.lan",
+ "IPTable": "/Users/akilan/Documents/p2p-rendering-computation/p2p/iptable/ip_table.json",
+ "DockerContainers": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/",
+ "DefaultDockerFile": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
+ "SpeedTestFile": "/Users/akilan/Documents/p2p-rendering-computation/p2p/50.bin",
+ "IPV6Address": "",
+ "PluginPath": "/Users/akilan/Documents/p2p-rendering-computation/plugin/deploy",
+ "TrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/trackcontainers.json",
+ "ServerPort": "8088",
+ "GroupTrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/grouptrackcontainers.json",
+ "FRPServerPort": "True",
+ "BehindNAT": "True",
+ "CustomConfig": null
+}
+#+end_src
+
+* Abstractions
+:PROPERTIES:
+:CUSTOM_ID: abstractions
+:END:
+
+The Abstractions package consists of black-boxed functions for P2PRC.
+
+** Functions
+:PROPERTIES:
+:CUSTOM_ID: functions
+:END:
+- =Init(<Project name>)=: Initializes P2PRC with all the needed
+  configurations.
+- =Start()=: Starts p2prc as a server and makes it possible to extend by
+  adding other routes and functionality to P2PRC.
+- =MapPort(<port no>)=: On the local machine the port you want to export
+  to world.
+- =StartContainer(<ip address>)=: The machine on the p2p network where
+  you want to spin up a docker container.
+- =RemoveContainer(<ip address>,<container id>)=: Terminate container
+  based on the IP address and container name.
+- =GetSpecs(<ip address>)=: Get specs of a machine on the network based
+  on the IP address.
+- =ViewIPTable()=: View the IP table which about nodes in the network.
+- =UpdateIPTable()=: Force update IP table to learn about new nodes
+  faster.
+  
+* NAT Traversal
+:PROPERTIES:
+:CUSTOM_ID: nat-traversal
+:END:
+P2PRC currently supports TURN for NAT traversal.
+
+** TURN
+:PROPERTIES:
+:CUSTOM_ID: turn
+:END:
+The current TURN implementation used is FRP. The TURN server is also
+required when a P2PRC node is acting as a Server. The TURN server is
+determined based on the Node with the least amount of latency based on
+the Nodes available on the IPTable. Once a TURN server is determined
+there are 2 actions performed. The first one is =/FRPPort= to the TURN
+server to receive a port which is used to generate the external port
+from the TURN server. The flow below describes the workflow.
+
+* Client mode
+:PROPERTIES:
+:CUSTOM_ID: client-mode
+:END:
+- Call =/FRPPort=
+
+#+begin_example
+http://<turn server ip>:<server port no>/FRPport
+#+end_example
+
+- Call the TURN server in the following manner. The following is a
+  sample code snippet below.
+
+#+begin_src go
+import (
+    "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
+)
+
+func main() {
+  serverPort, err := frp.GetFRPServerPort("http://" + <lowestLatencyIpAddress.Ipv4> + ":" + lowestLatencyIpAddress.ServerPort)
+   if err != nil {
+    return nil, err
+   }
+   // Create 1 second delay to allow FRP server to start
+   time.Sleep(1 * time.Second)
+   // Starts FRP as a client with
+   proxyPort, err := frp.StartFRPClientForServer(<lowestLatencyIpAddress.Ipv4>, serverPort, <the port you want to expose externally>)
+   if err != nil {
+     return nil, err
+   }
+}
+#+end_src
+
+
+
+
+* Blog posts
+** Self host within 5 minutes any program
+
+ - Author: [[http://akilan.io/][Akilan Selvacoumar]]
+ - Date: 28-01-2025
+
+   
+ - Video tutorial:
+ #+attr_html: :class video
+ [[https://youtu.be/rN4SiVowg5E][https://i3.ytimg.com/vi/rN4SiVowg5E/maxresdefault.jpg]]
+
+This is a fun expirement for anyone to try to quickly run a server and
+quickly do a map port and domain name mapping in a single command.
+
+*** 1. Find a program you want to run
+       Let's try to setup a really easy program (Let's do with Linkwarden
+       with docker compose :) ). This is under the assumption you have docker
+       compose installed on your local machine.
+       
+**** Let's run Linkwarden using docker compose and P2PRC
+       [[https://docs.linkwarden.app/self-hosting/installation][Installation instructions]]:
+       #+BEGIN_SRC
+mkdir linkwarden && cd linkwarden
+curl -O https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/docker-compose.yml
+curl -L https://raw.githubusercontent.com/linkwarden/linkwarden/refs/heads/main/.env.sample -o ".env"
+       #+END_SRC
+
+       Environment configuration
+       #+BEGIN_SRC
+vim .env
+
+# Change values
+NEXTAUTH_URL=https://<DOMAIN NAME>/api/v1/auth
+NEXTAUTH_SECRET=VERY_SENSITIVE_SECRET
+POSTGRES_PASSWORD=CUSTOM_POSTGRES_PASSWORD
+       #+END_SRC
+       Run linkwarden!
+       #+BEGIN_SRC
+docker compose up
+       #+END_SRC
+
+       If setup correctly linkwarden should
+       be running.
+       Local link: http://localhost:3000
+
+     Time to setup P2PRC
+     [[https://p2prc.akilan.io/Docs/#build-project-and-install-project][Installation Instructions]]
+
+     Run p2prc as a background
+      #+BEGIN_SRC
+p2prc -s &
+      #+END_SRC
+
+     Run map port and domain mapping
+     #+BEGIN_SRC
+p2prc --mp 3000 --dn <DOMAIN NAME>
+     #+END_SRC
+
+     Sample response
+     #+BEGIN_SRC
+ {
+	"IPAddress": "217.76.63.222",
+	"PortNo": "61582",
+	"EntireAddress": "217.76.63.222:61582"
+}
+     #+END_SRC
+
+     Add DNS entry
+     #+BEGIN_SRC
+A entry 217.76.63.222
+     #+END_SRC
+
+     Your done now just head to the DOMAIN NAME you added.
+     ex: https://linkwarden.akilan.io
+   
+       
+       
+
+       
+       
+       
+       
+
+
+* Ideas for future potencial features
+Consists of personal loideas for the future of P2PRC.
+At moment only has main contributors writiing to this.
+
+** To support hetrogenous set of Nodes that cannot run P2PRC
+This stems from a personal issue I have when doing research
+on [[https://github.com/CTSRD-CHERI/cheribsd][CheriBSD]] kernel. For my research I am using the ARM morello
+which is a 128bit ARMv8 processor. At the moment Go programs
+can cannot compile and run inside the CPU. This means I cannot
+run P2PRC at the moment inside the ARM morello to remotely access
+it when it's behind NAT using P2PRC. This would indeed be a common
+problem when running against various Architectures that do not
+support running P2PRC. As you will see soon this also creates
+oppurtunity space to scale faster to nodes in a local network
+and would introduce a new layer fault tolerance within a local
+network nodes.
+
+*** Assumptions:
+       - I have a Morello board that cannot run P2PRC
+       - The Morello has a local IP address (ex: 192.168.0.10)
+       - I have 2 laptops running P2PRC in that local network.
+       - This means I have 2 ways to access the Morello board: Which is to SSH
+	 into either 2 laptops and then SSH into 192.168.0.10 to gain access
+	 to the board. Wouldn't it be great to automate this whole layer and
+	 as well look into custom tasks into the hetrogenous hardware.
+*** Set of interesting possible:
+     We build a cool set possibilities before and use this to build up the implementation
+     plan.
+       - We can use P2PRC access the morello board remotely in a single command.
+       - We can use the P2PRC protocol to run servers inside the morello board via traversed
+	 node locally which can access that Node.
+       - Spin servers on node not running P2PRC using the P2PRC standard abstractions.
+       - Auto-setup P2PRC nodes with just SSH access via potencially a DSL.
+       - A neat use case for CHERI for instance would be use the architecture to run light
+	 weight hypervisors. 
+*** Implementation
+     - To use implementations similar to [[https://linux.die.net/man/1/socat][socat]] to ensure we can bind address of local
+       nodes to a node running P2PRC and the node running P2PRC can do a local map port.
+     - We are working on hardening the implementation of the --mp (Map port) to even
+       map ports to machines which remotely running P2PRC. This means of instance I
+       can issue a command to the Morello board without the morello board being in
+       my local network.
+     - We would want to implement the exsisting P2PRC public key mechanism as well so that
+       other nodes can access the Morello board who have permission access.
+
+#+CAPTION: Implementation idea (To be improved upon)
+ [[./Docs/images/P2PRCRemoteNodes.png]]

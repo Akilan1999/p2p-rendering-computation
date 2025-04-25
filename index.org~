@@ -3,17 +3,17 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/search.css"/>
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
-#+attr_html: :width 300px
-[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
+#+attr_html: :width 300px :align center
+[[./artwork/p2prc-logos/Colored-On-Light-Image.png]]
+
+* Guide through video
+*** The video below shows the setup and usage of P2PRC.
+#+attr_html: :class video
+[[https://www.youtube.com/watch?v=OMwCpedu5cs][https://i3.ytimg.com/vi/OMwCpedu5cs/maxresdefault.jpg]]
 
 * Introduction
 :PROPERTIES:
 :CUSTOM_ID: chapter1-introduction
-:END:
-
-** Abstract
-:PROPERTIES:
-:CUSTOM_ID: abstract
 :END:
 This project focuses on creating a framework for running heavy computational tasks that a regular 
 computer cannot handle easily. These tasks may include graphically demanding video games, rendering 
@@ -365,7 +365,7 @@ to determine upload and download speeds. This valuable information enables users
 servers with optimal performance, enhancing their overall network experience.
 
 #+caption: UML diagram of P2P module
-[[file:images/p2pmoduleArch.png]]
+[[file:Docs/images/p2pmoduleArch.png]
 
 The peer to peer implementation was built from scratch. This is because
 other peer to peer libraries were on the implementation of the
@@ -906,4 +906,4 @@ network nodes.
        other nodes can access the Morello board who have permission access.
 
 #+CAPTION: Implementation idea (To be improved upon)
- [[./images/P2PRCRemoteNodes.png]]
+ [[./Docs/images/P2PRCRemoteNodes.png]]

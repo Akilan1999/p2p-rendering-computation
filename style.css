@@ -1,32 +1,29 @@
-body {
-    font-family: sans-serif;
+#table-of-contents h2{
+    z-index: 200;
+    background-color: #b96c29;
+    text-align: center;
+    padding: 0.809em;
+    display: block;
+    color: #fcfcfc;
+    font-size: 100%;
+    margin-bottom: 0.809em;
 }
 
-span#discordJoin {
-    color: red;
+#search-results li {
+    background-color: #b96c29;
+    color: white;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    /* General Page Changing */
-    body {
-        background: #121212; /* Background Color */
-        color: #FFFFFF; /* Text Color */
-    }
-
-    a:link{ /* Unvisited Link */
-        color: #03DAC5;
-    }
-
-    a:visited { /* Visited Link */
-        color: #BB86FC;
-    }
-
-    a:hover { /* Mouse over Link */
-        color: #018786;
-    }
-
-    span#discordJoin { /* Text Color Change */
-        color: #cc0227;
-    }
+h4,h5,h6{
+    color: #b96c29;
+    font-weight:300;
 }
+
+.video {
+    box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3);
+  }
