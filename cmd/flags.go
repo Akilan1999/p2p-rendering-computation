@@ -41,6 +41,8 @@ var (
 	PullPlugin   string
 	RemovePlugin string
 	AddMetaData  string
+	AddRootNode  bool
+	IP           string
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -271,5 +273,19 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Adds metadata about the current node in the p2p network which is then propagated through the network",
 		EnvVars:     []string{"ADDMETADATA"},
 		Destination: &AddMetaData,
+	},
+	&cli.BoolFlag{
+		Name:        "AddRootNode",
+		Aliases:     []string{"arn"},
+		Usage:       "Adds initial root node to talk to",
+		EnvVars:     []string{"ADDROOTNODE"},
+		Destination: &AddRootNode,
+	},
+	&cli.StringFlag{
+		Name:        "IPAddress",
+		Aliases:     []string{"ip"},
+		Usage:       "IP address",
+		EnvVars:     []string{"IP"},
+		Destination: &IP,
 	},
 }

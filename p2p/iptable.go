@@ -29,9 +29,9 @@ type IpAddress struct {
 	Upload               float64       `json:"Upload"`
 	ServerPort           string        `json:"ServerPort"`
 	BareMetalSSHPort     string        `json:"BareMetalSSHPort"`
-	NAT                  string        `json:"NAT"`
+	NAT                  bool          `json:"NAT"`
 	EscapeImplementation string        `json:"EscapeImplementation"`
-	ProxyServer          string        `json:"ProxyServer"`
+	ProxyServer          bool          `json:"ProxyServer"`
 	UnSafeMode           bool          `json:"UnSafeMode"`
 	PublicKey            string        `json:"PublicKey"`
 	CustomInformation    string        `json:"CustomInformation"`
@@ -161,7 +161,7 @@ func (table *IpAddresses) RemoveDuplicates() error {
 			}
 		}
 
-		if table.IpAddress[i].NAT == "True" && table.IpAddress[i].EscapeImplementation == "None" {
+		if table.IpAddress[i].NAT && table.IpAddress[i].EscapeImplementation == "None" {
 			Exists = true
 		}
 

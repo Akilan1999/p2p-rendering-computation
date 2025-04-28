@@ -44,9 +44,9 @@ class Node:
     Upload: int
     ServerPort: str
     BareMetalSSHPort: str
-    NAT: str
+    NAT: bool
     EscapeImplementation: str
-    ProxyServer: str
+    ProxyServer: bool
     UnSafeMode: bool
     PublicKey: str
     CustomInformation: str
@@ -97,6 +97,21 @@ def ListNodes():
     ipTableObject = json.loads((str(ipTable).strip("b'")))
     dat: IPAddress = dacite.from_dict(IPAddress,ipTableObject)
     return dat
+
+# Add a root node to P2RRC and overwrites all other nodes.
+# To be only added before the network started and with
+# the intention of a fresh protocol.
+def AddRootNode(ip="", port="") -> bool:
+    ip = go_string(c_char_p(ip.encode('utf-8')), len(ip))
+    port = go_string(c_char_p(port.encode('utf-8')), len(port))
+
+    p2prc.AddRootNode.restype = c_char_p
+    res = p2prc.AddRootNode(ip, port)
+    if str(res).strip("b'") == "Success":
+        return True
+    return False
+
+
 
 # python function to pass-through custom
 # information to interpret which can be
