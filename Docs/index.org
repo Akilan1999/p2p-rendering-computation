@@ -4,7 +4,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
 #+attr_html: :width 300px
-[[../artwork/p2prc-logos/Colored-On-Light-Image.png]]
+[[./Colored-On-Light-Image.png]]
 
 * Guide through video
 *** The video below shows the setup and usage of P2PRC.
@@ -355,6 +355,14 @@ p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra 
 #+end_example
 
 --------------
+
+*** Add root node
+Adds a root node to P2RRC and overwrites all other nodes in the ip table. 
+To be only added before the network is started and with
+the intention of a fresh instance.
+#+begin_example
+p2prc --arn --ip <root node ip address> -p <root node port no>
+#+end_example
 
 * P2P Module Implementation
 :PROPERTIES:

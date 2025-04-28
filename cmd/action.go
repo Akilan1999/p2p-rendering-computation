@@ -238,7 +238,7 @@ var CliAction = func(ctx *cli.Context) error {
 func standardOutput(err error, i interface{}) {
 	if err != nil {
 		fmt.Println(err)
-	} else if i != nil {
+	} else if i == nil {
 		fmt.Println("Success")
 	} else {
 		client.PrettyPrint(i)

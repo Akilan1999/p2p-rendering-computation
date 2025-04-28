@@ -2,11 +2,11 @@ package main
 
 import "C"
 import (
-    "encoding/json"
-    "time"
+	"encoding/json"
+	"time"
 
-    "github.com/Akilan1999/p2p-rendering-computation/abstractions"
-    "github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
+	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
+	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
 )
 
 // The Client package where data-types
@@ -18,20 +18,20 @@ import (
 
 //export StartContainer
 func StartContainer(IP string) (output *C.char) {
-    container, err := abstractions.StartContainer(IP)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return ConvertStructToJSONString(container)
+	container, err := abstractions.StartContainer(IP)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return ConvertStructToJSONString(container)
 }
 
 //export RemoveContainer
 func RemoveContainer(IP string, ID string) (output *C.char) {
-    err := abstractions.RemoveContainer(IP, ID)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return C.CString("Success")
+	err := abstractions.RemoveContainer(IP, ID)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString("Success")
 }
 
 // --------------------------------- Plugin Control ----------------------------------------
@@ -77,20 +77,20 @@ func RemoveContainer(IP string, ID string) (output *C.char) {
 
 //export GetSpecs
 func GetSpecs(IP string) (output *C.char) {
-    specs, err := abstractions.GetSpecs(IP)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return ConvertStructToJSONString(specs)
+	specs, err := abstractions.GetSpecs(IP)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return ConvertStructToJSONString(specs)
 }
 
 //export Init
 func Init(customConfig string) (output *C.char) {
-    init, err := abstractions.Init(customConfig)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return ConvertStructToJSONString(init)
+	init, err := abstractions.Init(customConfig)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return ConvertStructToJSONString(init)
 
 }
 
@@ -98,81 +98,90 @@ func Init(customConfig string) (output *C.char) {
 
 //export ViewIPTable
 func ViewIPTable() (output *C.char) {
-    table, err := abstractions.ViewIPTable()
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return ConvertStructToJSONString(table)
+	table, err := abstractions.ViewIPTable()
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return ConvertStructToJSONString(table)
 }
 
 //export UpdateIPTable
 func UpdateIPTable() (output *C.char) {
-    err := abstractions.UpdateIPTable()
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return C.CString("Success")
+	err := abstractions.UpdateIPTable()
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString("Success")
 }
 
 //export EscapeFirewall
 func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internalPort string) (output *C.char) {
-    // Get free port from P2PRC server node
-    serverPort, err := frp.GetFRPServerPort("http://" + HostOutsideNATIP + ":" + HostOutsideNATPort)
+	// Get free port from P2PRC server node
+	serverPort, err := frp.GetFRPServerPort("http://" + HostOutsideNATIP + ":" + HostOutsideNATPort)
 
-    if err != nil {
-        return C.CString(err.Error())
-    }
+	if err != nil {
+		return C.CString(err.Error())
+	}
 
-    time.Sleep(5 * time.Second)
+	time.Sleep(5 * time.Second)
 
-    ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "")
-    if err != nil {
-        return C.CString(err.Error())
-    }
+	ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "")
+	if err != nil {
+		return C.CString(err.Error())
+	}
 
-    return C.CString(ExposedPort)
+	return C.CString(ExposedPort)
 }
 
 //export MapPort
 func MapPort(Port string, DomainName string, ServerAddress string) *C.char {
-    Address, err := abstractions.MapPort(Port, DomainName, ServerAddress)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return C.CString(Address.EntireAddress)
+	Address, err := abstractions.MapPort(Port, DomainName, ServerAddress)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString(Address.EntireAddress)
 }
 
 //export CustomInformation
 func CustomInformation(CustomInformation string) *C.char {
-    err := abstractions.AddCustomInformation(CustomInformation)
-    if err != nil {
-        return C.CString(err.Error())
-    }
-    return C.CString("Success")
+	err := abstractions.AddCustomInformation(CustomInformation)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString("Success")
+}
+
+//export AddRootNode
+func AddRootNode(IP string, Port string) *C.char {
+	err := abstractions.AddRootNode(IP, Port)
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return C.CString("Success")
 }
 
 // --------------------------------- Controlling Server  ----------------------------------------
 
 //export Server
 func Server() (output *C.char) {
-    _, err := abstractions.Start()
-    if err != nil {
-        return C.CString(err.Error())
-    }
+	_, err := abstractions.Start()
+	if err != nil {
+		return C.CString(err.Error())
+	}
 
-    return ConvertStructToJSONString("")
+	return ConvertStructToJSONString("")
 }
 
 // --------------------------------- Helper Functions  ----------------------------------------
 
 func ConvertStructToJSONString(Struct interface{}) *C.char {
-    jsonBytes, err := json.Marshal(Struct)
-    if err != nil {
-        return C.CString(err.Error())
-    }
+	jsonBytes, err := json.Marshal(Struct)
+	if err != nil {
+		return C.CString(err.Error())
+	}
 
-    // Convert the JSON bytes to a string
-    return C.CString(string(jsonBytes))
+	// Convert the JSON bytes to a string
+	return C.CString(string(jsonBytes))
 }
 
 func main() {}
