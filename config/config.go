@@ -29,8 +29,8 @@ type Config struct {
 	ServerPort               string
 	ProxyPort                string
 	GroupTrackContainersPath string
-	FRPServerPort            string
-	BehindNAT                string
+	FRPServerPort            bool
+	BehindNAT                bool
 	IPTableKey               string
 	PublicKeyFile            string
 	PrivateKeyFile           string
