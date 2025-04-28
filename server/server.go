@@ -255,7 +255,7 @@ func Server() (*gin.Engine, error) {
 	// TODO check if IPV6 or Proxy port is specified
 	// if not update current entry as proxy address
 	// with appropriate port on IP Table
-	if config.BehindNAT == "True" {
+	if config.BehindNAT {
 		if err != nil {
 			return nil, err
 		}
@@ -267,7 +267,7 @@ func Server() (*gin.Engine, error) {
 		for i, _ := range table.IpAddress {
 			// Checks if the ping is the lowest and if the following node is acting as a proxy
 			//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-			if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
+			if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && !table.IpAddress[i].NAT {
 				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
 				lowestLatencyIpAddress = table.IpAddress[i]
 			}
@@ -291,8 +291,8 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 			ProxyIpAddr.ServerPort = proxyPort
 			ProxyIpAddr.Name = config.MachineName
-			ProxyIpAddr.NAT = "False"
-			ProxyIpAddr.ProxyServer = "False"
+			ProxyIpAddr.NAT = false
+			ProxyIpAddr.ProxyServer = false
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
 			if config.BareMetal {
@@ -314,9 +314,9 @@ func Server() (*gin.Engine, error) {
 		}
 		ProxyIpAddr.ServerPort = config.ServerPort
 		ProxyIpAddr.Name = config.MachineName
-		ProxyIpAddr.NAT = "False"
+		ProxyIpAddr.NAT = false
 		if config.ProxyPort != "" {
-			ProxyIpAddr.ProxyServer = "True"
+			ProxyIpAddr.ProxyServer = true
 		}
 		ProxyIpAddr.EscapeImplementation = ""
 		if config.BareMetal {
@@ -425,9 +425,9 @@ func MapPort(port string, domainName string) (string, string, error) {
 	for i, _ := range table.IpAddress {
 		// Checks if the ping is the lowest and if the following node is acting as a proxy
 		//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-		if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].NAT != "" {
+		if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && !table.IpAddress[i].NAT {
 			// Filter based on nodes with proxy enabled
-			if domainName != "" && table.IpAddress[i].ProxyServer == "True" {
+			if domainName != "" && table.IpAddress[i].ProxyServer {
 				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
 				lowestLatencyIpAddress = table.IpAddress[i]
 				continue
@@ -466,7 +466,7 @@ func MapPort(port string, domainName string) (string, string, error) {
 		ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 		ProxyIpAddr.ServerPort = proxyPort
 		ProxyIpAddr.Name = config.MachineName
-		ProxyIpAddr.NAT = "False"
+		ProxyIpAddr.NAT = false
 		ProxyIpAddr.EscapeImplementation = "FRP"
 
 		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)

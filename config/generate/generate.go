@@ -78,9 +78,9 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.GroupTrackContainersPath = defaultPath + "client/trackcontainers/grouptrackcontainers.json"
 		Defaults.ServerPort = "8088"
 		Defaults.ProxyPort = ""
-		Defaults.FRPServerPort = "True"
+		Defaults.FRPServerPort = true
 		Defaults.CustomConfig = CustomConfig
-		Defaults.BehindNAT = "True"
+		Defaults.BehindNAT = true
 		Defaults.DockerRunLogs = "/tmp/"
 		// Generate a random key to be added to IPTable
 		Defaults.IPTableKey = String(12)
