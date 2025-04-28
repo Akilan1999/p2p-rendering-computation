@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
@@ -87,11 +88,7 @@ var CliAction = func(ctx *cli.Context) error {
 	// Displays all images available on the server side
 	if ViewImages != "" {
 		imageRes, err := client.ViewContainers(ViewImages)
-
-		if err != nil {
-			fmt.Print(err)
-		}
-		client.PrettyPrint(imageRes)
+		standardOutput(err, imageRes)
 	}
 
 	// Function called to stop and remove server from Docker
@@ -100,9 +97,7 @@ var CliAction = func(ctx *cli.Context) error {
 			fmt.Println("provide container ID via --ID or --id")
 		} else {
 			err := client.RemoveContianer(RemoveVM, ID)
-			if err != nil {
-				fmt.Print(err)
-			}
+			standardOutput(err, nil)
 		}
 	}
 
@@ -119,58 +114,40 @@ var CliAction = func(ctx *cli.Context) error {
 		// Calls function to do Api call to start the container on the server side
 		imageRes, err := client.StartContainer(CreateVM, PortsInt, GPU, ContainerName, BaseImage)
 
-		if err != nil {
-			fmt.Print(err)
-		}
-		client.PrettyPrint(imageRes)
+		standardOutput(err, imageRes)
 	}
 
 	//Call if specs flag is called
 	if Specs != "" {
 		specs, err := client.GetSpecs(Specs)
-		if err != nil {
-			return err
-		}
-
-		// Pretty print
-		client.PrettyPrint(specs)
+		standardOutput(err, specs)
 	}
 
 	//Sets default paths to the config file
 	if SetDefaultConfig {
 		_, err := generate.SetDefaults("P2PRC", false, nil, false)
-		if err != nil {
-			fmt.Print(err)
-		}
+		standardOutput(err, nil)
 	}
 
 	//If the network interface flag is called
 	// Then all the network interfaces are displayed
 	if NetworkInterface {
 		err := p2p.ViewNetworkInterface()
-		if err != nil {
-			fmt.Print(err)
-		}
+		standardOutput(err, nil)
 	}
 
 	// If the view plugin flag is called then display all
 	// plugins available
 	if ViewPlugin {
 		plugins, err := plugin.DetectPlugins()
-		if err != nil {
-			fmt.Print(err)
-		}
-		client.PrettyPrint(plugins)
+		standardOutput(err, plugins)
 	}
 
 	// If the flag Tracked Container is called or the flag
 	// --tc
 	if TrackedContainers {
 		err, trackedContainers := client.ViewTrackedContainers()
-		if err != nil {
-			fmt.Print(err)
-		}
-		client.PrettyPrint(trackedContainers)
+		standardOutput(err, trackedContainers)
 	}
 
 	//Executing plugin when the plugin flag is called
@@ -179,14 +156,11 @@ var CliAction = func(ctx *cli.Context) error {
 		// To execute plugin requires the container ID or group ID provided when being executed
 		if ID != "" {
 			err := plugin.CheckRunPlugin(ExecutePlugin, ID)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				fmt.Println("Success")
-			}
-		} else {
-			fmt.Println("provide container ID via --ID or --id")
+			standardOutput(err, nil)
 		}
+		//else {
+		//	fmt.Println("provide container ID via --ID or --id")
+		//}
 
 	}
 
@@ -194,10 +168,7 @@ var CliAction = func(ctx *cli.Context) error {
 	// Creates new group and outputs JSON file
 	if CreateGroup {
 		group, err := client.CreateGroup()
-		if err != nil {
-			return err
-		}
-		client.PrettyPrint(group)
+		standardOutput(err, group)
 	}
 
 	// Actions to be performed when the
@@ -208,26 +179,14 @@ var CliAction = func(ctx *cli.Context) error {
 		// --rmcgroup --id <contianer id>
 		if RemoveContainerGroup && ID != "" {
 			group, err := client.RemoveContainerGroup(ID, Group)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				client.PrettyPrint(group)
-			}
+			standardOutput(err, group)
 		} else if ID != "" { // Add container to group based on group ID provided
 			// --id <Container ID>
 			group, err := client.AddContainerToGroup(ID, Group)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				client.PrettyPrint(group)
-			}
+			standardOutput(err, group)
 		} else { // View all information about current group
 			group, err := client.GetGroup(Group)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				client.PrettyPrint(group)
-			}
+			standardOutput(err, group)
 		}
 	}
 
@@ -236,63 +195,52 @@ var CliAction = func(ctx *cli.Context) error {
 	// --rmgroup
 	if RemoveGroup != "" {
 		err := client.RemoveGroup(RemoveGroup)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Group Removed")
-		}
+		standardOutput(err, nil)
 	}
 
 	// Execute Function to view all groups
 	if Groups {
 		groups, err := client.ReadGroup()
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			client.PrettyPrint(groups)
-		}
+		standardOutput(err, groups)
 	}
 
 	//--------------------------------
 
 	if PullPlugin != "" {
 		err := plugin.DownloadPlugin(PullPlugin)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Success")
-		}
+		standardOutput(err, nil)
 	}
 
 	if RemovePlugin != "" {
 		err := plugin.DeletePlugin(RemovePlugin)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Success")
-		}
+		standardOutput(err, nil)
 	}
 
 	if AddMetaData != "" {
 		err := clientIPTable.AddCustomInformationToIPTable(AddMetaData)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Success")
-		}
+		standardOutput(err, nil)
 	}
 
 	if MAPPort != "" {
 		address, err := client.MAPPort(MAPPort, DomainName, RemoteAddress)
-		if err != nil {
-			return err
-		}
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			client.PrettyPrint(address)
-		}
+		standardOutput(err, address)
+	}
+
+	// Action called to add root node to network
+	if AddRootNode && IP != "" && Ports != "" {
+		err := abstractions.AddRootNode(IP, Ports)
+		standardOutput(err, nil)
 	}
 
 	return nil
+}
+
+func standardOutput(err error, i interface{}) {
+	if err != nil {
+		fmt.Println(err)
+	} else if i != nil {
+		fmt.Println("Success")
+	} else {
+		client.PrettyPrint(i)
+	}
 }

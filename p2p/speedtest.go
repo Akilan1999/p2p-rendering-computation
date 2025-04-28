@@ -95,7 +95,7 @@ func (ip *IpAddresses) SpeedTestUpdatedIPTable() error {
 			}
 			// Checks if both the IPV4 addresses are the same or the IPV6 address is not
 			// an empty string and IPV6 address are the same
-			if (ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 && targets.IpAddress[i].NAT == "True") || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6) {
+			if (ip.IpAddress[k].Ipv4 == targets.IpAddress[i].Ipv4 && targets.IpAddress[i].NAT) || (targets.IpAddress[i].Ipv6 != "" && ip.IpAddress[k].Ipv6 == targets.IpAddress[i].Ipv6) {
 				Exists = true
 				break
 			}
