@@ -64,6 +64,9 @@ def StartServer():
     # Starting P2PRC as a server mode
     p2prc.Server()
 
+def Init():
+    p2prc.Init("")
+
 # Class to create string to pass as string function 
 # parameter to shared object file
 class go_string(Structure):
