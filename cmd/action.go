@@ -7,7 +7,6 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
-	"github.com/Akilan1999/p2p-rendering-computation/plugin"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
 	"github.com/urfave/cli/v2"
 )
@@ -86,36 +85,36 @@ var CliAction = func(ctx *cli.Context) error {
 	}
 
 	// Displays all images available on the server side
-	if ViewImages != "" {
-		imageRes, err := client.ViewContainers(ViewImages)
-		standardOutput(err, imageRes)
-	}
-
-	// Function called to stop and remove server from Docker
-	if RemoveVM != "" {
-		if ID == "" {
-			fmt.Println("provide container ID via --ID or --id")
-		} else {
-			err := client.RemoveContianer(RemoveVM, ID)
-			standardOutput(err, nil)
-		}
-	}
+	//if ViewImages != "" {
+	//	imageRes, err := client.ViewContainers(ViewImages)
+	//	standardOutput(err, imageRes)
+	//}
+	//
+	//// Function called to stop and remove server from Docker
+	//if RemoveVM != "" {
+	//	if ID == "" {
+	//		fmt.Println("provide container ID via --ID or --id")
+	//	} else {
+	//		err := client.RemoveContianer(RemoveVM, ID)
+	//		standardOutput(err, nil)
+	//	}
+	//}
 
 	//Call function to create Docker container
-	if CreateVM != "" {
-
-		var PortsInt int
-
-		if Ports != "" {
-			// Convert Get Request value to int
-			fmt.Sscanf(Ports, "%d", &PortsInt)
-		}
-
-		// Calls function to do Api call to start the container on the server side
-		imageRes, err := client.StartContainer(CreateVM, PortsInt, GPU, ContainerName, BaseImage)
-
-		standardOutput(err, imageRes)
-	}
+	//if CreateVM != "" {
+	//
+	//	var PortsInt int
+	//
+	//	if Ports != "" {
+	//		// Convert Get Request value to int
+	//		fmt.Sscanf(Ports, "%d", &PortsInt)
+	//	}
+	//
+	//	// Calls function to do Api call to start the container on the server side
+	//	imageRes, err := client.StartContainer(CreateVM, PortsInt, GPU, ContainerName, BaseImage)
+	//
+	//	standardOutput(err, imageRes)
+	//}
 
 	//Call if specs flag is called
 	if Specs != "" {
@@ -138,83 +137,83 @@ var CliAction = func(ctx *cli.Context) error {
 
 	// If the view plugin flag is called then display all
 	// plugins available
-	if ViewPlugin {
-		plugins, err := plugin.DetectPlugins()
-		standardOutput(err, plugins)
-	}
+	//if ViewPlugin {
+	//	plugins, err := plugin.DetectPlugins()
+	//	standardOutput(err, plugins)
+	//}
 
 	// If the flag Tracked Container is called or the flag
 	// --tc
-	if TrackedContainers {
-		err, trackedContainers := client.ViewTrackedContainers()
-		standardOutput(err, trackedContainers)
-	}
+	//if TrackedContainers {
+	//	err, trackedContainers := client.ViewTrackedContainers()
+	//	standardOutput(err, trackedContainers)
+	//}
 
 	//Executing plugin when the plugin flag is called
 	// --plugin
-	if ExecutePlugin != "" {
-		// To execute plugin requires the container ID or group ID provided when being executed
-		if ID != "" {
-			err := plugin.CheckRunPlugin(ExecutePlugin, ID)
-			standardOutput(err, nil)
-		}
-		//else {
-		//	fmt.Println("provide container ID via --ID or --id")
-		//}
-
-	}
+	//if ExecutePlugin != "" {
+	//	// To execute plugin requires the container ID or group ID provided when being executed
+	//	if ID != "" {
+	//		err := plugin.CheckRunPlugin(ExecutePlugin, ID)
+	//		standardOutput(err, nil)
+	//	}
+	//	//else {
+	//	//	fmt.Println("provide container ID via --ID or --id")
+	//	//}
+	//
+	//}
 
 	// Executing function to create new group
 	// Creates new group and outputs JSON file
-	if CreateGroup {
-		group, err := client.CreateGroup()
-		standardOutput(err, group)
-	}
+	//if CreateGroup {
+	//	group, err := client.CreateGroup()
+	//	standardOutput(err, group)
+	//}
 
 	// Actions to be performed when the
 	// group flag is called
 	// --group <Group ID>
-	if Group != "" {
-		// Remove container from group based on group ID provided
-		// --rmcgroup --id <contianer id>
-		if RemoveContainerGroup && ID != "" {
-			group, err := client.RemoveContainerGroup(ID, Group)
-			standardOutput(err, group)
-		} else if ID != "" { // Add container to group based on group ID provided
-			// --id <Container ID>
-			group, err := client.AddContainerToGroup(ID, Group)
-			standardOutput(err, group)
-		} else { // View all information about current group
-			group, err := client.GetGroup(Group)
-			standardOutput(err, group)
-		}
-	}
+	//if Group != "" {
+	//	// Remove container from group based on group ID provided
+	//	// --rmcgroup --id <contianer id>
+	//	if RemoveContainerGroup && ID != "" {
+	//		group, err := client.RemoveContainerGroup(ID, Group)
+	//		standardOutput(err, group)
+	//	} else if ID != "" { // Add container to group based on group ID provided
+	//		// --id <Container ID>
+	//		group, err := client.AddContainerToGroup(ID, Group)
+	//		standardOutput(err, group)
+	//	} else { // View all information about current group
+	//		group, err := client.GetGroup(Group)
+	//		standardOutput(err, group)
+	//	}
+	//}
 
 	// Execute function to remove entire group
 	// when remove group flag is called
 	// --rmgroup
-	if RemoveGroup != "" {
-		err := client.RemoveGroup(RemoveGroup)
-		standardOutput(err, nil)
-	}
+	//if RemoveGroup != "" {
+	//	err := client.RemoveGroup(RemoveGroup)
+	//	standardOutput(err, nil)
+	//}
 
 	// Execute Function to view all groups
-	if Groups {
-		groups, err := client.ReadGroup()
-		standardOutput(err, groups)
-	}
+	//if Groups {
+	//	groups, err := client.ReadGroup()
+	//	standardOutput(err, groups)
+	//}
 
 	//--------------------------------
 
-	if PullPlugin != "" {
-		err := plugin.DownloadPlugin(PullPlugin)
-		standardOutput(err, nil)
-	}
-
-	if RemovePlugin != "" {
-		err := plugin.DeletePlugin(RemovePlugin)
-		standardOutput(err, nil)
-	}
+	//if PullPlugin != "" {
+	//	err := plugin.DownloadPlugin(PullPlugin)
+	//	standardOutput(err, nil)
+	//}
+	//
+	//if RemovePlugin != "" {
+	//	err := plugin.DeletePlugin(RemovePlugin)
+	//	standardOutput(err, nil)
+	//}
 
 	if AddMetaData != "" {
 		err := clientIPTable.AddCustomInformationToIPTable(AddMetaData)

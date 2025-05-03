@@ -1,3 +1,5 @@
+//go:build cgo
+
 package main
 
 import "C"
@@ -16,23 +18,23 @@ import (
 
 // --------------------------------- Container Control ----------------------------------------
 
-//export StartContainer
-func StartContainer(IP string) (output *C.char) {
-	container, err := abstractions.StartContainer(IP)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return ConvertStructToJSONString(container)
-}
-
-//export RemoveContainer
-func RemoveContainer(IP string, ID string) (output *C.char) {
-	err := abstractions.RemoveContainer(IP, ID)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-	return C.CString("Success")
-}
+////export StartContainer
+//func StartContainer(IP string) (output *C.char) {
+//	container, err := abstractions.StartContainer(IP)
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return ConvertStructToJSONString(container)
+//}
+//
+////export RemoveContainer
+//func RemoveContainer(IP string, ID string) (output *C.char) {
+//	err := abstractions.RemoveContainer(IP, ID)
+//	if err != nil {
+//		return C.CString(err.Error())
+//	}
+//	return C.CString("Success")
+//}
 
 // --------------------------------- Plugin Control ----------------------------------------
 

@@ -1,6 +1,0 @@
-Docker Module P2P-rendering-computation 
-========================================
-
-This module is incharge to spin up docker contaianers , create 
-SSH server and VNC server. This module is implemented using 
-python. 

@@ -49,3 +49,6 @@ venv
 # Nix and Nix flake files
 result
 result-*
+
+# Ignore WASM generated files
+*.wasm

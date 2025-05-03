@@ -1,7 +1,6 @@
 package server
 
 import (
-	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,7 +8,6 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p/frp"
-	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -120,65 +118,65 @@ func Server() (*gin.Engine, error) {
 	})
 
 	// Starts docker container in server
-	r.GET("/startcontainer", func(c *gin.Context) {
-		// Get Number of ports to open and whether to use GPU or not
-		Ports := c.DefaultQuery("ports", "0")
-		GPU := c.DefaultQuery("GPU", "false")
-		ContainerName := c.DefaultQuery("ContainerName", "")
-		BaseImage := c.DefaultQuery("BaseImage", "")
-		PublicKey := c.DefaultQuery("PublicKey", "")
-		var PortsInt int
-
-		if PublicKey == "" {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", "Publickey not passed"))
-		}
-
-		PublicKeyDecoded, err := b64.StdEncoding.DecodeString(PublicKey)
-		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		}
-
-		// Convert Get Request value to int
-		fmt.Sscanf(Ports, "%d", &PortsInt)
-
-		fmt.Println(string(PublicKeyDecoded[:]))
-
-		// Creates container and returns-back result to
-		// access container
-		resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage, string(PublicKeyDecoded[:]))
-
-		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		}
-
-		// Ensures that FRP is triggered only if a proxy address is provided
-		if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
-			resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
-			if err != nil {
-				c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-			}
-		}
-
-		c.JSON(http.StatusOK, resp)
-	})
+	//r.GET("/startcontainer", func(c *gin.Context) {
+	//	// Get Number of ports to open and whether to use GPU or not
+	//	Ports := c.DefaultQuery("ports", "0")
+	//	GPU := c.DefaultQuery("GPU", "false")
+	//	ContainerName := c.DefaultQuery("ContainerName", "")
+	//	BaseImage := c.DefaultQuery("BaseImage", "")
+	//	PublicKey := c.DefaultQuery("PublicKey", "")
+	//	var PortsInt int
+	//
+	//	if PublicKey == "" {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", "Publickey not passed"))
+	//	}
+	//
+	//	PublicKeyDecoded, err := b64.StdEncoding.DecodeString(PublicKey)
+	//	if err != nil {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+	//	}
+	//
+	//	// Convert Get Request value to int
+	//	fmt.Sscanf(Ports, "%d", &PortsInt)
+	//
+	//	fmt.Println(string(PublicKeyDecoded[:]))
+	//
+	//	// Creates container and returns-back result to
+	//	// access container
+	//	resp, err := docker.BuildRunContainer(PortsInt, GPU, ContainerName, BaseImage, string(PublicKeyDecoded[:]))
+	//
+	//	if err != nil {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+	//	}
+	//
+	//	// Ensures that FRP is triggered only if a proxy address is provided
+	//	if ProxyIpAddr.Ipv4 != "" && c.Request.Host != "localhost:"+config.ServerPort && c.Request.Host != "0.0.0.0:"+config.ServerPort {
+	//		resp, err = frp.StartFRPCDockerContainer(ProxyIpAddr.Ipv4, lowestLatencyIpAddress.ServerPort, resp)
+	//		if err != nil {
+	//			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+	//		}
+	//	}
+	//
+	//	c.JSON(http.StatusOK, resp)
+	//})
 
 	//Remove container
-	r.GET("/RemoveContainer", func(c *gin.Context) {
-		ID := c.DefaultQuery("id", "0")
-		if err := docker.StopAndRemoveContainer(ID); err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		}
-		c.String(http.StatusOK, "success")
-	})
-
-	//Show images available
-	r.GET("/ShowImages", func(c *gin.Context) {
-		resp, err := docker.ViewAllContainers()
-		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
-		}
-		c.JSON(http.StatusOK, resp)
-	})
+	//r.GET("/RemoveContainer", func(c *gin.Context) {
+	//	ID := c.DefaultQuery("id", "0")
+	//	if err := docker.StopAndRemoveContainer(ID); err != nil {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+	//	}
+	//	c.String(http.StatusOK, "success")
+	//})
+	//
+	////Show images available
+	//r.GET("/ShowImages", func(c *gin.Context) {
+	//	resp, err := docker.ViewAllContainers()
+	//	if err != nil {
+	//		c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
+	//	}
+	//	c.JSON(http.StatusOK, resp)
+	//})
 
 	// Request for port no from Server with address
 	r.GET("/FRPPort", func(c *gin.Context) {

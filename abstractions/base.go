@@ -1,6 +1,5 @@
 package abstractions
 
-import "C"
 import (
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
@@ -8,7 +7,6 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/server"
-	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/gin-gonic/gin"
 	"os"
 )
@@ -57,17 +55,17 @@ func MapPort(port string, domainName string, serverAddress string) (response *cl
 	return
 }
 
-// StartContainer Starts docker container on the remote machine
-func StartContainer(IP string) (container *docker.DockerVM, err error) {
-	container, err = client.StartContainer(IP, 0, false, "", "")
-	return
-}
-
-// RemoveContainer Removes docker container based on the IP address and ID
-// provided
-func RemoveContainer(IP string, ID string) error {
-	return client.RemoveContianer(IP, ID)
-}
+//// StartContainer Starts docker container on the remote machine
+//func StartContainer(IP string) (container *docker.DockerVM, err error) {
+//	container, err = client.StartContainer(IP, 0, false, "", "")
+//	return
+//}
+//
+//// RemoveContainer Removes docker container based on the IP address and ID
+//// provided
+//func RemoveContainer(IP string, ID string) error {
+//	return client.RemoveContianer(IP, ID)
+//}
 
 // GetSpecs Get spec information about the remote server
 func GetSpecs(IP string) (specs *server.SysInfo, err error) {

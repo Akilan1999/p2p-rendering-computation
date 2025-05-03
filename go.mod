@@ -3,7 +3,6 @@ module github.com/Akilan1999/p2p-rendering-computation
 go 1.18
 
 require (
-	github.com/apenella/go-ansible v1.1.0
 	github.com/docker/docker v20.10.0-beta1.0.20201113105859-b6bfff2a628f+incompatible
 	github.com/fatedier/frp v0.45.0
 	github.com/gin-gonic/gin v1.6.3
@@ -16,7 +15,6 @@ require (
 	github.com/urfave/cli/v2 v2.3.0
 	gitlab.com/NebulousLabs/go-upnp v0.0.0-20181011194642-3a71999ed0d3
 	golang.org/x/crypto v0.16.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -24,8 +22,6 @@ require (
 	github.com/Microsoft/go-winio v0.4.17-0.20210211115548-6eac466e5fa3 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
-	github.com/apenella/go-common-utils v0.1.1 // indirect
-	github.com/apenella/go-common-utils/error v0.0.0-20200917063805-34b0ed3c4ce1 // indirect
 	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
@@ -100,5 +96,6 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
