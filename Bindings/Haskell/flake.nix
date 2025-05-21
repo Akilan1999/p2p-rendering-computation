@@ -11,13 +11,13 @@
       system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          hsPkgs = pkgs.haskell.packages.ghc98;
         in
         {
-          packages.default = hsPkgs.callCabal2nix "p2prc" ./. {};
+          packages.default = pkgs.haskellPackages.callPackage ./project.nix {};
 
           devShell = pkgs.mkShell {
             buildInputs = with pkgs; [
+              cabal2nix
               cabal-install
               haskell.compiler.ghc98
               zlib.dev

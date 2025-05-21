@@ -28,11 +28,6 @@
             overlays = [ gomod2nix.overlays.default ];
           };
 
-          # p2prc-hs = import (self + "/Bindings/Haskell/flake.nix") {
-          #   inherit pkgs;
-          #   inherit system;
-          # };
-
           # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
           # This has no effect on other platforms.
           callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
@@ -41,7 +36,7 @@
 
           packages.default = callPackage ./. { };
 
-          # packages.p2prc-hs = p2prc-hs.packages.${system}.default;
+          packages.p2prc-hs = pkgs.haskellPackages.callPackage ./Bindings/Haskell/project.nix {};
 
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
@@ -51,9 +46,11 @@
               go-tools
               gomod2nix.packages.${system}.default
               sqlite-interactive
-              p2prc-hs.devShells.${system}.default
             ];
           };
+
+          devShells.p2prc-hs = p2prc-hs.devShell.${system};
+
         })
     );
 }
