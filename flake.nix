@@ -37,8 +37,10 @@
     in
     {
       overlays.default = mainOverlay;
-    } //
-      (flake-utils.lib.eachDefaultSystem (
+      overlays.another_default = mainOverlay;
+    }
+    //
+    (flake-utils.lib.eachDefaultSystem (
         system:
           let
             pkgs = import nixpkgs {
