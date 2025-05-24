@@ -14,43 +14,61 @@
 
     p2prc-hs = {
       url = "path:./Bindings/Haskell";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };
 
   };
 
-  outputs = { self, nixpkgs, flake-utils, gomod2nix, p2prc-hs, ... }:
-    (flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ gomod2nix.overlays.default ];
-          };
+  outputs =
+    {
+      nixpkgs,
+      flake-utils,
+      gomod2nix,
+      p2prc-hs,
+      ...
+    }:
+    let
 
-          # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
-          # This has no effect on other platforms.
-          callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
-        in
-        {
+      getOverlay = overlayName: import ./nix/overlays/${overlayName};
 
-          packages.default = callPackage ./. { };
+      mainOverlay = getOverlay "main.nix";
 
-          packages.p2prc-hs = pkgs.haskellPackages.callPackage ./Bindings/Haskell/project.nix {};
+    in
+    {
+      overlays.default = mainOverlay;
+    } //
+      (flake-utils.lib.eachDefaultSystem (
+        system:
+          let
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [ gomod2nix.overlays.default mainOverlay ];
+            };
 
-          devShells.default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              go
-              gopls
-              gotools
-              go-tools
-              gomod2nix.packages.${system}.default
-              sqlite-interactive
-            ];
-          };
+            # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
+            # This has no effect on other platforms.
+            callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
+          in
+          {
 
-          devShells.p2prc-hs = p2prc-hs.devShell.${system};
+            packages.default = callPackage ./. { };
 
-        })
-    );
+            packages.p2prc-hs = pkgs.haskellPackages.callPackage ./Bindings/Haskell/project.nix { };
+
+            devShells.default = pkgs.mkShell {
+              buildInputs = with pkgs; [
+                go
+                gopls
+                gotools
+                go-tools
+                gomod2nix.packages.${system}.default
+                sqlite-interactive
+              ];
+            };
+
+            devShells.p2prc-hs = p2prc-hs.devShell.${system};
+
+          }
+      ));
 }
