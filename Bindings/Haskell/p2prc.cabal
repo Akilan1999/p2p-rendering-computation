@@ -27,20 +27,20 @@ extra-doc-files:    README.md
 common warnings
     ghc-options:        -Wall
 
-executable p2prc
-
-    import:             warnings
-
-    hs-source-dirs:     src
-
-    main-is:            Main.hs
-
-    other-extensions:   OverloadedStrings
-
-    build-depends:      base
-                      , p2prc
-
-    default-language:   GHC2021
+-- executable p2prc
+--
+--     import:             warnings
+--
+--     hs-source-dirs:     src
+--
+--     main-is:            Main.hs
+--
+--     other-extensions:   OverloadedStrings
+--
+--     build-depends:      base
+--                       , p2prc
+--
+--     default-language:   GHC2021
 
 library
 
