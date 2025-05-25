@@ -2,10 +2,11 @@
   description = "Nix flake for P2PRC Haskell library";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
+    p2prc-main = "path:../../";
   };
 
   outputs =
-    { nixpkgs, flake-utils, ... }:
+    { nixpkgs, flake-utils, p2prc-main-go, ... }:
     flake-utils.lib.eachDefaultSystem (
       system:
         let
@@ -20,20 +21,9 @@
               cabal-install
               haskell.compiler.ghc98
               zlib.dev
+              p2prc-main-go.packages.${system}.default
             ];
 
-            shellHook = ''
-              pwd
-              cd ../../
-              echo "building package"
-              pwd
-              nix build .
-              echo "building package"
-              pwd
-              cd Bindings/Haskell
-              pwd
-              echo "done!!!!"
-            '';
           };
         }
     );
