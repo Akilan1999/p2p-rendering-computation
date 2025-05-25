@@ -36,8 +36,7 @@
 
     in
     {
-      overlays.default = mainOverlay;
-      overlays.another_default = mainOverlay;
+      overlay.default = mainOverlay;
     }
     //
     (flake-utils.lib.eachDefaultSystem (
