@@ -5,13 +5,9 @@ mkDerivation {
   pname = "p2prc";
   version = "0.1.0.0";
   src = ./.;
-  isLibrary = true;
-  isExecutable = true;
   libraryHaskellDepends = [
     aeson base bytestring directory process text
   ];
-  executableHaskellDepends = [ base ];
   description = "P2PRC haskell library";
   license = "unknown";
-  mainProgram = "p2prc";
 }
