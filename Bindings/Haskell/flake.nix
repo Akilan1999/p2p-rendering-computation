@@ -1,6 +1,5 @@
 {
   description = "Nix flake for P2PRC Haskell library";
-
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
   };
@@ -22,6 +21,19 @@
               haskell.compiler.ghc98
               zlib.dev
             ];
+
+            shellHook = ''
+              pwd
+              cd ../../
+              echo "building package"
+              pwd
+              nix build .
+              echo "building package"
+              pwd
+              cd Bindings/Haskell
+              pwd
+              echo "done!!!!"
+            '';
           };
         }
     );

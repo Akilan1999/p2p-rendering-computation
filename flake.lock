@@ -57,32 +57,11 @@
         "type": "github"
       }
     },
-    "p2prc-hs": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-rg64vJj97NRXMCphUrZ1FlMZPQU0OtW9C9vZrA/kpKw=",
-        "path": "./Bindings/Haskell",
-        "type": "path"
-      },
-      "original": {
-        "path": "./Bindings/Haskell",
-        "type": "path"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "gomod2nix": "gomod2nix",
-        "nixpkgs": "nixpkgs",
-        "p2prc-hs": "p2prc-hs"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {
