@@ -7,7 +7,6 @@
 
     flake-utils = {
       url = "github:numtide/flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     gomod2nix = {
@@ -26,11 +25,7 @@
       ...
     }:
     let
-
-      getOverlay = overlayName: import ./nix/overlays/${overlayName};
-
-      mainOverlay = getOverlay "main.nix";
-
+      mainOverlay = import ./nix/overlays/main.nix;
     in
     {
       overlays.default = mainOverlay;
@@ -44,7 +39,6 @@
             # This has no effect on other platforms.
             callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
 
-            p2prcFinalPackage = callPackage ./. { };
 
             pkgs = import nixpkgs {
               inherit system;
@@ -52,7 +46,7 @@
                 gomod2nix.overlays.default
                 mainOverlay
                 (final: prev: {
-                  p2prc = p2prcFinalPackage;
+                  p2prc = final.callPackage ./. { };
                 })
               ];
             };
@@ -60,7 +54,7 @@
           in
           {
 
-            packages.default = p2prcFinalPackage;
+            packages.default = callPackage ./. { };
 
 
             devShells.default = pkgs.mkShell {
