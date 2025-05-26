@@ -25,10 +25,13 @@
       ...
     }:
     let
-      mainOverlay = import ./nix/overlays/main.nix;
+      bindingsOverlay = import ./nix/overlays/bindings.nix;
+      coreOverlay = (final: prev: {
+        p2prc = final.callPackage ./. { };
+      });
     in
     {
-      overlays.default = mainOverlay;
+      overlays.default = bindingsOverlay;
     }
     //
     (flake-utils.lib.eachDefaultSystem (
@@ -44,10 +47,8 @@
               inherit system;
               overlays = [
                 gomod2nix.overlays.default
-                mainOverlay
-                (final: prev: {
-                  p2prc = final.callPackage ./. { };
-                })
+                bindingsOverlay
+                coreOverlay
               ];
             };
 
