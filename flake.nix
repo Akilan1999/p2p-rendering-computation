@@ -31,7 +31,7 @@
       });
     in
     {
-      overlays.default = bindingsOverlay;
+      # overlays.default = bindingsOverlay;
     }
     //
     (flake-utils.lib.eachDefaultSystem (
@@ -66,6 +66,13 @@
                 go-tools
                 gomod2nix.packages.${system}.default
                 sqlite-interactive
+              ];
+            };
+
+            overlays = {
+              default = [
+                bindingsOverlay
+                coreOverlay
               ];
             };
 
