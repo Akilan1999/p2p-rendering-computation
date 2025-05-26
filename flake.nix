@@ -70,10 +70,8 @@
             };
 
             overlays = {
-              default = [
-                bindingsOverlay
-                coreOverlay
-              ];
+              default = coreOverlay;
+              bindings = bindingsOverlay;
             };
 
           }
