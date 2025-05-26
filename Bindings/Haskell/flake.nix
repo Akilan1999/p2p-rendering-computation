@@ -2,7 +2,7 @@
   description = "Nix flake for P2PRC Haskell library";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    p2prc-main.url = "path:../../";
+    p2prc-main.url = "../../";
   };
 
   outputs = { nixpkgs, flake-utils, p2prc-main, ... }:
