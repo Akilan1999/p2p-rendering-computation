@@ -1,0 +1,72 @@
+{
+  description = "Start of Haskell P2PRC flake";
+
+  inputs =
+    {
+      nixpkgs = {
+        url = "github:NixOS/nixpkgs/nixos-unstable";
+      };
+
+      p2prc-flake = {
+        url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
+
+      flake-utils = {
+        url = "github:numtide/flake-utils";
+      };
+
+    };
+
+  outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
+    (flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            p2prc-flake.overlays.${system}.default
+            p2prc-flake.overlays.${system}.bindings
+          ];
+        };
+
+
+        # TODO: Add this to a p2prc-nix lib
+        initProject = pkgs.writeShellApplication {
+          name = "initProject";
+          runtimeInputs = with pkgs; [
+            cabal2nix
+            cabal-install
+          ];
+          text = ''
+            if [ -f *.cabal ]; then echo "The file exists"; fi
+            cabal init
+            echo "RUNNING"
+            cabal2nix . > ./project.nix;
+          '';
+        };
+
+      in {
+        package = {
+          # default = pkgs.haskellPackages.callPackage ./project.nix { };
+          init = initProject;
+        };
+
+        # devShell.default = pkgs.mkShell {
+        #   packages = with pkgs; [
+        #     # cabal2nix
+        #     # cabal-install
+        #   ];
+        #
+        #   buildInputs = [
+        #     # p2prc-flake.packages.${system}.default
+        #     initProject
+        #   ];
+        #
+        #   shellHook = ''
+        #     echo "creating a new development shell"
+        #   '';
+        # };
+      }
+    ));
+
+}
