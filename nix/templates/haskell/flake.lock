@@ -86,11 +86,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1748291200,
-        "narHash": "sha256-VUJo8sgFHLPouEpZs+QM/dI6S2ZJE6F0cj4SLWg1cBg=",
+        "lastModified": 1748386148,
+        "narHash": "sha256-bbm2KWAWE2jdYl06xwNg8A3Frz1+ujiziKaeh+GGGQg=",
         "owner": "xecarlox94",
         "repo": "p2p-rendering-computation",
-        "rev": "5fa625160ee6627de61ca13991de3250c504be54",
+        "rev": "85806ab035b22d451de5531c18c07461df1d7c77",
         "type": "github"
       },
       "original": {

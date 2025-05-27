@@ -40,11 +40,13 @@
             cabal-install
           ];
           text = ''
-            # TODO: add this check
-            # if [ -f *.cabal ]; then echo "The file exists"; fi
-            cabal init
+            cabal init --minimal
             echo "RUNNING"
+
+            # TODO: sed command to fix bash import and add p2prc import
+            # TODO: sed command to add p2prc example to main file
             cabal2nix . > ./project.nix;
+
             git add .
           '';
         };
@@ -57,6 +59,7 @@
         };
 
         # TODO: override haskell binding lib devshell
+        # FIX: p2prc library not available in dev shell
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             cabal2nix
@@ -69,7 +72,7 @@
           ];
 
           shellHook = ''
-            cabal2nix . > ./project.nix;
+            cabal2nix . > ./project.nix
           '';
         };
       }
