@@ -25,15 +25,12 @@
       ...
     }:
     let
+      # TODO: merge overlays into a list
       bindingsOverlay = import ./nix/overlays/bindings.nix;
       coreOverlay = (final: prev: {
         p2prc = final.callPackage ./. { };
       });
     in
-    {
-      # overlays.default = bindingsOverlay;
-    }
-    //
     (flake-utils.lib.eachDefaultSystem (
         system:
           let
@@ -70,6 +67,7 @@
             };
 
             overlays = {
+              # TODO: merge all overlays into a single one
               default = coreOverlay;
               bindings = bindingsOverlay;
             };

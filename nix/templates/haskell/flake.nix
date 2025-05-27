@@ -23,6 +23,8 @@
       let
         pkgs = import nixpkgs {
           inherit system;
+
+          # TODO: p2prc overlays into a single list
           overlays = [
             p2prc-flake.overlays.${system}.default
             p2prc-flake.overlays.${system}.bindings
@@ -38,34 +40,38 @@
             cabal-install
           ];
           text = ''
-            if [ -f *.cabal ]; then echo "The file exists"; fi
+            # TODO: add this check
+            # if [ -f *.cabal ]; then echo "The file exists"; fi
             cabal init
             echo "RUNNING"
             cabal2nix . > ./project.nix;
+            git add .
           '';
         };
 
       in {
-        package = {
-          # default = pkgs.haskellPackages.callPackage ./project.nix { };
+        packages = {
+          # TODO: fix issue
+          default = pkgs.haskellPackages.callPackage ./project.nix { };
           init = initProject;
         };
 
-        # devShell.default = pkgs.mkShell {
-        #   packages = with pkgs; [
-        #     # cabal2nix
-        #     # cabal-install
-        #   ];
-        #
-        #   buildInputs = [
-        #     # p2prc-flake.packages.${system}.default
-        #     initProject
-        #   ];
-        #
-        #   shellHook = ''
-        #     echo "creating a new development shell"
-        #   '';
-        # };
+        # TODO: override haskell binding lib devshell
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            cabal2nix
+            cabal-install
+          ];
+
+          buildInputs = [
+            p2prc-flake.packages.${system}.default
+            initProject
+          ];
+
+          shellHook = ''
+            cabal2nix . > ./project.nix;
+          '';
+        };
       }
     ));
 
