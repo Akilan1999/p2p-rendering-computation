@@ -49,3 +49,11 @@ venv
 # Nix and Nix flake files
 result
 result-*
+nix/templates/haskell/haskell.cabal
+nix/templates/haskell/haskell.cabal
+nix/templates/haskell/haskell.cabal
+nix/templates/haskell/dist-newstyle
+nix/templates/haskell/app
+nix/templates/haskell/CHANGELOG.md
+nix/templates/haskell/LICENSE
+nix/templates/haskell/project.nix
