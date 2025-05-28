@@ -7,13 +7,12 @@
         url = "github:NixOS/nixpkgs/nixos-unstable";
       };
 
-      p2prc-flake = {
-        url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
-        inputs.nixpkgs.follows = "nixpkgs";
-      };
-
       flake-utils = {
         url = "github:numtide/flake-utils";
+      };
+
+      p2prc-flake = {
+        url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
       };
 
     };
@@ -36,44 +35,66 @@
         initProject = pkgs.writeShellApplication {
           name = "initProject";
           runtimeInputs = with pkgs; [
+            ghc
             cabal2nix
             cabal-install
           ];
-          text = ''
-            cabal init --minimal
-            echo "RUNNING"
+          text =
+            let
 
-            # TODO: sed command to fix bash import and add p2prc import
-            # TODO: sed command to add p2prc example to main file
-            cabal2nix . > ./project.nix;
+              # TODO: finish script
+#               getMainFileContent = appName: ''"\
+#                 module Main where\
+# \
+#                 import P2PRC\
+#                   ( runP2PRC\
+#                   , MapPortRequest(MkMapPortRequest)\
+#                   )\
+# \
+#                 main :: IO ()\
+#                 main =\
+#                   runP2PRC\
+#                     ( MkMapPortRequest 8080 \"${appName}.akilan.io\"\
+#                     )\
+#               "'';
+              # FOLDER_NAME=$(echo */ | sed 's/ /\n/' | head -n 1)
+              # cat ${getMainFileContent "file_name"} > "$FOLDER_NAME"/Main.hs
 
-            git add .
-          '';
+            in
+            ''
+              cabal init
+
+              # sed -i 's/base.*$/base, p2prc/' haskell.cabal
+
+              cabal2nix . > ./cabal.nix;
+
+              cabal run
+            '';
         };
 
       in {
         packages = {
-          # TODO: fix issue
-          default = pkgs.haskellPackages.callPackage ./project.nix { };
-          init = initProject;
+          default = pkgs.haskellPackages.callPackage ./cabal.nix { };
         };
 
-        # TODO: override haskell binding lib devshell
-        # FIX: p2prc library not available in dev shell
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
+
+        devShells.default = pkgs.haskellPackages.shellFor {
+
+          packages = p: [
+            (p.callPackage ./cabal.nix { })
+          ];
+
+          buildInputs = with pkgs; [
+            p2prc-flake.packages.${system}.default
+            ghc
             cabal2nix
             cabal-install
-          ];
-
-          buildInputs = [
-            p2prc-flake.packages.${system}.default
             initProject
-            pkgs.haskellPackages.p2prc
           ];
 
+          # TODO: add cabal2nix shell command
           shellHook = ''
-            cabal2nix . > ./project.nix
+            cabal2nix . > ./cabal.nix
           '';
         };
       }
