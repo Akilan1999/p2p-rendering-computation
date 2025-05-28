@@ -24,54 +24,53 @@
       gomod2nix,
       ...
     }:
-    let
-      # TODO: merge overlays into a list
-      bindingsOverlay = import ./nix/overlays/bindings.nix;
-      coreOverlay = (final: prev: {
-        p2prc = final.callPackage ./. { };
-      });
-    in
-    (flake-utils.lib.eachDefaultSystem (
-        system:
-          let
+    (flake-utils.lib.eachDefaultSystem (system:
+      let
 
-            # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
-            # This has no effect on other platforms.
-            callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
+        # TODO: merge overlays into a list
+        # TODO: create default file in overlays folder to merge all overlays
+        bindingsOverlay = import ./nix/overlays/bindings.nix;
+        coreOverlay = (final: prev: {
+          p2prc = final.callPackage ./. { };
+        });
 
-
-            pkgs = import nixpkgs {
-              inherit system;
-              overlays = [
-                gomod2nix.overlays.default
-                bindingsOverlay
-                coreOverlay
-              ];
-            };
-
-          in
-          {
-
-            packages.default = callPackage ./. { };
+        # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
+        # This has no effect on other platforms.
+        callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
 
 
-            devShells.default = pkgs.mkShell {
-              buildInputs = with pkgs; [
-                go
-                gopls
-                gotools
-                go-tools
-                gomod2nix.packages.${system}.default
-                sqlite-interactive
-              ];
-            };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            gomod2nix.overlays.default
+            bindingsOverlay
+            coreOverlay
+          ];
+        };
 
-            overlays = {
-              # TODO: merge all overlays into a single one
-              default = coreOverlay;
-              bindings = bindingsOverlay;
-            };
+      in
+      {
 
-          }
-      ));
+        packages.default = callPackage ./. { };
+
+
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            go
+            gopls
+            gotools
+            go-tools
+            gomod2nix.packages.${system}.default
+            sqlite-interactive
+          ];
+        };
+
+        overlays = {
+          # TODO: merge all overlays into a single one
+          default = coreOverlay;
+          bindings = bindingsOverlay;
+        };
+
+      }
+    ));
 }

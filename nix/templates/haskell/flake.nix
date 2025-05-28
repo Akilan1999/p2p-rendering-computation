@@ -69,6 +69,7 @@
           buildInputs = [
             p2prc-flake.packages.${system}.default
             initProject
+            pkgs.haskellPackages.p2prc
           ];
 
           shellHook = ''
