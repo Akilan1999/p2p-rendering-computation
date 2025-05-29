@@ -25,8 +25,8 @@
 
           # TODO: p2prc overlays into a single list
           overlays = [
-            p2prc-flake.overlays.${system}.default
-            p2prc-flake.overlays.${system}.bindings
+            p2prc-flake.overlays.default
+            p2prc-flake.overlays.bindings
           ];
         };
 
@@ -62,13 +62,13 @@
 
             in
             ''
-              cabal init
+              # cabal init
 
               # sed -i 's/base.*$/base, p2prc/' haskell.cabal
 
-              cabal2nix . > ./cabal.nix;
+              # cabal2nix . > ./cabal.nix;
 
-              cabal run
+              # cabal run
             '';
         };
 
@@ -78,11 +78,13 @@
           default = pkgs.haskellPackages.callPackage ./cabal.nix { };
         };
 
-        devShells.default = pkgs.haskellPackages.shellFor {
+        devShells.default = pkgs.mkShell {
 
-          packages = p: [
-            (p.callPackage ./cabal.nix { })
-          ];
+        # devShells.default = pkgs.haskellPackages.shellFor {
+
+          # packages = p: [
+          #   (p.callPackage ./cabal.nix { })
+          # ];
 
           buildInputs = with pkgs; [
             p2prc-flake.packages.${system}.default
