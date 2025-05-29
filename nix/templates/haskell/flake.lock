@@ -100,11 +100,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1748558171,
-        "narHash": "sha256-XKoPzOrfrED387rJZRHlPZDcrDyzCMFz9BSCWwZNCEQ=",
+        "lastModified": 1748559134,
+        "narHash": "sha256-s0fLgmKRrUDAkHStJyA3RrD5EuQzM/yXQGgsLooGmrc=",
         "owner": "xecarlox94",
         "repo": "p2p-rendering-computation",
-        "rev": "e04e918328eb411517680ea3d36d19b3b9f8d4d4",
+        "rev": "a07a412c723355529c39bbd5568ece437b95135b",
         "type": "github"
       },
       "original": {

@@ -62,26 +62,27 @@
 
             in
             ''
-              # cabal init
+              echo "RUNNING"
+              cabal init
 
-              # sed -i 's/base.*$/base, p2prc/' haskell.cabal
+              sed -i 's/base.*$/base, p2prc/' haskell.cabal
 
-              # cabal2nix . > ./cabal.nix;
+              cabal2nix . > ./cabal.nix;
 
-              # cabal run
+              cabal run
             '';
         };
 
       in {
 
         packages = {
-          default = pkgs.haskellPackages.callPackage ./cabal.nix { };
+          # default = pkgs.haskellPackages.callPackage ./cabal.nix { };
+          inherit initProject;
         };
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = pkgs.haskellPackages.shellFor {
 
-        # devShells.default = pkgs.haskellPackages.shellFor {
-
+          packages = _: [];
           # packages = p: [
           #   (p.callPackage ./cabal.nix { })
           # ];
