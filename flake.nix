@@ -71,7 +71,7 @@
           bindings = bindingsOverlay;
         };
 
-        templates = {
+        templates.default = {
           hs-bindings = ./nix/templates/haskell;
           description = "Haskell Bindings to p2prc protocol";
         };
