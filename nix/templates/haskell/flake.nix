@@ -73,10 +73,10 @@
         };
 
       in {
+
         packages = {
           default = pkgs.haskellPackages.callPackage ./cabal.nix { };
         };
-
 
         devShells.default = pkgs.haskellPackages.shellFor {
 
@@ -94,7 +94,7 @@
 
           # TODO: add cabal2nix shell command
           shellHook = ''
-            cabal2nix . > ./cabal.nix
+            # cabal2nix . > ./cabal.nix
           '';
         };
       }
