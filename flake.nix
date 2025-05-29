@@ -24,20 +24,22 @@
       gomod2nix,
       ...
     }:
+    let
+
+      # TODO: merge overlays into a list
+      # TODO: create default file in overlays folder to merge all overlays
+      bindingsOverlay = import ./nix/overlays/bindings.nix;
+      coreOverlay = (final: prev: {
+        p2prc = final.callPackage ./. { };
+      });
+
+    in
     (flake-utils.lib.eachDefaultSystem (system:
       let
-
-        # TODO: merge overlays into a list
-        # TODO: create default file in overlays folder to merge all overlays
-        bindingsOverlay = import ./nix/overlays/bindings.nix;
-        coreOverlay = (final: prev: {
-          p2prc = final.callPackage ./. { };
-        });
 
         # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
         # This has no effect on other platforms.
         callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
-
 
         pkgs = import nixpkgs {
           inherit system;
@@ -64,15 +66,14 @@
           ];
         };
 
-        overlays = {
-          # TODO: merge all overlays into a single one
-          default = coreOverlay;
-          bindings = bindingsOverlay;
-        };
-
       }
     )) //
     {
+      overlays = {
+        # TODO: merge all overlays into a single one
+        default = coreOverlay;
+        bindings = bindingsOverlay;
+      };
       templates.haskell = {
         bindings = ./nix/templates/haskell;
         description = "Haskell Bindings to p2prc protocol";
