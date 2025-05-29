@@ -53,7 +53,6 @@
 
         packages.default = callPackage ./. { };
 
-
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             go
@@ -71,11 +70,12 @@
           bindings = bindingsOverlay;
         };
 
-        templates.default = {
-          hs-bindings = ./nix/templates/haskell;
-          description = "Haskell Bindings to p2prc protocol";
-        };
-
       }
-    ));
+    )) //
+    {
+      templates.haskell = {
+        bindings = ./nix/templates/haskell;
+        description = "Haskell Bindings to p2prc protocol";
+      };
+    };
 }
