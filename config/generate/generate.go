@@ -95,6 +95,7 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.PrivateKeyFile = defaultPath + "p2prc.privateKey"
 		Defaults.BareMetal = false
 		Defaults.UnsafeMode = false
+		Defaults.Test = false
 
 		// Generate certificate files for SSL
 		err = GenerateCertificate()
