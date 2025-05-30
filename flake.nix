@@ -66,12 +66,29 @@
           ];
         };
 
+        packages.initHaskellProject = pkgs.writeShellApplication {
+          name = "initHaskellProject";
+          runtimeInputs = with pkgs; [
+            # ghc
+            cabal2nix
+            cabal-install
+          ];
+          text =
+            ''
+              cabal init -mnq
+
+              # sed -i 's/base.*$/base, p2prc/' haskell.cabal
+              cabal2nix . > ./cabal.nix;
+            '';
+        };
+
+
       }
     )) //
     {
       overlays = {
-        # TODO: merge all overlays into a single one
-        default = coreOverlay;
+        default = [coreOverlay bindingsOverlay];
+        core = coreOverlay;
         bindings = bindingsOverlay;
       };
       templates.haskell = {

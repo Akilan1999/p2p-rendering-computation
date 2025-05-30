@@ -11,17 +11,17 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
+
         packages.default = pkgs.haskellPackages.callPackage ./project.nix {};
 
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             cabal2nix
             cabal-install
-            haskell.compiler.ghc98
+            ghc
             zlib.dev
             p2prc-main.packages.${system}.default
           ];
-
         };
       }
     );
