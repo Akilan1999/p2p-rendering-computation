@@ -38,6 +38,7 @@ type Config struct {
 	KeyFile                  string
 	BareMetal                bool
 	UnsafeMode               bool
+	Test                     bool
 	CustomConfig             interface{}
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
