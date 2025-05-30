@@ -690,18 +690,28 @@ configuration file was generated using JSON format.
 
 #+begin_src json
 {
- "MachineName": "pc-74-120.customer.ask4.lan",
+ "MachineName": "Akilans-MacBook-Pro.local-975261X",
  "IPTable": "/Users/akilan/Documents/p2p-rendering-computation/p2p/iptable/ip_table.json",
  "DockerContainers": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/",
  "DefaultDockerFile": "/Users/akilan/Documents/p2p-rendering-computation/server/docker/containers/docker-ubuntu-sshd/",
+ "DockerRunLogs": "/tmp/",
  "SpeedTestFile": "/Users/akilan/Documents/p2p-rendering-computation/p2p/50.bin",
  "IPV6Address": "",
  "PluginPath": "/Users/akilan/Documents/p2p-rendering-computation/plugin/deploy",
  "TrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/trackcontainers.json",
  "ServerPort": "8088",
+ "ProxyPort": "",
  "GroupTrackContainersPath": "/Users/akilan/Documents/p2p-rendering-computation/client/trackcontainers/grouptrackcontainers.json",
- "FRPServerPort": "True",
- "BehindNAT": "True",
+ "FRPServerPort": true,
+ "BehindNAT": true,
+ "IPTableKey": "QH3yQrGRe2X4",
+ "PublicKeyFile": "/Users/akilan/Documents/p2p-rendering-computation/p2prc.publicKey",
+ "PrivateKeyFile": "/Users/akilan/Documents/p2p-rendering-computation/p2prc.privateKey",
+ "PemFile": "/Users/akilan/Documents/p2p-rendering-computation/cert.pem",
+ "KeyFile": "/Users/akilan/Documents/p2p-rendering-computation/key.pem",
+ "BareMetal": false,
+ "UnsafeMode": false,
+ "Test": false,
  "CustomConfig": null
 }
 #+end_src
@@ -783,10 +793,48 @@ func main() {
    }
 }
 #+end_src
+* Simulation
+The simulation library is a really simple library to locally
+run serveral instances of P2PRC to test the functionality
+of sending information through the network and particularly
+the Node discovery mechanism. There are current 5 commands
+which can be used as shown below:
 
+** Command
+- ***P2PRC instances "number of instances"*** : Starts p2prc processes
+  based on the number of number instances provided. This includes
+  creating temporary folders with independent IPTables.   
+- ***Start all instances "number of instances"***: Starts the P2PRC instances
+  created. This function enters into the instance directory and runs
+  ```p2prc -s &``` with a delay for approximately 3 seconds. This allows
+  each independent created node to learn about each other.
+- ***IP Tables after Started number of instances"***: Prints the IPTable of
+  each independant node.
+- ***Remove all test files***: Removes all test files created which needed for
+  testing the generated P2PRC instances. 
+- ***Kill all instances***: Kills all the background P2PRC instances created. 
 
+** Sample bash instructions
+#+begin_src bash
+# Unset default P2PRC env path
+unset P2PRC
 
+# Run with 2 nodes
+P2PRC_instances 3
 
+# Start instances
+Start_all_instances 3
+
+# List ip tables of nodes started
+IP_Tables_after_Started 3
+
+# Remove test files created
+Remove_all_test_files
+
+# Kill all instances
+Kill_all_instances
+#+end_src
+Source code: https://github.com/Akilan1999/p2p-rendering-computation/blob/master/Simulation/simulation.sh
 * Blog posts
 ** Self host within 5 minutes any program
 
