@@ -77,8 +77,8 @@
             ''
               cabal init -mnq
 
-              # sed -i 's/base.*$/base, p2prc/' haskell.cabal
-              # cabal2nix . > ./cabal.nix;
+              sed -i 's/base.*$/base, p2prc/' haskell.cabal
+              cabal2nix . > ./cabal.nix;
             '';
         };
 
