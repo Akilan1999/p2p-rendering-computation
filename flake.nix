@@ -72,6 +72,7 @@
             ghc
             cabal2nix
             cabal-install
+            nix
           ];
           text =
             ''
@@ -80,6 +81,8 @@
               sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
 
               cabal2nix . > ./cabal.nix;
+
+              nix flake init -t github:xecarlox94/p2p-rendering-computation?ref=nix#haskell
             '';
         };
 
