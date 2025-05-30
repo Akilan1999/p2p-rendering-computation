@@ -77,7 +77,8 @@
             ''
               cabal init -mnq
 
-              sed -i 's/base.*$/base, p2prc/' haskell.cabal
+              sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
+
               cabal2nix . > ./cabal.nix;
             '';
         };
