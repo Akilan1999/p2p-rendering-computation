@@ -26,8 +26,6 @@
     }:
     let
 
-      # TODO: merge overlays into a list
-      # TODO: create default file in overlays folder to merge all overlays
       bindingsOverlay = import ./nix/overlays/bindings.nix;
       coreOverlay = (final: prev: {
         p2prc = final.callPackage ./. { };
@@ -78,15 +76,17 @@
             ''
               cabal init
 
+              # TODO: remove reference to cabal file
               sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
 
               cabal2nix . > ./cabal.nix;
 
+              # TODO: remove reference to nix branch
               nix flake init -t github:xecarlox94/p2p-rendering-computation?ref=nix#haskell
+
+              git add .
             '';
         };
-
-
       }
     )) //
     {
