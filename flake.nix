@@ -69,7 +69,7 @@
         packages.initHaskellProject = pkgs.writeShellApplication {
           name = "initHaskellProject";
           runtimeInputs = with pkgs; [
-            # ghc
+            ghc
             cabal2nix
             cabal-install
           ];
