@@ -3,18 +3,11 @@
 
   inputs =
     {
-      nixpkgs = {
-        url = "github:NixOS/nixpkgs/nixos-unstable";
-      };
+      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-      flake-utils = {
-        url = "github:numtide/flake-utils";
-      };
+      flake-util.url = "github:numtide/flake-utils";
 
-      p2prc-flake = {
-        url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
-      };
-
+      p2prc-flake.url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
     };
 
   outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
@@ -30,9 +23,7 @@
 
       in {
 
-        packages = {
-          default = pkgs.haskellPackages.callPackage ./cabal.nix { };
-        };
+        packages.default = pkgs.haskellPackages.callPackage ./cabal.nix { };
 
         devShells.default = pkgs.haskellPackages.shellFor {
 
@@ -54,5 +45,4 @@
         };
       }
     ));
-
 }
