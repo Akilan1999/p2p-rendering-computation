@@ -45,8 +45,8 @@
           inherit system;
           overlays = [
             gomod2nix.overlays.default
-            bindingsOverlay
             coreOverlay
+            bindingsOverlay
           ];
         };
 
@@ -91,8 +91,7 @@
     )) //
     {
       overlays = {
-        default = [coreOverlay bindingsOverlay];
-        core = coreOverlay;
+        default = coreOverlay;
         bindings = bindingsOverlay;
       };
       templates.haskell = {
