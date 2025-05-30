@@ -24,80 +24,31 @@
           inherit system;
 
           # TODO: p2prc overlays into a single list
-          overlays = [
-            p2prc-flake.overlays.default
-            p2prc-flake.overlays.bindings
-          ];
-        };
-
-
-        # TODO: Add this to a p2prc-nix lib
-        initProject = pkgs.writeShellApplication {
-          name = "initProject";
-          runtimeInputs = with pkgs; [
-            ghc
-            cabal2nix
-            cabal-install
-          ];
-          text =
-            let
-
-              # TODO: finish script
-#               getMainFileContent = appName: ''"\
-#                 module Main where\
-# \
-#                 import P2PRC\
-#                   ( runP2PRC\
-#                   , MapPortRequest(MkMapPortRequest)\
-#                   )\
-# \
-#                 main :: IO ()\
-#                 main =\
-#                   runP2PRC\
-#                     ( MkMapPortRequest 8080 \"${appName}.akilan.io\"\
-#                     )\
-#               "'';
-              # FOLDER_NAME=$(echo */ | sed 's/ /\n/' | head -n 1)
-              # cat ${getMainFileContent "file_name"} > "$FOLDER_NAME"/Main.hs
-
-            in
-            ''
-              echo "RUNNING"
-              cabal init
-
-              sed -i 's/base.*$/base, p2prc/' haskell.cabal
-
-              cabal2nix . > ./cabal.nix;
-
-              cabal run
-            '';
+          overlays = p2prc-flake.overlays.default;
         };
 
       in {
 
         packages = {
-          # default = pkgs.haskellPackages.callPackage ./cabal.nix { };
-          inherit initProject;
+          default = pkgs.haskellPackages.callPackage ./cabal.nix { };
         };
 
         devShells.default = pkgs.haskellPackages.shellFor {
 
-          packages = _: [];
-          # packages = p: [
-          #   (p.callPackage ./cabal.nix { })
-          # ];
+          packages = p: [
+            (p.callPackage ./cabal.nix { })
+          ];
 
           buildInputs = with pkgs; [
             p2prc-flake.packages.${system}.default
             ghc
             cabal2nix
             cabal-install
-            initProject
           ];
 
           # TODO: add cabal2nix shell command
           shellHook = ''
-            # cabal2nix . > ./cabal.nix
+            cabal2nix . > ./cabal.nix
           '';
         };
       }
