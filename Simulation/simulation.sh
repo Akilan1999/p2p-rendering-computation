@@ -103,18 +103,12 @@ P2PRC_instances 3
 
 ## Start instances
 Start_all_instances 3
-#
-## Delay for instances to run
 
-#
-## update all instances ip table
-##Update_All_IP_Tables 3
-#
 ## List ip tables of nodes started
 IP_Tables_after_Started 3
 #
 ## Remove test files created
 Remove_all_test_files
-#
+
 ## Kill all instances
 Kill_all_instances
