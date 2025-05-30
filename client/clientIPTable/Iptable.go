@@ -118,7 +118,7 @@ func UpdateIpTableListClient() error {
 
 			Exists := false
 			// If the address is local then add to the local list
-			if currentIPV4 == Addresses.IpAddress[j].Ipv4 && Addresses.IpAddress[j].ServerPort == Config.ServerPort {
+			if (currentIPV4 == Addresses.IpAddress[j].Ipv4 && !Config.Test) && Addresses.IpAddress[j].ServerPort == Config.ServerPort {
 				Exists = true
 			}
 
@@ -136,11 +136,12 @@ func UpdateIpTableListClient() error {
 			}
 
 			w.Add(1)
-			if Addresses.IpAddress[j].Ipv6 != "" {
-				go UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort, &w)
-			} else if Addresses.IpAddress[j].Ipv4 != currentIPV4 {
-				go UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort, &w)
-			}
+			//if Addresses.IpAddress[j].Ipv6 != "" {
+			//	go UpdateIpTable(Addresses.IpAddress[j].Ipv6, Addresses.IpAddress[j].ServerPort, &w)
+			//} else if Addresses.IpAddress[j].Ipv4 != currentIPV4 {
+			//	//go UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort, &w)
+			//}
+			go UpdateIpTable(Addresses.IpAddress[j].Ipv4, Addresses.IpAddress[j].ServerPort, &w)
 			w.Wait()
 
 			//Appends server1 IP address to variable DoNotRead

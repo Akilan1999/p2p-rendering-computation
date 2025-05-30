@@ -57,6 +57,7 @@ Start_all_instances() {
         # Start P2PRC as background process
         p2prc -s &
         pids+=($!)
+        sleep 3
         cd ..
     done
 }
@@ -100,20 +101,20 @@ unset P2PRC
 # Run with 2 nodes
 P2PRC_instances 3
 
-# Start instances
+## Start instances
 Start_all_instances 3
+#
+## Delay for instances to run
 
-# Delay for instances to run
-sleep 6
-
-# update all instances ip table
-#Update_All_IP_Tables 3
-
-# List ip tables of nodes started
+#
+## update all instances ip table
+##Update_All_IP_Tables 3
+#
+## List ip tables of nodes started
 IP_Tables_after_Started 3
-
-# Remove test files created
+#
+## Remove test files created
 Remove_all_test_files
-
-# Kill all instances
+#
+## Kill all instances
 Kill_all_instances
