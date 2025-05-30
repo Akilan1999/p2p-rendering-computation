@@ -22,9 +22,10 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-
-          # TODO: p2prc overlays into a single list
-          overlays = p2prc-flake.overlays.default;
+          overlays = [
+            p2prc-flake.overlays.default
+            p2prc-flake.overlays.bindings
+          ];
         };
 
       in {
