@@ -75,7 +75,7 @@
           ];
           text =
             ''
-              cabal init -mnq
+              cabal init
 
               sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
 
