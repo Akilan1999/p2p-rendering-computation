@@ -42,6 +42,8 @@ type IP struct {
 	Query string
 }
 
+var Test = false
+
 // ReadIpTable Read data from Ip tables from json file
 func ReadIpTable() (*IpAddresses, error) {
 	// Get Path from config
@@ -178,6 +180,16 @@ func (table *IpAddresses) RemoveDuplicates() error {
 
 // CurrentPublicIP Get Current Public IP address
 func CurrentPublicIP() (string, error) {
+	// Get configs
+	Config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return "", err
+	}
+	// If test mode is on then return local address
+	if Config.Test {
+		return "0.0.0.0", nil
+	}
+
 	req, err := http.Get("http://ip-api.com/json/")
 	if err != nil {
 		return "", err
