@@ -312,6 +312,7 @@ func Server() (*gin.Engine, error) {
 		if err != nil {
 			fmt.Println(err)
 		}
+
 		ProxyIpAddr.ServerPort = config.ServerPort
 		ProxyIpAddr.Name = config.MachineName
 		ProxyIpAddr.NAT = false

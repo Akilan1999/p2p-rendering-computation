@@ -16,7 +16,6 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"log"
 	"math/big"
 	"net"
@@ -54,7 +53,8 @@ func GenerateCertificate() error {
 
 	//flag.Parse()
 
-	host, err = p2p.CurrentPublicIP()
+	//host, err = p2p.CurrentPublicIP()
+	host = "0.0.0.0"
 
 	if err != nil {
 		return err
