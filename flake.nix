@@ -80,11 +80,6 @@
               sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
 
               cabal2nix . > ./cabal.nix;
-
-              # TODO: remove reference to nix branch
-              nix flake init -t github:xecarlox94/p2p-rendering-computation?ref=nix#haskell
-
-              git add .
             '';
         };
       }
