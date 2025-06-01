@@ -35,10 +35,6 @@
     (flake-utils.lib.eachDefaultSystem (system:
       let
 
-        # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
-        # This has no effect on other platforms.
-        callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
-
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
@@ -48,10 +44,15 @@
           ];
         };
 
+        # The current default sdk for macOS fails to compile go projects, so we use a newer one for now.
+        # This has no effect on other platforms.
+        callPackage = pkgs.darwin.apple_sdk_11_0.callPackage or pkgs.callPackage;
+
+        p2prcDefault = callPackage ./. { };
+
       in
       {
-
-        packages.default = callPackage ./. { };
+        packages.default = p2prcDefault;
 
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
@@ -70,10 +71,30 @@
             ghc
             cabal2nix
             cabal-install
-            nix
             git
+            p2prcDefault
           ];
           text =
+            let
+              # TODO: add
+              p2prcMainContent = availablePort: availableUrl:
+                ''
+                  module Main where
+
+                  import P2PRC
+                    ( runP2PRC
+                    , MapPortRequest(MkMapPortRequest)
+                    )
+
+                  main :: IO ()
+                  main =
+                    runP2PRC
+                      ( MkMapPortRequest ${availablePort} "${availableUrl}.akilan.io"
+                      )
+                '';
+
+              mainFileContent = p2prcMainContent 8080 "haskell";
+            in
             ''
               clear
               if [ "$#" -eq 0 ]; then
@@ -96,6 +117,8 @@
 
               sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
+              cat ${mainFileContent} > app/main.hs
+
               cabal2nix . > ./cabal.nix;
               cabal2nix . --shell > shell.nix
 
@@ -104,7 +127,7 @@
 
               echo -e "run the following commands to finish nix development and production environment:\n\n"
 
-              echo -e "cd $PROJECT_DIR\n"
+              echo -e "cd $PROJECT_DIR"
               echo -e "nix flake init -t github:akilan1999/p2p-rendering-computation#haskell"
               echo -e "nix develop"
               echo -e "nix run"
