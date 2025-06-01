@@ -85,11 +85,12 @@
 
               echo -e "$PROJECT_DIR"
 
-              # echo -e  "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
-              #
-              # echo -e  "Could you input the name of your project?\n"
-              #
-              # cd "$PROJECT_DIR"
+              mkdir "$PROJECT_DIR"
+
+              cd "$PROJECT_DIR"
+
+              echo "$PWD"
+
               #
               # git init .
               #
