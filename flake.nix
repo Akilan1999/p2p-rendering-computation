@@ -93,7 +93,7 @@
                       )
                 '';
 
-              mainFileContent = p2prcMainContent 8080 "haskell";
+              mainFileContent = p2prcMainContent (builtins.toString 8080) "haskell";
             in
             ''
               clear
