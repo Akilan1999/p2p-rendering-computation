@@ -98,6 +98,14 @@
               # TODO: add cabal2nix shell.nix generator
 
               git add .
+
+              clear
+
+              echo "run the following commands:\n\n"
+
+              echo "cd $PROJECT_NAME\n"
+              echo "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
+
             '';
         };
       }
