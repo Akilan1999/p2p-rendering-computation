@@ -97,8 +97,7 @@
               sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
               cabal2nix . > ./cabal.nix;
-
-              # TODO: add cabal2nix shell.nix generator
+              cabal2nix . --shell > shell.nix
 
               git add .
               clear
@@ -107,6 +106,8 @@
 
               echo -e "cd $PROJECT_DIR\n"
               echo -e "nix flake init -t github:akilan1999/p2p-rendering-computation#haskell"
+              echo -e "nix develop"
+              echo -e "nix run"
 
             '';
         };
