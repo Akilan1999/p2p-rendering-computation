@@ -71,6 +71,7 @@
             cabal2nix
             cabal-install
             nix
+            git
           ];
           text =
             ''
@@ -83,6 +84,8 @@
 
               cd $PROJECT_NAME
 
+              git init .
+
               echo $PWD
 
               cabal init --exe --simple
@@ -93,6 +96,8 @@
               cabal2nix . > ./cabal.nix;
 
               # TODO: add cabal2nix shell.nix generator
+
+              git add .
             '';
         };
       }
