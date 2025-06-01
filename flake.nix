@@ -74,12 +74,25 @@
           ];
           text =
             ''
-              cabal init
+              clear
+
+              echo "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
+
+              echo "Could you input the name of your project?\n"
+              read $PROJECT_NAME
+
+              cd $PROJECT_NAME
+
+              echo $PWD
+
+              cabal init --exe --simple
 
               # TODO: remove reference to cabal file
-              sed -i 's/base.*$/base, p2prc/' test-flake-template.cabal
+              sed -i 's/base.*$/base, p2prc/' $PROJECT_NAME.cabal
 
               cabal2nix . > ./cabal.nix;
+
+              # TODO: add cabal2nix shell.nix generator
             '';
         };
       }
