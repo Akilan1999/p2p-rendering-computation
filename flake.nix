@@ -73,6 +73,7 @@
             nix
             git
           ];
+          askjdaskd=[];
           text =
             ''
               clear
