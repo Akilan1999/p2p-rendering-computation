@@ -73,7 +73,6 @@
             nix
             git
           ];
-          askjdaskd=[];
           text =
             ''
               clear
@@ -84,33 +83,35 @@
 
               PROJECT_DIR="$1"
 
-              printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
+              echo -e "$PROJECT_DIR"
 
-              printf "Could you input the name of your project?\n"
-
-              cd "$PROJECT_DIR"
-
-              git init .
-
-              printf "%s\n" "$PWD"
-
-              cabal init --exe --simple
-
-              # TODO: remove reference to cabal file
-              sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
-
-              cabal2nix . > ./cabal.nix;
-
-              # TODO: add cabal2nix shell.nix generator
-
-              git add .
-
-              clear
-
-              printf "run the following commands:\n\n"
-
-              printf "cd "%s\n" "$PROJECT_DIR"\n"
-              printf "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
+              # echo -e  "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
+              #
+              # echo -e  "Could you input the name of your project?\n"
+              #
+              # cd "$PROJECT_DIR"
+              #
+              # git init .
+              #
+              # echo -e "$PWD"
+              #
+              # cabal init --exe --simple
+              #
+              # # TODO: remove reference to cabal file
+              # sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
+              #
+              # cabal2nix . > ./cabal.nix;
+              #
+              # # TODO: add cabal2nix shell.nix generator
+              #
+              # git add .
+              #
+              # clear
+              #
+              # echo -e "run the following commands:\n\n"
+              #
+              # echo -e "cd "$PROJECT_DIR"\n"
+              # echo -e "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
         };
