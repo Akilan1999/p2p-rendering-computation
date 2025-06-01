@@ -80,12 +80,11 @@
                   echo "No arguments provided."
               fi
 
-              printf "$1"
+              PROJECT_DIR=$1
 
               printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
               printf "Could you input the name of your project?\n"
-              IFS= read -r PROJECT_DIR
 
               cd \"\$PROJECT_DIR\"
 
