@@ -28,7 +28,7 @@
         devShells.default = pkgs.haskellPackages.shellFor {
 
           packages = p: [
-            (p.callPackage ./cabal.nix { })
+            (p.callPackage ./shell.nix { })
           ];
 
           buildInputs = with pkgs; [
@@ -41,6 +41,7 @@
           # TODO: add cabal2nix shell command
           shellHook = ''
             cabal2nix . > ./cabal.nix
+            cabal2nix . --shell > ./shell.nix
           '';
         };
       }
