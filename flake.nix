@@ -80,7 +80,7 @@
               printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
               printf "Could you input the name of your project?\n"
-              read -r \"\$PROJECT_NAME\"
+              read -r PROJECT_NAME
 
               cd \"\$PROJECT_NAME\"
 
