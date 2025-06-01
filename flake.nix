@@ -79,6 +79,7 @@
               if [ "$#" -eq 0 ]; then
                 echo "No arguments provided."
                 echo "Please provide the name of your project"
+                echo "nix run github:akilan1999/p2p-rendering-computation#initHaskellProject -- <NAME-PROJECT>"
                 exit 1;
               fi
 
@@ -100,12 +101,11 @@
               # TODO: add cabal2nix shell.nix generator
 
               git add .
-
               clear
 
               echo -e "run the following commands:\n\n"
 
-              echo -e "cd "$PROJECT_DIR"\n"
+              echo -e "cd $PROJECT_DIR\n"
               echo -e "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
