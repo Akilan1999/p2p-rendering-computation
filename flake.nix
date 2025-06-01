@@ -78,24 +78,25 @@
               clear
               if [ "$#" -eq 0 ]; then
                   echo "No arguments provided."
+                exit 1;
               fi
 
-              PROJECT_DIR=$1
+              PROJECT_DIR="$1"
 
               printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
               printf "Could you input the name of your project?\n"
 
-              cd \"\$PROJECT_DIR\"
+              cd "$PROJECT_DIR"
 
               git init .
 
-              printf \"\$PWD\"
+              printf "$PWD"
 
               cabal init --exe --simple
 
               # TODO: remove reference to cabal file
-              sed -i 's/base.*$/base, p2prc/' \"\$PROJECT_DIR\".cabal
+              sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
               cabal2nix . > ./cabal.nix;
 
@@ -107,7 +108,7 @@
 
               printf "run the following commands:\n\n"
 
-              printf "cd \"\$PROJECT_DIR\"\n"
+              printf "cd "$PROJECT_DIR"\n"
               printf "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
