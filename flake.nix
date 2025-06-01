@@ -103,10 +103,10 @@
               git add .
               clear
 
-              echo -e "run the following commands:\n\n"
+              echo -e "run the following commands to finish nix development and production environment:\n\n"
 
               echo -e "cd $PROJECT_DIR\n"
-              echo -e "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
+              echo -e "nix flake init -t github:akilan1999/p2p-rendering-computation#haskell"
 
             '';
         };
