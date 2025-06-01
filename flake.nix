@@ -117,7 +117,7 @@
 
               sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
-              cat ${mainFileContent} > app/main.hs
+              cat ${mainFileContent} > app/Main.hs
 
               cabal2nix . > ./cabal.nix;
               cabal2nix . --shell > shell.nix
