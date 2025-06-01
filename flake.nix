@@ -76,24 +76,24 @@
           ];
           text =
             let
-              # TODO: add
-              p2prcMainContent = availablePort: availableUrl:
-                ''
-                  module Main where
-
-                  import P2PRC
-                    ( runP2PRC
-                    , MapPortRequest(MkMapPortRequest)
-                    )
-
-                  main :: IO ()
-                  main =
-                    runP2PRC
-                      ( MkMapPortRequest ${availablePort} "${availableUrl}.akilan.io"
-                      )
-                '';
-
-              mainFileContent = p2prcMainContent (builtins.toString 8080) "haskell";
+              # TODO: add the content for the main file
+              # p2prcMainContent = availablePort: availableUrl:
+              #   ''
+              #     module Main where
+              #
+              #     import P2PRC
+              #       ( runP2PRC
+              #       , MapPortRequest(MkMapPortRequest)
+              #       )
+              #
+              #     main :: IO ()
+              #     main =
+              #       runP2PRC
+              #         ( MkMapPortRequest ${availablePort} "${availableUrl}.akilan.io"
+              #         )
+              #   '';
+              #
+              # mainFileContent = p2prcMainContent (builtins.toString 8080) "haskell";
             in
             ''
               clear
@@ -117,7 +117,7 @@
 
               sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
-              cat ${mainFileContent} > app/Main.hs
+              # cat ${mainFileContent} > app/Main.hs
 
               cabal2nix . > ./cabal.nix;
               cabal2nix . --shell > shell.nix
