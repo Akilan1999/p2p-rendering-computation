@@ -77,16 +77,16 @@
             ''
               clear
 
-              echo "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
+              printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
-              echo "Could you input the name of your project?\n"
-              read \"\$PROJECT_NAME\"
+              printf "Could you input the name of your project?\n"
+              read -r PROJECT_NAME
 
               cd \"\$PROJECT_NAME\"
 
               git init .
 
-              echo \"\$PWD\"
+              printf \"\$PWD\"
 
               cabal init --exe --simple
 
@@ -101,10 +101,10 @@
 
               clear
 
-              echo "run the following commands:\n\n"
+              printf "run the following commands:\n\n"
 
-              echo "cd \"\$PROJECT_NAME\"\n"
-              echo "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
+              printf "cd \"\$PROJECT_NAME\"\n"
+              printf "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
         };
