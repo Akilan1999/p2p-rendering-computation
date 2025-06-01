@@ -91,7 +91,7 @@
 
               git init .
 
-              printf "$PWD"
+              printf "%s\n" "$PWD"
 
               cabal init --exe --simple
 
@@ -108,7 +108,7 @@
 
               printf "run the following commands:\n\n"
 
-              printf "cd "$PROJECT_DIR"\n"
+              printf "cd "%s\n" "$PROJECT_DIR"\n"
               printf "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
