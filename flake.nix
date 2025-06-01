@@ -76,6 +76,11 @@
           text =
             ''
               clear
+              if [ "$#" -eq 0 ]; then
+                  echo "No arguments provided."
+              fi
+
+              printf "$1"
 
               printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
