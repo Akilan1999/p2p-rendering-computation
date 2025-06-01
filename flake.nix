@@ -92,11 +92,10 @@
 
               cabal init --exe --simple
 
-              # # TODO: remove reference to cabal file
-              # sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
-              #
-              # cabal2nix . > ./cabal.nix;
-              #
+              sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
+
+              cabal2nix . > ./cabal.nix;
+
               # # TODO: add cabal2nix shell.nix generator
               #
               # git add .
