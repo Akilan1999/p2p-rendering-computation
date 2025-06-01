@@ -80,9 +80,9 @@
               printf "Hello, this shell script will bootstrap a P2PRC Haskell project with Nix Flake\n"
 
               printf "Could you input the name of your project?\n"
-              IFS= read -r project_dir
+              IFS= read -r PROJECT_DIR
 
-              cd \"\$project_dir\"
+              cd \"\$PROJECT_DIR\"
 
               git init .
 
@@ -91,7 +91,7 @@
               cabal init --exe --simple
 
               # TODO: remove reference to cabal file
-              sed -i 's/base.*$/base, p2prc/' \"\$project_dir\".cabal
+              sed -i 's/base.*$/base, p2prc/' \"\$PROJECT_DIR\".cabal
 
               cabal2nix . > ./cabal.nix;
 
@@ -103,7 +103,7 @@
 
               printf "run the following commands:\n\n"
 
-              printf "cd \"\$project_dir\"\n"
+              printf "cd \"\$PROJECT_DIR\"\n"
               printf "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
