@@ -77,27 +77,21 @@
             ''
               clear
               if [ "$#" -eq 0 ]; then
-                  echo "No arguments provided."
+                echo "No arguments provided."
+                echo "Please provide the name of your project"
                 exit 1;
               fi
 
               PROJECT_DIR="$1"
 
-              echo -e "$PROJECT_DIR"
-
               mkdir "$PROJECT_DIR"
 
               cd "$PROJECT_DIR"
 
-              echo "$PWD"
+              git init .
 
-              #
-              # git init .
-              #
-              # echo -e "$PWD"
-              #
-              # cabal init --exe --simple
-              #
+              cabal init --exe --simple
+
               # # TODO: remove reference to cabal file
               # sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
               #
