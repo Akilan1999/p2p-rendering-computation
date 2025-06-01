@@ -89,6 +89,7 @@
               cd "$PROJECT_DIR"
 
               git init .
+              clear
 
               cabal init --exe --simple
 
@@ -96,16 +97,16 @@
 
               cabal2nix . > ./cabal.nix;
 
-              # # TODO: add cabal2nix shell.nix generator
-              #
-              # git add .
-              #
-              # clear
-              #
-              # echo -e "run the following commands:\n\n"
-              #
-              # echo -e "cd "$PROJECT_DIR"\n"
-              # echo -e "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
+              # TODO: add cabal2nix shell.nix generator
+
+              git add .
+
+              clear
+
+              echo -e "run the following commands:\n\n"
+
+              echo -e "cd "$PROJECT_DIR"\n"
+              echo -e "nix run github:xecarlox94/p2p-rendering-computation?ref=nix#initHaskellProject"
 
             '';
         };
