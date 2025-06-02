@@ -7,12 +7,13 @@
 
       flake-util.url = "github:numtide/flake-utils";
 
-      p2prc-flake.url = "github:xecarlox94/p2p-rendering-computation?ref=nix";
+      p2prc-flake.url = "github:akilan1999/p2p-rendering-computation";
     };
 
   outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
     (flake-utils.lib.eachDefaultSystem (system:
       let
+
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
