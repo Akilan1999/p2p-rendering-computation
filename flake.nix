@@ -75,32 +75,13 @@
             p2prcDefault
           ];
           text =
-            let
-              # TODO: add the content for the main file
-              # p2prcMainContent = availablePort: availableUrl:
-              #   ''
-              #     module Main where
-              #
-              #     import P2PRC
-              #       ( runP2PRC
-              #       , MapPortRequest(MkMapPortRequest)
-              #       )
-              #
-              #     main :: IO ()
-              #     main =
-              #       runP2PRC
-              #         ( MkMapPortRequest ${availablePort} "${availableUrl}.akilan.io"
-              #         )
-              #   '';
-              #
-              # mainFileContent = p2prcMainContent (builtins.toString 8080) "haskell";
-            in
             ''
               clear
+
               if [ "$#" -eq 0 ]; then
                 echo "No arguments provided."
                 echo "Please provide the name of your project"
-                echo "nix run github:akilan1999/p2p-rendering-computation#initHaskellProject -- <NAME-PROJECT>"
+                echo "nix run git+https://github:akilan1999/p2p-rendering-computation#initHaskellProject -- <NAME-PROJECT>"
                 exit 1;
               fi
 
@@ -117,12 +98,10 @@
 
               sed -i 's/base.*$/base, p2prc/' "$PROJECT_DIR".cabal
 
-              # cat ${mainFileContent} > app/Main.hs
-
               cabal2nix . > ./cabal.nix;
-              cabal2nix . --shell > shell.nix
 
               git add .
+
               clear
 
               echo -e "run the following commands to finish nix development and production environment:\n\n"
@@ -131,6 +110,7 @@
               echo -e "nix flake init -t github:akilan1999/p2p-rendering-computation#haskell"
               echo -e "nix develop"
               echo -e "nix run"
+              echo -e "\n\n"
 
             '';
         };
