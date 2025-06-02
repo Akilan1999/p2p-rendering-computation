@@ -51,13 +51,14 @@ server.
 Over here we will cover the basic steps to get the server and client
 side running.
 
-** Latest release install
+** Latest release installation
 :PROPERTIES:
 :CUSTOM_ID: latest-release-install
 :END:
 https://github.com/Akilan1999/p2p-rendering-computation/releases
 
-** Manual Install from Github master branch
+
+** Manual Installation from Github master branch
 :PROPERTIES:
 :CUSTOM_ID: install-from-github-master-branch
 :END:
@@ -179,6 +180,113 @@ GLOBAL OPTIONS:
 #+end_example
 
 --------------
+
+
+* Nix Flake
+
+Nix is a growing ecosystem that allows flexibility on how you develop, build and package software and configurations. It brings all programming languages (and all other tooling) to an equal footing, despite deep design differences. More importantly, integrates all the "packaging" into the context of a "pure" function.
+
+
+P2PRC aims to become a utility that can be used in various flexible manners and having Nix support is a good alternative to accomplish this goal.
+
+
+Nix Flake is a format, within the Nix ecosystem, intentionally designed to encourage a standard in packaging distribution. The current packaging assumes that you have "nix flake" installed because it is currently an experimental feature of Nix.
+
+
+** P2PRC core Go language repo
+
+In case you want to develop, build or integrate using nix, you just need to run either "nix develop" or "nix run" from the command line locally in a cloned git repository or by running "nix run github:akilan1999/p2p-rendering-computation -- --help"
+
+
+P2PRC library also is ready to be imported into other nix flakes. To accomplish that please make sure to override the target nixpkgs environment in the following manner;
+
+#+begin_example
+pkgs = import nixpkgs {
+  inherit system;
+  overlays = [
+    p2prc-flake.overlays.default
+  ];
+};
+#+end_example
+
+
+This will make the p2prc executable available in the environment of any application you use.
+
+
+* P2PRC Haskell library
+
+
+The project is structured to provide language bindings to any programming language. The first one being supported in this manner is the Haskell programming language. It provides a bootstrapping script for a new Cabal project with p2prc binary available in the environment and, more relevantly, the Haskell library bindings available in the virtual environment cabal environment.
+
+#+begin_example
+nix run git+https://github.com/akilan1999/p2p-rendering-computation#initHaskellProject -- <PROJECT_NAME>
+#+end_example
+
+
+This will generate a new haskell project setup to automatically work with the p2prc development and running environment.
+
+
+Once completed, you should go into the project directory and copy the nix flake template, necessary to define the project's environment.
+
+#+begin_example
+nix flake init -t github:akilan1999/p2p-rendering-computation#haskell
+#+end_example
+
+The previous command sets up the flake environment and its dependencies. It will look like the following
+
+#+begin_example
+{
+  description = "Start of Haskell P2PRC flake";
+
+  inputs =
+    {
+      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+      flake-util.url = "github:numtide/flake-utils";
+
+      p2prc-flake.url = "github:akilan1999/p2p-rendering-computation";
+    };
+
+  outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
+    (flake-utils.lib.eachDefaultSystem (system:
+      let
+
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            p2prc-flake.overlays.default
+            p2prc-flake.overlays.bindings
+          ];
+        };
+
+      in {
+
+        packages.default = pkgs.haskellPackages.callPackage ./cabal.nix { };
+
+        devShells.default = pkgs.haskellPackages.shellFor {
+
+          packages = p: [
+            (p.callPackage ./cabal.nix { })
+          ];
+
+          buildInputs = with pkgs; [
+            p2prc-flake.packages.${system}.default
+            ghc
+            cabal2nix
+            cabal-install
+          ];
+
+          shellHook = ''
+            cabal2nix . > ./cabal.nix
+          '';
+        };
+      }
+    ));
+}
+#+end_example
+
+The template uses Cabal2Nix which manages the Haskell virtual environment automatically. It applies the system overlays, sets up the shell environment for the project (updating the Cabal2Nix configuration) and packages the main executable.
+
 
 * Using basic commands
 :PROPERTIES:
