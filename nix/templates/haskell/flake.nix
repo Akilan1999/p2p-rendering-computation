@@ -38,8 +38,6 @@
             cabal-install
           ];
 
-          # TODO: add cabal2nix shell command
-          # cabal2nix . --shell > ./shell.nix
           shellHook = ''
             cabal2nix . > ./cabal.nix
           '';
