@@ -15,16 +15,16 @@
 :PROPERTIES:
 :CUSTOM_ID: chapter1-introduction
 :END:
-This project focuses on creating a framework for running heavy computational tasks that a regular 
-computer cannot handle easily. These tasks may include graphically demanding video games, rendering 
-3D animations, and performing complex protein folding simulations. The major focus of this project 
-is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P) 
-network to decentralise task execution and increase the computational bandwidth available for 
+This project focuses on creating a framework for running heavy computational tasks that a regular
+computer cannot handle easily. These tasks may include graphically demanding video games, rendering
+3D animations, and performing complex protein folding simulations. The major focus of this project
+is not on financial incentives but rather on building a robust and efficient peer-to-peer (P2P)
+network to decentralise task execution and increase the computational bandwidth available for
 such tasks.
 
-The P2PRC framework serves as a foundation for decentralised rendering and computation, 
-providing insights into how tasks can be distributed efficiently across a network of peers. 
-Leveraging the P2PRC approach, this project extends its capabilities to handle a 
+The P2PRC framework serves as a foundation for decentralised rendering and computation,
+providing insights into how tasks can be distributed efficiently across a network of peers.
+Leveraging the P2PRC approach, this project extends its capabilities to handle a
 wider range of computationally intensive tasks.
 
 ** Motivation
@@ -51,13 +51,14 @@ server.
 Over here we will cover the basic steps to get the server and client
 side running.
 
-** Latest release install
+** Latest release installation
 :PROPERTIES:
 :CUSTOM_ID: latest-release-install
 :END:
 https://github.com/Akilan1999/p2p-rendering-computation/releases
 
-** Install from Github master branch
+
+** Manual Installation from Github master branch
 :PROPERTIES:
 :CUSTOM_ID: install-from-github-master-branch
 :END:
@@ -73,7 +74,7 @@ Thus, we need go lang to compile to code to a binary file.
 :PROPERTIES:
 :CUSTOM_ID: install-docker
 :END:
-In this project the choice of virtualization is Docker due to it's wide
+In this project the choice of virtualisation is Docker due to it's wide
 usage in the developer community. In the server module we use the Docker
 Go API to create and interact with the containers.
 
@@ -180,6 +181,113 @@ GLOBAL OPTIONS:
 
 --------------
 
+
+* Nix Flake
+
+Nix is a growing ecosystem that allows flexibility on how you develop, build and package software and configurations. It brings all programming languages (and all other tooling) to an equal footing, despite deep design differences. More importantly, integrates all the "packaging" into the context of a "pure" function.
+
+
+P2PRC aims to become a utility that can be used in various flexible manners and having Nix support is a good alternative to accomplish this goal.
+
+
+Nix Flake is a format, within the Nix ecosystem, intentionally designed to encourage a standard in packaging distribution. The current packaging assumes that you have "nix flake" installed because it is currently an experimental feature of Nix.
+
+
+** P2PRC core Go language repo
+
+In case you want to develop, build or integrate using nix, you just need to run either "nix develop" or "nix run" from the command line locally in a cloned git repository or by running "nix run github:akilan1999/p2p-rendering-computation -- --help"
+
+
+P2PRC library also is ready to be imported into other nix flakes. To accomplish that please make sure to override the target nixpkgs environment in the following manner;
+
+#+begin_example
+pkgs = import nixpkgs {
+  inherit system;
+  overlays = [
+    p2prc-flake.overlays.default
+  ];
+};
+#+end_example
+
+
+This will make the p2prc executable available in the environment of any application you use.
+
+
+* P2PRC Haskell library
+
+
+The project is structured to provide language bindings to any programming language. The first one being supported in this manner is the Haskell programming language. It provides a bootstrapping script for a new Cabal project with p2prc binary available in the environment and, more relevantly, the Haskell library bindings available in the virtual environment cabal environment.
+
+#+begin_example
+nix run git+https://github.com/akilan1999/p2p-rendering-computation#initHaskellProject -- <PROJECT_NAME>
+#+end_example
+
+
+This will generate a new haskell project setup to automatically work with the p2prc development and running environment.
+
+
+Once completed, you should go into the project directory and copy the nix flake template, necessary to define the project's environment.
+
+#+begin_example
+nix flake init -t github:akilan1999/p2p-rendering-computation#haskell
+#+end_example
+
+The previous command sets up the flake environment and its dependencies. It will look like the following
+
+#+begin_example
+{
+  description = "Start of Haskell P2PRC flake";
+
+  inputs =
+    {
+      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+      flake-util.url = "github:numtide/flake-utils";
+
+      p2prc-flake.url = "github:akilan1999/p2p-rendering-computation";
+    };
+
+  outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
+    (flake-utils.lib.eachDefaultSystem (system:
+      let
+
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            p2prc-flake.overlays.default
+            p2prc-flake.overlays.bindings
+          ];
+        };
+
+      in {
+
+        packages.default = pkgs.haskellPackages.callPackage ./cabal.nix { };
+
+        devShells.default = pkgs.haskellPackages.shellFor {
+
+          packages = p: [
+            (p.callPackage ./cabal.nix { })
+          ];
+
+          buildInputs = with pkgs; [
+            p2prc-flake.packages.${system}.default
+            ghc
+            cabal2nix
+            cabal-install
+          ];
+
+          shellHook = ''
+            cabal2nix . > ./cabal.nix
+          '';
+        };
+      }
+    ));
+}
+#+end_example
+
+The template uses Cabal2Nix which manages the Haskell virtual environment automatically. It applies the system overlays, sets up the shell environment for the project (updating the Cabal2Nix configuration) and packages the main executable.
+
+
 * Using basic commands
 :PROPERTIES:
 :CUSTOM_ID: using-basic-commands
@@ -190,7 +298,7 @@ GLOBAL OPTIONS:
 :END:
 
 #+begin_example
-p2prc -s 
+p2prc -s
 #+end_example
 
 *** View server Specification
@@ -218,7 +326,7 @@ p2prc --touch=<server ip address> -p <number of ports> --gpu
 The docker id is present in the output where you create a container
 
 #+begin_example
-p2prc --rm=<server ip address> --id=<docker container id> 
+p2prc --rm=<server ip address> --id=<docker container id>
 #+end_example
 
 *** Adding servers to ip table
@@ -226,7 +334,7 @@ p2prc --rm=<server ip address> --id=<docker container id>
 :CUSTOM_ID: adding-servers-to-ip-table
 :END:
 #+begin_example
-p2prc --as=<server ip address you want to add> 
+p2prc --as=<server ip address you want to add>
 #+end_example
 
 *** Update ip table
@@ -234,7 +342,7 @@ p2prc --as=<server ip address you want to add>
 :CUSTOM_ID: update-ip-table
 :END:
 #+begin_example
-p2prc --us 
+p2prc --us
 #+end_example
 
 *** List Servers
@@ -242,7 +350,7 @@ p2prc --us
 :CUSTOM_ID: list-servers
 :END:
 #+begin_example
-p2prc --ls 
+p2prc --ls
 #+end_example
 
 *** View Network interfaces
@@ -306,7 +414,7 @@ p2prc --group <group id>
 :CUSTOM_ID: delete-container-from-group
 :END:
 #+begin_example
-p2prc --rmcgroup --group <group id> --id <container id> 
+p2prc --rmcgroup --group <group id> --id <container id>
 #+end_example
 
 *** Delete entire group
@@ -330,7 +438,7 @@ p2prc --pp <repo link>
 :CUSTOM_ID: deleting-plugin-from-the-plugin-directory
 :END:
 #+begin_example
-p2prc --rp <plugin name> 
+p2prc --rp <plugin name>
 #+end_example
 
 *** Added custom metadata about the current node
@@ -342,12 +450,12 @@ p2prc --amd "custom metadata"
 #+end_example
 
 *** MapPort and link to domain name
-Allows to expose remote ports from a machine in the P2P network. 
+Allows to expose remote ports from a machine in the P2P network.
 #+begin_example
 p2prc --mp <port no to map> --dn <domain name to link Mapped port against>
 #+end_example
 **** MapPort in remote machine
-This is to ensure ports on remote machines on the P2PRC can be easily opened. 
+This is to ensure ports on remote machines on the P2PRC can be easily opened.
 #+begin_example
 p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra <remote server address>
 #+end_example
@@ -358,10 +466,10 @@ p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra 
 :PROPERTIES:
 :CUSTOM_ID: p2p-module-implementation
 :END:
-The P2P module is for managing server information within the network. 
-It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing 
-entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers 
-to determine upload and download speeds. This valuable information enables users to identify nearby 
+The P2P module is for managing server information within the network.
+It maintains and updates the IP table, ensuring accuracy by preventing duplicates and removing
+entries for unreachable servers. Furthermore, the module conducts speed tests on the listed servers
+to determine upload and download speeds. This valuable information enables users to identify nearby
 servers with optimal performance, enhancing their overall network experience.
 
 #+caption: UML diagram of P2P module
@@ -405,7 +513,7 @@ configuration module.
 			"NAT": "<boolean representing if the node is behind NAT or not>",
 			"EscapeImplementation": "<NAT traversal implementation>",
 			"ProxyServer": "<If the node listed is acting as a proxy server>",
-			"UnSafeMode": <Unsafe mode if turned on will allow all nodes in the network public keys to be 
+			"UnSafeMode": <Unsafe mode if turned on will allow all nodes in the network public keys to be
       added to that particular node>",
 			"PublicKey": "<Public key of that particular node>",
 			"CustomInformation": "<custom information passed in through all the nodes in the network>"
@@ -528,7 +636,7 @@ Below are a sample set of commands to open the bindings implementation.
 # run
 cd Bindings/
 # list files
-ls 
+ls
 # search for file
 Client.go
 #+end_example
@@ -636,14 +744,14 @@ The easier way
 #+begin_src sh
 # Run
 make python
-# Expected ouput
+# Expected output
 Output is in the Directory Bindings/python/export/
 # Run
 cd Bindings/python/export/
 # list files
 ls
 # Expected output
-SharedObjects/  library.py requirements.txt 
+SharedObjects/  library.py requirements.txt
 #+end_src
 
 Above shows a generated folder which consists of a folder called
@@ -722,7 +830,7 @@ The Abstractions package consists of black-boxed functions for P2PRC.
 - =ViewIPTable()=: View the IP table which about nodes in the network.
 - =UpdateIPTable()=: Force update IP table to learn about new nodes
   faster.
-  
+
 * NAT Traversal
 :PROPERTIES:
 :CUSTOM_ID: nat-traversal
@@ -783,18 +891,18 @@ func main() {
  - Author: [[http://akilan.io/][Akilan Selvacoumar]]
  - Date: 28-01-2025
 
-   
+
  - Video tutorial:
  [[https://youtu.be/rN4SiVowg5E][https://i3.ytimg.com/vi/rN4SiVowg5E/maxresdefault.jpg]]
 
-This is a fun expirement for anyone to try to quickly run a server and
+This is a fun experiment for anyone to try to quickly run a server and
 quickly do a map port and domain name mapping in a single command.
 
 *** 1. Find a program you want to run
        Let's try to setup a really easy program (Let's do with Linkwarden
        with docker compose :) ). This is under the assumption you have docker
        compose installed on your local machine.
-       
+
 **** Let's run Linkwarden using docker compose and P2PRC
        [[https://docs.linkwarden.app/self-hosting/installation][Installation instructions]]:
        #+BEGIN_SRC
@@ -850,21 +958,21 @@ A entry 217.76.63.222
 
      Your done now just head to the DOMAIN NAME you added.
      ex: https://linkwarden.akilan.io
-   
-       
-       
-
-       
-       
-       
-       
 
 
-* Ideas for future potencial features
-Consists of personal loideas for the future of P2PRC.
-At moment only has main contributors writiing to this.
 
-** To support hetrogenous set of Nodes that cannot run P2PRC
+
+
+
+
+
+
+
+* Ideas for future potential features
+Consists of personal ideas for the future of P2PRC.
+At moment only has main contributors writing to this.
+
+** To support heterogenous set of Nodes that cannot run P2PRC
 This stems from a personal issue I have when doing research
 on [[https://github.com/CTSRD-CHERI/cheribsd][CheriBSD]] kernel. For my research I am using the ARM morello
 which is a 128bit ARMv8 processor. At the moment Go programs
@@ -873,7 +981,7 @@ run P2PRC at the moment inside the ARM morello to remotely access
 it when it's behind NAT using P2PRC. This would indeed be a common
 problem when running against various Architectures that do not
 support running P2PRC. As you will see soon this also creates
-oppurtunity space to scale faster to nodes in a local network
+opportunity space to scale faster to nodes in a local network
 and would introduce a new layer fault tolerance within a local
 network nodes.
 
@@ -884,7 +992,7 @@ network nodes.
        - This means I have 2 ways to access the Morello board: Which is to SSH
 	 into either 2 laptops and then SSH into 192.168.0.10 to gain access
 	 to the board. Wouldn't it be great to automate this whole layer and
-	 as well look into custom tasks into the hetrogenous hardware.
+	 as well look into custom tasks into the heterogeneous hardware.
 *** Set of interesting possible:
      We build a cool set possibilities before and use this to build up the implementation
      plan.
@@ -892,9 +1000,9 @@ network nodes.
        - We can use the P2PRC protocol to run servers inside the morello board via traversed
 	 node locally which can access that Node.
        - Spin servers on node not running P2PRC using the P2PRC standard abstractions.
-       - Auto-setup P2PRC nodes with just SSH access via potencially a DSL.
+       - Auto-setup P2PRC nodes with just SSH access via potentially a DSL.
        - A neat use case for CHERI for instance would be use the architecture to run light
-	 weight hypervisors. 
+	 weight hypervisors.
 *** Implementation
      - To use implementations similar to [[https://linux.die.net/man/1/socat][socat]] to ensure we can bind address of local
        nodes to a node running P2PRC and the node running P2PRC can do a local map port.
@@ -902,7 +1010,7 @@ network nodes.
        map ports to machines which remotely running P2PRC. This means of instance I
        can issue a command to the Morello board without the morello board being in
        my local network.
-     - We would want to implement the exsisting P2PRC public key mechanism as well so that
+     - We would want to implement the existing P2PRC public key mechanism as well so that
        other nodes can access the Morello board who have permission access.
 
 #+CAPTION: Implementation idea (To be improved upon)
