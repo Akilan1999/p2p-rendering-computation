@@ -31,9 +31,11 @@ P2PRC_instances() {
     p2prc --as 0.0.0.0 -p "$NEW_PORT"
 
     # Replace the ServerPort in config
+    # test-$counter
     sed -i.bak "s/\"ServerPort\": \"[0-9]*\"/\"ServerPort\": \"$NEW_PORT\"/" "./config.json"
     sed -i.bak "s/\"Test\": false/\"Test\": true/" "./config.json"
     sed -i.bak "s/\"BehindNAT\": true/\"BehindNAT\": false/" "./config.json"
+    # sed -i.bak "s/\"MachineName\": "Akilans-MacBook-Pro.local-J2UbbkF"/\"MachineName\": \"test-$counter\"/" "./config.json"
 
     cat config.json
 
@@ -92,6 +94,15 @@ Update_All_IP_Tables() {
   done
 }
 
+# Test function for the root to custom information
+# through the network
+Send_Information() {
+  ls
+  cd test-2/
+  p2prc --amd "test message"
+  cd ..
+}
+
 
 # ---------------- Work flow test ---------------
 
@@ -104,6 +115,12 @@ P2PRC_instances 3
 ## Start instances
 Start_all_instances 3
 
+
+# Send test information from node 1
+sleep 10
+Send_Information
+
+sleep 10
 ## List ip tables of nodes started
 IP_Tables_after_Started 3
 #
@@ -112,3 +129,4 @@ Remove_all_test_files
 
 ## Kill all instances
 Kill_all_instances
+
