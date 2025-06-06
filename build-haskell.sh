@@ -11,11 +11,13 @@ rm -rf exports
 # Create exports directory
 mkdir exports
 # Copy current haskell project into the folder
-cp -rf . exports/
+cp -rf . exports/ 
 # Copy p2prc binary inside haskell folder
 cp ../../p2p-rendering-computation exports/
 
 cd exports
+# remove exports directory copied inside exports
+rm -rf exports/ 
 
 # Set p2prc variable
 echo export P2PRC=$PWD
