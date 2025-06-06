@@ -96,7 +96,7 @@ main =
 p2prcAPI :: P2PRCapi
 p2prcAPI =
   MkP2PRCapi
-    { startServer = spawnProcP2PRC p2prcCmdName [ MkOptAtomic "--s" ]
+    { startServer = spawnProcP2PRC p2prcCmdName [ MkOptAtomic "-s" ]
 
     , execListServers =
       execProcP2PRCParser [ MkOptAtomic "--ls" ] MkEmptyStdInput

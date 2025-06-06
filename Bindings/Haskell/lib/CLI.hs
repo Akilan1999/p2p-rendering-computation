@@ -116,5 +116,5 @@ eitherErrorDecode esa =
 -- assumes the program is ran inside the haskell module in p2prc's repo
 -- assumes that last path segment is "haskell" and that p2prc binary's name is "p2p-rendering-computation"
 p2prcCmdName :: String
-p2prcCmdName = "p2prc"
+p2prcCmdName = "p2p-rendering-computation"
 
