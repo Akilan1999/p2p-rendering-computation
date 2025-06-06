@@ -212,9 +212,9 @@ pkgs = import nixpkgs {
 
 This will make the p2prc executable available in the environment of any application you use.
 
-* P2PRC Haskell library
+** P2PRC Haskell library
 
-
+*** Nix:
 The project is structured to provide language bindings to any programming language. The first one being supported in this manner is the Haskell programming language. It provides a bootstrapping script for a new Cabal project with p2prc binary available in the environment and, more relevantly, the Haskell library bindings available in the virtual environment cabal environment.
 
 #+begin_example
@@ -772,7 +772,24 @@ called from other programming languages.
 P2PRC officially supports Haskell bindings and will further support
 project using Haskell to build orchestrators on top of P2PRC.
 
-[[https://p2prc.akilan.io/Docs/haskell][Read more...]]
+**** Local machine without Nix
+On the local machine we just create a folder as exports which copies the p2prc haskell bindings
+and the latest build of the p2prc binary. After the binary is copied it runs the --dc in p2prc to setup the
+basic p2prc configurations. To do the following just do:
+#+begin_example
+make haskell
+#+end_example
+**** Directory to enter into
+#+begin_example
+cd Bindings/Haskell/exports
+#+end_example
+**** Run
+#+begin_example
+- cabal build
+- cabal run
+#+end_example
+
+[[https://p2prc.akilan.io/haskell][Read more...]]
 
 * Config Implementation
 :PROPERTIES:
