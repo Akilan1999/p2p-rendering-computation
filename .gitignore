@@ -31,6 +31,7 @@ server/docker/containers/
 
 # generic folder to ignore
 export/
+exports/
 
 # Any testing file
 *test
