@@ -1,5 +1,5 @@
 > [!TIP]
-> Haskell bindings supported!: [Bindings documentaton](https://p2prc.akilan.io/Docs/haskell/P2PRC.html)
+> Haskell bindings supported!: [Bindings documentaton](https://p2prc.akilan.io/haskell/P2PRC.html)
 
 > [!NOTE]
 > Fixing documentation to latest changes. If you have any questions setting up P2PRC either [create an issue](https://github.com/Akilan1999/p2p-rendering-computation/issues/new/choose) or send me an email (me AT akilan dot io).
@@ -57,7 +57,7 @@ alias p2prc='env P2PRC=<path you want the configs to exist in> nix run github:ak
 ```bash
 p2prc -h
 ```
-Read more on command usage: https://p2prc.akilan.io/Docs/#using-basic-commands
+Read more on command usage: https://p2prc.akilan.io/#using-basic-commands
 
 ## Latest tutorial
 [![IMAGE ALT TEXT](https://i.ytimg.com/vi/OMwCpedu5cs/hqdefault.jpg)](https://www.youtube.com/watch?v=OMwCpedu5cs")
@@ -66,7 +66,7 @@ Read more on command usage: https://p2prc.akilan.io/Docs/#using-basic-commands
 
 ## Documentation
 
-### We have documented to our best effort the basics of p2prc: [Link](https://p2prc.akilan.io/Docs/)
+### We have documented to our best effort the basics of p2prc: [Link](https://p2prc.akilan.io/)
 
 <!-- ## Table of contents in the current README -->
 <!-- 1. [Introduction](#Introduction)
