@@ -96,15 +96,14 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-5qbaxawuLsg8iu9076zlAbLtTFSNJaTz7WERS5rWRxU=",
-        "path": "/nix/store/lg694r23fzc6v5ai3qqcszq1fp44djg2-source",
+        "path": "../../",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/lg694r23fzc6v5ai3qqcszq1fp44djg2-source",
+        "path": "../../",
         "type": "path"
-      }
+      },
+      "parent": []
     },
     "root": {
       "inputs": {

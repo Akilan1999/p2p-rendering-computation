@@ -95,7 +95,7 @@ runP2PRC
 
   ( MkP2PRCapi
     { startServer     = startServer
-    -- , execInitConfig  = execInitConfig
+    , execInitConfig  = execInitConfig
     , execListServers = execListServers
     , execMapPort     = execMapPort
     }
@@ -105,7 +105,7 @@ runP2PRC
       let
 
 
-      -- configValue <- execInitConfig
+      configValue <- execInitConfig
 
       -- TODO: get name of host server from config json
 
