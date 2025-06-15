@@ -32,6 +32,7 @@ import CLI
   , eitherExecProcessParser
   , spawnProcP2PRC
   )
+import System.Console.GetOpt (usageInfo)
 
 -- import System.Environment (lookupEnv)
 
@@ -43,12 +44,32 @@ data P2PRCapi
   = MkP2PRCapi
     { startServer       :: IOEitherError ProcessHandle
       -- ^ Start server
-    -- , execInitConfig    :: IOEitherError P2PRCConfig
+    , execInitConfig    :: IOEitherError P2PRCConfig
       -- ^ Instantiate server configuration
     , execListServers   :: IOEitherError IPAddressTable
       -- ^ List servers in network
     , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
       -- ^ Exposes and associates a local TCP port with a remote DNS address
+
+
+    -- -p port
+    -- --arn
+    -- --ip value
+    -- --as value
+    -- --us
+    -- --amd
+
+    -- # Set root port
+    -- p2prc --arn --ip 0.0.0.0 -p "$rootPort"
+    --
+    -- # add current node
+    -- p2prc --as 0.0.0.0 -p "$NEW_PORT"
+    --
+    -- --us
+    -- --amd
+    --
+    --
+    --
     }
 
 
@@ -115,9 +136,7 @@ p2prcAPI =
           ]
           MkEmptyStdInput
 
-    -- , execInitConfig = do
-
-    --   confInitRes <- execProcP2PRC [ MkOptAtomic "--dc" ] MkEmptyStdInput
+    , execInitConfig = execProcP2PRCParser [ MkOptAtomic "--dc" ] MkEmptyStdInput
 
     --   case confInitRes of
     --     (Right _) -> do
