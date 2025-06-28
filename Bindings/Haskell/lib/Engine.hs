@@ -2,6 +2,7 @@
 
 module Engine
   ( runP2PRC
+  , fn
   )
   where
 
@@ -18,7 +19,7 @@ import System.Process ( terminateProcess )
 import API
   ( P2PRCapi(..)
   , MapPortRequest(..)
-  , p2prcAPI
+  , p2prcAPI, P2PRCommands
   )
 
 
@@ -58,14 +59,10 @@ import API
   @
 -}
 runP2PRC
-  :: MapPortRequest   -- ^ TCP Port Request
+  :: [P2PRCommands]   -- ^ TCP Port Request
   -> IO ()
-runP2PRC
-  ( MkMapPortRequest
-      portNumber
-      domainName
-  )
-  =
+runP2PRC [] = putStrLn ""
+runP2PRC nonEmpty@(_:_) = 
   let
 
   --
@@ -98,6 +95,7 @@ runP2PRC
     -- , execInitConfig  = execInitConfig
     , execListServers = execListServers
     , execMapPort     = execMapPort
+    , execAddCustomInformation = _
     }
     ) = p2prcAPI
 
@@ -116,7 +114,8 @@ runP2PRC
 
 
       case eitherStartProcessHandle of
-        (Right startProcessHandle) -> do
+        (Right startProcessHandle) -> 
+          do
 
           let sleepNSecs i = threadDelay (i * 1000000)
 
@@ -125,7 +124,8 @@ runP2PRC
           outputStr <- execListServers
           print outputStr
 
-          mapPortOut <- execMapPort $ MkMapPortRequest portNumber domainName
+          -- mapPortOut <- execMapPort $ MkMapPortRequest portNumber domainName
+          mapPortOut <- execMapPort $ MkMapPortRequest undefined undefined
 
           case mapPortOut of
             (Right v) -> print v
@@ -159,3 +159,7 @@ runP2PRC
       when (toLower c /= 'q') $ exitOnQ exitF
       exitF
 
+
+
+fn :: undefined 
+fn = undefined

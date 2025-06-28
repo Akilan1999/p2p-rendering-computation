@@ -43,6 +43,7 @@ var (
 	AddMetaData  string
 	AddRootNode  bool
 	IP           string
+	ViewConfig   bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -287,5 +288,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "IP address",
 		EnvVars:     []string{"IP"},
 		Destination: &IP,
+	},
+	&cli.BoolFlag{
+		Name:        "ViewConfig",
+		Aliases:     []string{"vc"},
+		Usage:       "View config file",
+		EnvVars:     []string{"VC"},
+		Destination: &ViewConfig,
 	},
 }

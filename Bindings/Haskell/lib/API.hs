@@ -3,6 +3,7 @@ module API
   ( P2PRCapi(..)
   , MapPortRequest(..)
   , p2prcAPI
+  , P2PRCommands(..)
   )
   where
 
@@ -12,6 +13,7 @@ import System.Directory ( getCurrentDirectory )
 import System.Process ( ProcessHandle )
 
 import Data.Aeson ( FromJSON )
+
 
 import Error
   ( IOEitherError
@@ -49,7 +51,10 @@ data P2PRCapi
       -- ^ List servers in network
     , execMapPort       :: MapPortRequest -> IOEitherError MapPortResponse
       -- ^ Exposes and associates a local TCP port with a remote DNS address
+    , execMaybeMapPortAndAddCustomInformation :: Maybe MapPortRequest -> PassCustomInformation -> IOEitherError String
+    , execAddCustomInformation :: PassCustomInformation -> IOEitherError String
     }
+
 
 
 -- | This defines the request required to create an association between a TCP socket port and a DNS server in the network. If successful, it makes a resource available in the network.
@@ -58,6 +63,14 @@ data MapPortRequest =
     Int                 -- ^ TCP socket number
     String              -- ^ Network domain name
 
+-- | This defined the custom information required to be passed through.
+newtype PassCustomInformation = 
+  MkAddCustomInformation
+    String
+
+data P2PRCommands
+  = MapPort MapPortRequest
+  | CustomInformation PassCustomInformation
 
 {-|
   This function intiates a pure P2PRC runtime state and builds up a 'P2PRCapi' API instance. It allows a developer to create computing orchestration algorithms using the API primitives.
@@ -94,7 +107,13 @@ main =
 
 {-# WARNING p2prcAPI "This function is currently unstable because the configuration reading is dependent on the following issue: https://github.com/Akilan1999/p2p-rendering-computation/issues/120" #-}
 p2prcAPI :: P2PRCapi
-p2prcAPI =
+p2prcAPI = let
+
+    execTemp :: Maybe MapPortRequest -> PassCustomInformation -> IOEitherError String
+    execTemp mp ci = undefined
+
+    
+  in
   MkP2PRCapi
     { startServer = spawnProcP2PRC p2prcCmdName [ MkOptAtomic "-s" ]
 
@@ -114,6 +133,9 @@ p2prcAPI =
             )
           ]
           MkEmptyStdInput
+
+        , execMaybeMapPortAndAddCustomInformation = execTemp
+        , execAddCustomInformation = execTemp Nothing
 
     -- , execInitConfig = do
 

@@ -96,6 +96,7 @@ func SetDefaults(envName string, forceDefault bool, CustomConfig interface{}, No
 		Defaults.BareMetal = false
 		Defaults.UnsafeMode = false
 		Defaults.Test = false
+		Defaults.ConfigPath = defaultPath + "config.json"
 
 		// Generate certificate files for SSL
 		err = GenerateCertificate()

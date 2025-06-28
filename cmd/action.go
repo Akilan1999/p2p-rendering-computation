@@ -5,6 +5,7 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/abstractions"
 	"github.com/Akilan1999/p2p-rendering-computation/client"
 	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
+	Config "github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/config/generate"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/Akilan1999/p2p-rendering-computation/plugin"
@@ -230,6 +231,12 @@ var CliAction = func(ctx *cli.Context) error {
 	if AddRootNode && IP != "" && Ports != "" {
 		err := abstractions.AddRootNode(IP, Ports)
 		standardOutput(err, nil)
+	}
+
+	// display configuration
+	if ViewConfig {
+		config, err := Config.ConfigInit(nil, nil)
+		standardOutput(err, config)
 	}
 
 	return nil
