@@ -3,10 +3,14 @@ module Main where
 import P2PRC
   ( runP2PRC
   , MapPortRequest(MkMapPortRequest)
+  , P2PRCommands(MapPort)
   )
 
 main :: IO ()
-main =
+main =let
+  in 
   runP2PRC
-    ( MkMapPortRequest 8080 "jose.akilan.io"
-    )
+    [
+      ( MapPort $ MkMapPortRequest 8080 "jose.akilan.io")
+    ]
+    

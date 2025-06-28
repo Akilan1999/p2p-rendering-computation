@@ -40,6 +40,7 @@ type Config struct {
 	UnsafeMode               bool
 	Test                     bool
 	CustomConfig             interface{}
+	ConfigPath               string
 	//NetworkInterface  string
 	//NetworkInterfaceIPV6Index int
 }

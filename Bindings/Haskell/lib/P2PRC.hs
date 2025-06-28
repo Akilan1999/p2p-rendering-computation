@@ -52,6 +52,7 @@ module P2PRC
   , P2PRCConfig(..)
   , MapPortRequest(..)
   , MapPortResponse(..)
+  , P2PRCommands(..)
 
     -- ** Primitive data types
     -- | These types represent the core data that is communicated between requests and the runtime.
@@ -83,6 +84,7 @@ import API
   ( MapPortRequest(..)
   , P2PRCapi(..)
   , p2prcAPI
+  , P2PRCommands(..)
   )
 
 
