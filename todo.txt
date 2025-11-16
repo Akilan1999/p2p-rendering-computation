@@ -1,0 +1,6 @@
+To create a Go program that can statically compile to a Rust program. This will allow P2PRC to be a static binary but allows to create extended features in Rust. 
+
+- TODO: 
+  - [ ] To create a simple program that emits a string as the output with aan input of a string for testing reason.
+  - [ ] This will be a simple Cli flag from P2PRC to test the functionality to ensure the "C" import does not break the regular compile. 
+  - [ ] If possible to create a Nix flake out of this. 
