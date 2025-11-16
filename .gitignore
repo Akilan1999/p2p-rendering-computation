@@ -28,6 +28,7 @@ logs/
 server/docker/containers/
 *.h
 *.so
+*.a
 
 # generic folder to ignore
 export/
@@ -50,3 +51,9 @@ venv
 # Nix and Nix flake files
 result
 result-*
+
+# ignore beam files
+*.beam
+
+# Rust ignore files
+target/
