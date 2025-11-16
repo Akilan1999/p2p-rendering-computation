@@ -17,6 +17,9 @@ python:
 haskell:
 	sh build-haskell.sh
 
+install-rust:
+	sh install.sh p2prc rust
+
 clean:
 	go clean -modcache
 	rm -fr .go-build vendor result*
