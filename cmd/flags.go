@@ -44,6 +44,8 @@ var (
 	AddRootNode  bool
 	IP           string
 	ViewConfig   bool
+	// CallRustProgram Test calling rust code
+	CallRustProgram bool
 )
 
 var AppConfigFlags = []cli.Flag{
@@ -295,5 +297,12 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "View config file",
 		EnvVars:     []string{"VC"},
 		Destination: &ViewConfig,
+	},
+	&cli.BoolFlag{
+		Name:        "CallRustProgram",
+		Aliases:     []string{"crp"},
+		Usage:       "Experimental: Call test Rust program",
+		EnvVars:     []string{"CRP"},
+		Destination: &CallRustProgram,
 	},
 }

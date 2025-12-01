@@ -1,6 +1,6 @@
 module github.com/Akilan1999/p2p-rendering-computation
 
-go 1.18
+go 1.23.2
 
 require (
 	github.com/apenella/go-ansible v1.1.0
@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/google/uuid v1.3.0
+	github.com/ihciah/rust2go v0.0.0-20251105132719-caedb7aac7b2
 	github.com/lithammer/shortuuid v3.0.0+incompatible
 	github.com/otiai10/copy v1.6.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5

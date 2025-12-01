@@ -1,0 +1,17 @@
+[package]
+name = "p2prc_loaded"
+version = "0.1.0"
+
+[lib]
+# If you only wanted dynamic library, you'd use only "cdylib".
+# If you only wanted static library, you'd use only "staticlib".
+# This demo shows both. See https://doc.rust-lang.org/reference/linkage.html
+# for more information.
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+libc = "0.2.2"
+rust2go = "0.4.1"
+
+[build-dependencies]
+rust2go = { version = "0.4.1", features = ["build"] }
