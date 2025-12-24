@@ -458,14 +458,20 @@ This is to ensure ports on remote machines on the P2PRC can be easily opened.
 p2prc --mp <port no to map> --dn <domain name to link Mapped port against> --ra <remote server address>
 #+end_example
 
---------------
-
 *** Add root node
 Adds a root node to P2RRC and overwrites all other nodes in the ip table.
 To be only added before the network is started and with
 the intention of a fresh instance.
 #+begin_example
 p2prc --arn --ip <root node ip address> -p <root node port no>
+#+end_example
+
+*** Test rust module
+Tests the p2prc go program by calling the test rust function which is
+statically linked to the binary only if the module is enabled. There is a tutorial
+on how to set this [[#RustTutorialModule][up]].
+#+begin_example
+p2prc --CallRustProgram
 #+end_example
 
 * P2P Module Implementation
@@ -479,7 +485,7 @@ to determine upload and download speeds. This valuable information enables users
 servers with optimal performance, enhancing their overall network experience.
 
 #+caption: UML diagram of P2P module
-[[file:./images/p2pmoduleArch.png]
+[[file:./images/p2pmoduleArch.png]]
 
 The peer to peer implementation was built from scratch. This is because
 other peer to peer libraries were on the implementation of the
@@ -790,7 +796,11 @@ cd Bindings/Haskell/exports
 #+end_example
 
 [[https://p2prc.akilan.io/haskell][Read more...]]
+
 ** Building P2PRC modules in Rust
+:PROPERTIES:
+:CUSTOM_ID: RustTutorialModule
+:END:
 This refers to building parts of p2prc internal implementation in Rust. As it
 stands Rust has great C FFI bindings to Go. This decision aligns with our
 future plans to have the bare basic functionality in Golang and to write
