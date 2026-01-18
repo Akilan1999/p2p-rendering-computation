@@ -20,8 +20,8 @@ import (
 
 type ReverseProxy struct {
 	IPAddress string
-	Port      string
-	UDPport   string
+	Port      int
+	UDPport   int
 }
 
 // ReverseProxies Reverse to the map such as ReverseProxies[<domain nane>]ReverseProxy type
@@ -181,23 +181,28 @@ func Server() (*gin.Engine, error) {
 
 	// Request for port no from Server with address
 	r.GET("/FRPPort", func(c *gin.Context) {
-		port, udpPort, err := frp.StartFRPProxyFromRandom()
+		UDPUrl := c.DefaultQuery("udp", "false")
+		UDP := false
+		if UDPUrl != "false" {
+			UDP = true
+		}
+		port, err := frp.StartFRPProxyFromRandom(UDP)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
-
-		var r ReverseProxy
-		r.IPAddress = ""
-		r.Port = strconv.Itoa(port)
-		r.UDPport = strconv.Itoa(udpPort)
-		c.JSON(http.StatusOK, r)
-		//c.String(http.StatusOK, strconv.Itoa(port))
+		c.String(http.StatusOK, strconv.Itoa(port))
 	})
 
 	r.GET("/MAPPort", func(c *gin.Context) {
 		Ports := c.DefaultQuery("port", "0")
 		DomainName := c.DefaultQuery("domain_name", "")
-		url, _, err := MapPort(Ports, DomainName)
+		UDPUrl := c.DefaultQuery("udp", "false")
+		UDP := false
+		if UDPUrl != "false" {
+			UDP = true
+		}
+
+		url, _, err := MapPort(Ports, DomainName, UDP)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
@@ -279,14 +284,14 @@ func Server() (*gin.Engine, error) {
 
 		// If there is an identified node
 		if lowestLatency != 10000000 {
-			serverPort, _, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+			serverPort, err := frp.GetFRPServerPort("http://"+lowestLatencyIpAddress.Ipv4+":"+lowestLatencyIpAddress.ServerPort, false)
 			if err != nil {
 				return nil, err
 			}
 			// Create 3 second delay to allow FRP server to start
 			time.Sleep(1 * time.Second)
 			// Starts FRP as a client with
-			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "")
+			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "", false)
 			if err != nil {
 				return nil, err
 			}
@@ -300,7 +305,7 @@ func Server() (*gin.Engine, error) {
 			ProxyIpAddr.EscapeImplementation = "FRP"
 
 			if config.BareMetal {
-				_, SSHPort, err := MapPort("22", "")
+				_, SSHPort, err := MapPort("22", "", false)
 				if err != nil {
 					return nil, err
 				}
@@ -378,7 +383,7 @@ func Server() (*gin.Engine, error) {
 	return r, nil
 }
 
-func MapPort(port string, domainName string) (string, string, error) {
+func MapPort(port string, domainName string, udp bool) (string, string, error) {
 
 	// if server address is provided to do call RESTAPI to remotely open port.
 	//if serverAddress != "" {
@@ -444,14 +449,14 @@ func MapPort(port string, domainName string) (string, string, error) {
 
 	// If there is an identified node
 	if lowestLatency != 10000000 {
-		serverPort, err := frp.GetFRPServerPort("http://" + lowestLatencyIpAddress.Ipv4 + ":" + lowestLatencyIpAddress.ServerPort)
+		serverPort, err := frp.GetFRPServerPort("http://"+lowestLatencyIpAddress.Ipv4+":"+lowestLatencyIpAddress.ServerPort, udp)
 		if err != nil {
 			return "", "", err
 		}
 		// Create 3 second delay to allow FRP server to start
 		time.Sleep(1 * time.Second)
 		// Starts FRP as a client with
-		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "")
+		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "", udp)
 		if err != nil {
 			return "", "", err
 		}
@@ -470,6 +475,7 @@ func MapPort(port string, domainName string) (string, string, error) {
 		// updating with the current proxy address
 		ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
 		ProxyIpAddr.ServerPort = proxyPort
+		//ProxyIpAddr.UDPServerPort = proxyPortUDP
 		ProxyIpAddr.Name = config.MachineName
 		ProxyIpAddr.NAT = false
 		ProxyIpAddr.EscapeImplementation = "FRP"

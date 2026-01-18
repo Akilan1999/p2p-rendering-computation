@@ -30,6 +30,7 @@ var (
 	RemoveContainerGroup bool
 	RemoveGroup          string
 	MAPPort              string
+	UDP                  bool
 	RemoteAddress        string
 	DomainName           string
 	//FRPProxy             bool
@@ -217,6 +218,13 @@ var AppConfigFlags = []cli.Flag{
 		Usage:       "Maps port for a specific port provided as the parameter",
 		EnvVars:     []string{"MAPPORT"},
 		Destination: &MAPPort,
+	},
+	&cli.BoolFlag{
+		Name:        "udp",
+		Aliases:     []string{"udp"},
+		Usage:       "Ensures any port mappings is for UDP",
+		EnvVars:     []string{"UDP"},
+		Destination: &UDP,
 	},
 	&cli.StringFlag{
 		Name:        "RemoteAddress",

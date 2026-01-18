@@ -17,7 +17,7 @@ type Client struct {
 	Name           string
 	Server         *Server
 	ClientMappings []ClientMapping
-	Type           string // UDP or TCP
+	UDP            bool
 }
 
 // ClientMapping Stores client mapping ports
@@ -33,21 +33,22 @@ type ClientMapping struct {
 // remote port is a custom external port a user would want
 // to open. This under the assumption the user knows the
 // exact port available in server doing the TURN connection.
-func StartFRPClientForServer(ipaddress string, port string, localport string, remoteport string) (string, error) {
+func StartFRPClientForServer(ipaddress string, port string, localport string, remoteport string, udp bool) (string, error) {
 	// Setup server information
 	var s Server
-	s.address = ipaddress
+	s.IPAddress = ipaddress
 	// convert port to int
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
 		return "", err
 	}
-	s.port = portInt
+	s.Port = portInt
 
 	// Setup client information
 	var c Client
 	c.Name = "ServerPort"
 	c.Server = &s
+	c.UDP = udp
 
 	// converts localport to int
 	portInt, err = strconv.Atoi(localport)
@@ -97,13 +98,13 @@ func StartFRPCDockerContainer(ipaddress string, port string, Docker *docker.Dock
 	//DockerFRP.Ports.PortSet = []docker.Port{}
 	// Setup server information
 	var s Server
-	s.address = ipaddress
+	s.IPAddress = ipaddress
 	// convert port to int
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
 		return nil, err
 	}
-	s.port = portInt
+	s.Port = portInt
 
 	// Setup client information
 	var c Client
@@ -115,7 +116,7 @@ func StartFRPCDockerContainer(ipaddress string, port string, Docker *docker.Dock
 	for i, _ := range Docker.Ports.PortSet {
 		portMap := Docker.Ports.PortSet[i].ExternalPort
 
-		serverPort, err := GetFRPServerPort("http://" + ipaddress + ":" + port)
+		serverPort, err := GetFRPServerPort("http://"+ipaddress+":"+port, false)
 		if err != nil {
 			return nil, err
 		}
@@ -123,7 +124,7 @@ func StartFRPCDockerContainer(ipaddress string, port string, Docker *docker.Dock
 		//delay to allow the FRP server to start
 		time.Sleep(1 * time.Second)
 
-		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap), "")
+		proxyPort, err := StartFRPClientForServer(ipaddress, serverPort, strconv.Itoa(portMap), "", false)
 		if err != nil {
 			return nil, err
 		}
@@ -157,15 +158,15 @@ func (c *Client) StartFRPClient() error {
 
 	proxyConfs = make(map[string]config.ProxyConf)
 
-	cfg.ServerAddr = c.Server.address
-	cfg.ServerPort = c.Server.port
+	cfg.ServerAddr = c.Server.IPAddress
+	cfg.ServerPort = c.Server.Port
 	//cfg.TLSEnable = true
 	//cfg.TLSKeyFile = Config.KeyFile
 	//cfg.TLSCertFile = Config.PemFile
 
 	for i, _ := range c.ClientMappings {
 		// Hacky way to map ports as UDP connection
-		if c.Type == "udp" {
+		if c.UDP {
 			var udpcnf config.UDPProxyConf
 			udpcnf.LocalIP = c.ClientMappings[i].LocalIP
 			udpcnf.LocalPort = c.ClientMappings[i].LocalPort

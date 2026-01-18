@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"strconv"
 )
 
 type ResponseMAPPort struct {
@@ -13,7 +14,7 @@ type ResponseMAPPort struct {
 	EntireAddress string
 }
 
-func MAPPort(port string, domainName string, ServerAddress string) (*ResponseMAPPort, error) {
+func MAPPort(port string, domainName string, ServerAddress string, udp bool) (*ResponseMAPPort, error) {
 	Config, err := config.ConfigInit(nil, nil)
 	if err != nil {
 		return nil, err
@@ -26,7 +27,7 @@ func MAPPort(port string, domainName string, ServerAddress string) (*ResponseMAP
 	}
 
 	//if version == "version 6" {
-	URL = URL + "/MAPPort?port=" + port + "&domain_name=" + domainName
+	URL = URL + "/MAPPort?port=" + port + "&domain_name=" + domainName + "&udp=" + strconv.FormatBool(udp)
 	//} else {
 	//	URL = "http://" + IP + ":" + serverPort + "/server_info"
 	//}

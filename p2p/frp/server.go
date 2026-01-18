@@ -1,13 +1,11 @@
 package frp
 
 import (
-	"encoding/json"
 	"github.com/fatedier/frp/pkg/config"
 	"github.com/fatedier/frp/server"
 	"github.com/phayes/freeport"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 )
 
 type Server struct {
@@ -19,7 +17,7 @@ type Server struct {
 // StartFRPProxyFromRandom starts
 // reverse proxy server based on
 // a random port generated
-func StartFRPProxyFromRandom() (int, int, error) {
+func StartFRPProxyFromRandom(UDP bool) (int, error) {
 	// gets current configuration
 	//config, err := configP2PRC.ConfigInit()
 	//if err != nil {
@@ -30,19 +28,18 @@ func StartFRPProxyFromRandom() (int, int, error) {
 	s.IPAddress = "0.0.0.0"
 
 	// use random port
-	OpenPorts, err := freeport.GetFreePorts(2)
+	OpenPorts, err := freeport.GetFreePorts(1)
 	if err != nil {
-		return 0, 0, err
+		return 0, err
 	}
 
 	s.Port = OpenPorts[0]
-	s.UDPport = OpenPorts[1]
 
 	// start FRP server
 
-	go s.StartFRPServer()
+	go s.StartFRPServer(UDP)
 
-	return s.Port, s.UDPport, nil
+	return s.Port, nil
 
 }
 
@@ -50,12 +47,16 @@ func StartFRPProxyFromRandom() (int, int, error) {
 // for TCP and UDP ports
 // This function starts a server that can act as a reverse
 // proxy for nodes behind NAT.
-func (s *Server) StartFRPServer() error {
+func (s *Server) StartFRPServer(UDP bool) error {
 	baseConfig := config.GetDefaultServerConf()
 	baseConfig.BindAddr = s.IPAddress
-
-	baseConfig.BindPort = s.Port
-	baseConfig.BindUDPPort = s.UDPport
+	// Start UDP as server mode to hole punch
+	// if needed
+	if UDP {
+		baseConfig.BindUDPPort = s.Port
+	} else {
+		baseConfig.BindPort = s.Port
+	}
 	service, err := server.NewService(baseConfig)
 	if err != nil {
 		return err
@@ -67,12 +68,16 @@ func (s *Server) StartFRPServer() error {
 
 // GetFRPServerPort Gets the port no from the FRPServer to establish
 // the FRP connection needed.
-// Returns (Opened TCPPort,UDPPort, error)
-func GetFRPServerPort(host string) (string, string, error) {
-	resp, err := http.Get(host + "/FRPPort")
+// Returns (Opened TCPPort or UDPPort, error)
+func GetFRPServerPort(host string, udp bool) (string, error) {
+	url := host + "/FRPPort"
+	if udp {
+		url = host + "/FRPPort?udp=true"
+	}
+	resp, err := http.Get(url)
 
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	defer resp.Body.Close()
@@ -80,15 +85,15 @@ func GetFRPServerPort(host string) (string, string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	// we initialize our Users array
-	var s Server
+	//var s Server
 
-	// we unmarshal our byteArray which contains our
-	// jsonFile's content into 'users' which we defined above
-	json.Unmarshal(body, &s)
+	//// we unmarshal our byteArray which contains our
+	//// jsonFile's content into 'users' which we defined above
+	//json.Unmarshal(body, &s)
 
-	return strconv.Itoa(s.Port), strconv.Itoa(s.UDPport), nil
+	return string(body), nil
 }
