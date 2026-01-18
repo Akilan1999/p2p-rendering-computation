@@ -221,7 +221,7 @@ var AppConfigFlags = []cli.Flag{
 	},
 	&cli.BoolFlag{
 		Name:        "udp",
-		Aliases:     []string{"udp"},
+		Aliases:     []string{""},
 		Usage:       "Ensures any port mappings is for UDP",
 		EnvVars:     []string{"UDP"},
 		Destination: &UDP,

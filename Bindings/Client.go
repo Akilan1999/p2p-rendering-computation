@@ -117,7 +117,7 @@ func UpdateIPTable() (output *C.char) {
 //export EscapeFirewall
 func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internalPort string) (output *C.char) {
 	// Get free port from P2PRC server node
-	serverPort, err := frp.GetFRPServerPort("http://" + HostOutsideNATIP + ":" + HostOutsideNATPort)
+	serverPort, err := frp.GetFRPServerPort("http://"+HostOutsideNATIP+":"+HostOutsideNATPort, false)
 
 	if err != nil {
 		return C.CString(err.Error())
@@ -125,7 +125,7 @@ func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internal
 
 	time.Sleep(5 * time.Second)
 
-	ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "")
+	ExposedPort, err := frp.StartFRPClientForServer(HostOutsideNATIP+":"+HostOutsideNATPort, serverPort, internalPort, "", false)
 	if err != nil {
 		return C.CString(err.Error())
 	}
