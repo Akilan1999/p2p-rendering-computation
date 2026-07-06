@@ -159,7 +159,7 @@ func (s *IpAddress) PingTest() error {
         pingURL = "http://" + s.Ipv4 + ":" + s.ServerPort + "/server_info"
     }
 
-    l := time.Duration(100000000000) // 10sec
+    l := time.Duration(2 * time.Second) // 2sec
     for i := 0; i < 3; i++ {
         sTime := time.Now()
         resp, err := http.Get(pingURL)
