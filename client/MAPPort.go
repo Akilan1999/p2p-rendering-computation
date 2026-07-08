@@ -1,7 +1,6 @@
 package client
 
 import (
-    "fmt"
     "github.com/Akilan1999/p2p-rendering-computation/config"
     "io/ioutil"
     "net"
@@ -29,7 +28,6 @@ func MAPPort(port string, domainName string, ServerAddress string, udp bool) (*R
 
     //if version == "version 6" {
     URL = URL + "/MAPPort?port=" + port + "&domain_name=" + domainName + "&udp=" + strconv.FormatBool(udp)
-    fmt.Println(URL)
     //} else {
     //	URL = "http://" + IP + ":" + serverPort + "/server_info"
     //}
