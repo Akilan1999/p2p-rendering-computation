@@ -28,7 +28,11 @@ type ReverseProxy struct {
 var ReverseProxies map[string]ReverseProxy
 
 func Server() (*gin.Engine, error) {
-    r := gin.Default()
+
+    gin.SetMode(gin.ReleaseMode)
+
+    r := gin.New()
+    r.Use(gin.Recovery())
 
     // "The make function allocates and initializes a hash map data
     //structure and returns a map value that points to it.
