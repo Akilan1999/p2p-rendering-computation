@@ -57,3 +57,7 @@ result-*
 
 # Rust ignore files
 target/
+
+# Disable log files
+log.txt
+logs.txt
