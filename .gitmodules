@@ -1,0 +1,3 @@
+[submodule "Bindings/Rust/p2prc-rust-bindings"]
+	path = Bindings/Rust/p2prc-rust-bindings
+	url = https://github.com/Akilan1999/p2prc-rust-bindings
