@@ -69,7 +69,12 @@ func AddKeyToAuthorizedKeys(path, newKey string) error {
 	return nil
 }
 
-func RemoveKeyFromAuthorizedKeys(path, keyToRemove string) error {
+func RemoveKeyFromAuthorizedKeys(keyToRemove string) error {
+	path, err := GetAuthorizedKeysPath()
+	if err != nil {
+		return err
+	}
+
 	keys, err := ReadAuthorizedKeys(path)
 	if err != nil {
 		return err
