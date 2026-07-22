@@ -61,3 +61,6 @@ target/
 # Disable log files
 log.txt
 logs.txt
+
+# random folders
+playground/

@@ -5,7 +5,7 @@ import (
 )
 
 // SpeedTest Runs a speed test and does updates IP tables accordingly
-func (ip *IpAddresses) SpeedTest(unsafe bool) error {
+func (ip *IpAddresses) SpeedTest() error {
 
 	//temp variable to store elements IP addresses and other information
 	// of IP addresses that are pingable
@@ -23,13 +23,8 @@ func (ip *IpAddresses) SpeedTest(unsafe bool) error {
 		err = value.PingTest()
 
 		if err != nil {
-			if unsafe {
-				// Remove key from auth list
-				err = RemoveKeyFromAuthorizedKeys(value.PublicKey)
-				if err != nil {
-					return err
-				}
-			}
+			// Remove key from auth list
+			RemoveKeyFromAuthorizedKeys(value.PublicKey)
 			continue
 		}
 
@@ -117,7 +112,7 @@ func (ip *IpAddresses) SpeedTestUpdatedIPTable() error {
 		ip.IpAddress = append(ip.IpAddress, targets.IpAddress[i])
 	}
 
-	err = ip.SpeedTest(Config.UnsafeMode)
+	err = ip.SpeedTest()
 
 	if err != nil {
 		return err
@@ -133,9 +128,7 @@ func LocalSpeedTestIpTable() error {
 		return err
 	}
 
-	Config, err := config.ConfigInit(nil, nil)
-
-	err = targets.SpeedTest(Config.UnsafeMode)
+	err = targets.SpeedTest()
 	if err != nil {
 		return err
 	}

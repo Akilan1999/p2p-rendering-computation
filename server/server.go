@@ -263,6 +263,12 @@ func Server() (*gin.Engine, error) {
     // Remove current name from the IP table
     p2p.RemoveIPTableEntry(config.MachineName)
 
+    // Remove all public keys from auth list
+    err = p2p.RemoveAllKeysFromAuthorizedList()
+    if err != nil {
+        fmt.Println(err)
+    }
+
     // Remove nodes currently not pingable
     clientIPTable.RemoveOfflineNodes()
 
