@@ -4,145 +4,147 @@
 package p2p
 
 import (
-    "bufio"
-    "errors"
-    "fmt"
-    "os"
-    "path/filepath"
-    "strings"
+	"bytes"
+	"fmt"
+	"golang.org/x/crypto/ssh"
+	"os"
+	"path/filepath"
 )
 
 // GetAuthorizedKeysPath returns the path to the authorized_keys file
 func GetAuthorizedKeysPath() (string, error) {
-    homeDir, err := os.UserHomeDir()
-    if err != nil {
-        return "", fmt.Errorf("could not find home directory: %v", err)
-    }
-    return filepath.Join(homeDir, ".ssh", "authorized_keys"), nil
-}
-
-// ReadAuthorizedKeys reads and returns the current contents of the authorized_keys file as a map
-func ReadAuthorizedKeys(path string) (map[string]bool, error) {
-    file, err := os.Open(path)
-    if err != nil {
-        return nil, fmt.Errorf("could not open authorized_keys file: %v", err)
-    }
-    defer file.Close()
-
-    keys := make(map[string]bool)
-    scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
-        line := strings.TrimSpace(scanner.Text())
-        // Skip empty lines and comments
-        if line != "" && !strings.HasPrefix(line, "#") {
-            keys[line] = true
-        }
-    }
-    if err := scanner.Err(); err != nil {
-        return nil, fmt.Errorf("error reading authorized_keys file: %v", err)
-    }
-    return keys, nil
-}
-
-// AddKeyToAuthorizedKeys adds a new key to the authorized_keys file if it doesn’t already exist
-func AddKeyToAuthorizedKeys(path, newKey string) error {
-    keys, err := ReadAuthorizedKeys(path)
-    if err != nil {
-        return err
-    }
-
-    // Check if the key already exists in the map
-    if keys[newKey] {
-        return errors.New("key already exists in authorized_keys")
-    }
-
-    // Append the new key
-    file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-    if err != nil {
-        return fmt.Errorf("could not open authorized_keys file for writing: %v", err)
-    }
-    defer file.Close()
-
-    if _, err := file.WriteString(newKey + "\n"); err != nil {
-        return fmt.Errorf("could not write to authorized_keys file: %v", err)
-    }
-    return nil
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("could not find home directory: %v", err)
+	}
+	return filepath.Join(homeDir, ".ssh", "authorized_keys"), nil
 }
 
 func RemoveAllKeysFromAuthorizedList() error {
-    table, err := ReadIpTable()
-    if err != nil {
-        return err
-    }
+	table, err := ReadIpTable()
+	if err != nil {
+		return err
+	}
 
-    for i, _ := range table.IpAddress {
-        RemoveKeyFromAuthorizedKeys(table.IpAddress[i].PublicKey)
-    }
+	for i, _ := range table.IpAddress {
+		RemoveAuthorisationKey(table.IpAddress[i].PublicKey)
+	}
 
-    return nil
+	return nil
 }
 
-func RemoveKeyFromAuthorizedKeys(keyToRemove string) error {
-    path, err := GetAuthorizedKeysPath()
-    if err != nil {
-        return err
-    }
+// RemoveAuthorisationKey Removes authorisation from the list
+func RemoveAuthorisationKey(PublicKey string) error {
+	path, err := GetAuthorizedKeysPath()
+	if err != nil {
+		return err
+	}
 
-    keys, err := ReadAuthorizedKeys(path)
-    if err != nil {
-        return err
-    }
+	// Display existing keys
+	keys, err := ReadAuthFile(path)
 
-    // Check if the key exists in the map
-    if !keys[keyToRemove] {
-        return errors.New("key not found in authorized_keys")
-    }
+	// Convert Public key string the right type
+	parsedPub, _, _, _, err := ssh.ParseAuthorizedKey([]byte(PublicKey))
+	if err != nil {
+		return err
+	}
 
-    // Delete the key from the map
-    delete(keys, keyToRemove)
+	for i, _ := range keys {
+		if bytes.Equal(keys[i].Marshal(), parsedPub.Marshal()) {
+			keys = remove(keys, i)
+			break
+		}
+	}
 
-    // Write updated keys back to the authorized_keys file
-    file, err := os.OpenFile(path, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0600)
-    if err != nil {
-        return fmt.Errorf("could not open authorized_keys file for writing: %v", err)
-    }
-    defer file.Close()
+	// write to file
+	err = WriteToAuthFile(keys)
+	if err != nil {
+		return err
+	}
 
-    for key := range keys {
-        if _, err := file.WriteString(key + "\n"); err != nil {
-            return fmt.Errorf("could not write to authorized_keys file: %v", err)
-        }
-    }
+	return nil
+}
 
-    return nil
+func remove(slice []ssh.PublicKey, s int) []ssh.PublicKey {
+	return append(slice[:s], slice[s+1:]...)
 }
 
 // AddAuthorisationKey Adds public key provided to the
 // authorization file so that nodes can SSH into
 // the
 func AddAuthorisationKey(PublicKey string) error {
-    path, err := GetAuthorizedKeysPath()
-    if err != nil {
-        return err
-    }
+	path, err := GetAuthorizedKeysPath()
+	if err != nil {
+		return err
+	}
 
-    // Display existing keys
-    key, err := ReadAuthorizedKeys(path)
-    if err != nil {
-        return err
-    }
+	// Convert Public key string the right type
+	parsedPub, _, _, _, err := ssh.ParseAuthorizedKey([]byte(PublicKey))
+	if err != nil {
+		return err
+	}
 
-    // Key exists in the auth file and should not
-    // be added for redundancy.
-    _, ok := key[PublicKey]
-    if ok {
-        return nil
-    }
+	// Display existing keys
+	keys, err := ReadAuthFile(path)
 
-    err = AddKeyToAuthorizedKeys(path, PublicKey)
-    if err != nil {
-        return err
-    }
+	exists := false
+	for i, _ := range keys {
+		if bytes.Equal(keys[i].Marshal(), parsedPub.Marshal()) {
+			exists = true
+		}
+	}
 
-    return nil
+	if exists {
+		return nil
+	}
+
+	keys = append(keys, parsedPub)
+
+	// write to file
+	err = WriteToAuthFile(keys)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ReadAuthFile(File string) ([]ssh.PublicKey, error) {
+	authorizedKeysBytes, err := os.ReadFile(File)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read authorized keys: %s", err)
+	}
+
+	var authorizedKeys []ssh.PublicKey
+
+	for {
+		key, _, _, rest, err := ssh.ParseAuthorizedKey(authorizedKeysBytes)
+		if err != nil {
+			// there's no good error to check for here
+			break
+		}
+		authorizedKeys = append(authorizedKeys, key)
+		authorizedKeysBytes = rest
+	}
+
+	return authorizedKeys, nil
+}
+
+func WriteToAuthFile(keys []ssh.PublicKey) error {
+	path, err := GetAuthorizedKeysPath()
+	if err != nil {
+		return err
+	}
+
+	var output []byte
+
+	for _, key := range keys {
+		output = append(output, ssh.MarshalAuthorizedKey(key)...)
+	}
+
+	err = os.WriteFile(path, output, 0666)
+	if err != nil {
+		return err
+	}
+	return nil
 }

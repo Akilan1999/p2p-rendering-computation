@@ -196,7 +196,7 @@ func MakeSSHKeyPair(pubKeyPath, privateKeyPath string) error {
 	}
 
 	// Set permission to private key to SSH
-	err = os.Chmod(privateKeyPath, 0655)
+	err = os.Chmod(privateKeyPath, 600)
 	if err != nil {
 		return err
 	}

@@ -24,7 +24,7 @@ func (ip *IpAddresses) SpeedTest() error {
 
 		if err != nil {
 			// Remove key from auth list
-			RemoveKeyFromAuthorizedKeys(value.PublicKey)
+			ReadAuthFile(value.PublicKey)
 			continue
 		}
 
