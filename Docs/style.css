@@ -10,7 +10,7 @@
 }
 
 #search-results li {
-    background-color: #b96c29;
+    background-color: #4e4a4a;
     color: white;
     margin-bottom: 5px;
     padding: 5px;
@@ -22,6 +22,17 @@
 h4,h5,h6{
     color: #b96c29;
     font-weight:300;
+}
+
+#table-of-contents ul.nav > li > a {
+    color: #ffa85d;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+#search-container {
+    padding: 12px;
+    background-color: #4e4a4a;
 }
 
 .video {

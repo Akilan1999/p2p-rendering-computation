@@ -1,7 +1,7 @@
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/setup/html-theme-readtheorg.setup
 
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/search.css"/>
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css?version=1"/>
 
 #+attr_html: :width 300px
 [[./Colored-On-Light-Image.png]]
