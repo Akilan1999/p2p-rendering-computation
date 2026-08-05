@@ -11,7 +11,7 @@ func CRON() {
 
 	s.NewJob(
 		gocron.DurationJob(
-			10*time.Second,
+			20*time.Second,
 		),
 		gocron.NewTask(
 			func() {

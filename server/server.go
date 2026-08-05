@@ -394,7 +394,7 @@ func Server() (*gin.Engine, error) {
 	go r.Run(":" + config.ServerPort)
 
 	// Start the CRON jobs on the server side
-	// go CRON()
+	go CRON()
 
 	return r, nil
 }
