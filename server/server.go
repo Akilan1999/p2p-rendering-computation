@@ -206,7 +206,7 @@ func Server() (*gin.Engine, error) {
 			UDP = true
 		}
 
-		url, _, err := MapPort(Ports, DomainName, UDP)
+		url, _, _, err := MapPort(Ports, DomainName, UDP)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
@@ -254,12 +254,14 @@ func Server() (*gin.Engine, error) {
 	//
 	//})
 
+	// Run gin server on the specified port
+	go r.Run(":" + config.ServerPort)
+
 	// If there is a proxy port specified
 	// then starts the FRP server
 	//if config.FRPServerPort != "0" {
 	//	go frp.StartFRPProxyFromRandom()
 	//}
-
 	// Remove current name from the IP table
 	p2p.RemoveIPTableEntry(config.MachineName)
 
@@ -273,60 +275,31 @@ func Server() (*gin.Engine, error) {
 	clientIPTable.RemoveOfflineNodes()
 
 	table, err := p2p.ReadIpTable()
+	if err != nil {
+		return nil, err
+	}
 
-	// TODO check if IPV6 or Proxy port is specified
-	// if not update current entry as proxy address
-	// with appropriate port on IP Table
 	if config.BehindNAT {
+
+		_, port, externalAddress, err := MapPort(config.ServerPort, "", false)
 		if err != nil {
 			return nil, err
 		}
 
-		var lowestLatency int64
-		// random large number
-		lowestLatency = 10000000
+		// updating with the current proxy address
+		ProxyIpAddr.Ipv4 = externalAddress
+		ProxyIpAddr.ServerPort = port
+		ProxyIpAddr.Name = config.MachineName
+		ProxyIpAddr.NAT = false
+		ProxyIpAddr.ProxyServer = false
+		ProxyIpAddr.EscapeImplementation = "FRP"
 
-		for i, _ := range table.IpAddress {
-			// Checks if the ping is the lowest and if the following node is acting as a proxy
-			//if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && table.IpAddress[i].ProxyPort != "" {
-			if table.IpAddress[i].Latency.Milliseconds() < lowestLatency && !table.IpAddress[i].NAT {
-				lowestLatency = table.IpAddress[i].Latency.Milliseconds()
-				lowestLatencyIpAddress = table.IpAddress[i]
-			}
-		}
-
-		// If there is an identified node
-		if lowestLatency != 10000000 {
-			serverPort, err := frp.GetFRPServerPort("http://"+lowestLatencyIpAddress.Ipv4+":"+lowestLatencyIpAddress.ServerPort, false)
+		if config.BareMetal {
+			_, SSHPort, _, err := MapPort("22", "", false)
 			if err != nil {
 				return nil, err
 			}
-			// Create 3 second delay to allow FRP server to start
-			time.Sleep(1 * time.Second)
-			// Starts FRP as a client with
-			proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, config.ServerPort, "", false)
-			if err != nil {
-				return nil, err
-			}
-
-			// updating with the current proxy address
-			ProxyIpAddr.Ipv4 = lowestLatencyIpAddress.Ipv4
-			ProxyIpAddr.ServerPort = proxyPort
-			ProxyIpAddr.Name = config.MachineName
-			ProxyIpAddr.NAT = false
-			ProxyIpAddr.ProxyServer = false
-			ProxyIpAddr.EscapeImplementation = "FRP"
-
-			if config.BareMetal {
-				_, SSHPort, err := MapPort("22", "", false)
-				if err != nil {
-					return nil, err
-				}
-				ProxyIpAddr.BareMetalSSHPort = SSHPort
-			}
-
-			//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
-			// write information back to the IP Table
+			ProxyIpAddr.BareMetalSSHPort = SSHPort
 		}
 
 	} else {
@@ -367,6 +340,8 @@ func Server() (*gin.Engine, error) {
 		return nil, err
 	}
 
+	fmt.Println(ProxyIpAddr)
+
 	// append the following to the ip table
 	table.IpAddress = append(table.IpAddress, ProxyIpAddr)
 
@@ -390,16 +365,13 @@ func Server() (*gin.Engine, error) {
 		go ProxyRun(config.ProxyPort)
 	}
 
-	// Run gin server on the specified port
-	go r.Run(":" + config.ServerPort)
-
 	// Start the CRON jobs on the server side
 	go CRON()
 
 	return r, nil
 }
 
-func MapPort(port string, domainName string, udp bool) (string, string, error) {
+func MapPort(port string, domainName string, udp bool) (string, string, string, error) {
 
 	// if server address is provided to do call RESTAPI to remotely open port.
 	//if serverAddress != "" {
@@ -430,7 +402,7 @@ func MapPort(port string, domainName string, udp bool) (string, string, error) {
 	//Get Server port based on the config file
 	config, err := config.ConfigInit(nil, nil)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	// update IPTable with new port and ip address and update ip table
@@ -441,7 +413,7 @@ func MapPort(port string, domainName string, udp bool) (string, string, error) {
 
 	table, err := p2p.ReadIpTable()
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	var lowestLatency int64
@@ -467,14 +439,14 @@ func MapPort(port string, domainName string, udp bool) (string, string, error) {
 	if lowestLatency != 10000000 {
 		serverPort, err := frp.GetFRPServerPort("http://"+lowestLatencyIpAddress.Ipv4+":"+lowestLatencyIpAddress.ServerPort, udp)
 		if err != nil {
-			return "", "", err
+			return "", "", "", err
 		}
 		// Create 3 second delay to allow FRP server to start
 		time.Sleep(1 * time.Second)
 		// Starts FRP as a client with
 		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "", udp)
 		if err != nil {
-			return "", "", err
+			return "", "", "", err
 		}
 
 		// Doing the proxy mapping for the domain name
@@ -498,8 +470,8 @@ func MapPort(port string, domainName string, udp bool) (string, string, error) {
 
 		//ProxyIpAddr.CustomInformationKey = p2p.GenerateHashSHA256(config.IPTableKey)
 	} else {
-		return "", "", errors.New("proxy IP not found")
+		return "", "", "", errors.New("proxy IP not found")
 	}
 
-	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, nil
+	return ProxyIpAddr.Ipv4 + ":" + ProxyIpAddr.ServerPort, ProxyIpAddr.ServerPort, ProxyIpAddr.Ipv4, nil
 }

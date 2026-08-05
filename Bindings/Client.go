@@ -135,7 +135,7 @@ func EscapeFirewall(HostOutsideNATIP string, HostOutsideNATPort string, internal
 
 //export MapPort
 func MapPort(Port string, DomainName string, ServerAddress string) *C.char {
-	Address, err := abstractions.MapPort(Port, DomainName, ServerAddress)
+	Address, err := abstractions.MapPort(Port, DomainName, ServerAddress, false)
 	if err != nil {
 		return C.CString(err.Error())
 	}
