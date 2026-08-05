@@ -31,22 +31,6 @@ on the requirements of a user.  -->
 
 This project aims to simplify self-hosting servers and streamline the creation of distributed systems. The primary focus is to enable users to design custom peer-to-peer networks for distributed computing, offering full flexibility and control while abstracting away the complexities of networking.
 
-## Key Features
-Simplified Self-Hosting
-Empower users to easily host nodes, whether on personal computers behind NAT, custom hardware, or cloud-based infrastructure.
-
-### Custom Peer-to-Peer Networks
-Build a decentralised network tailored to user requirements, enabling distributed task execution without the need for in-depth networking knowledge.
-
-### Heterogeneous Node Support
-Harness a diverse array of nodes from personal computers to specialised hardware—seamlessly integrated into a global node list.
-
-### Abstracted Networking Layer
-Networking details are completely abstracted, enabling users to focus on developing bespoke task orchestration systems. No more manual configuration of IPs, ports, or connection logic.
-
-### Flexible Task Distribution
-Users acting as clients retain full control over how tasks are batched and assigned to nodes, creating endless possibilities for optimising performance based on specific use cases.
-
 ## Setup with Nix
 - Ensure you have the nix package manager installed.
 - Add the following to your .bashrc file.
