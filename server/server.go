@@ -254,21 +254,43 @@ func Server() (*gin.Engine, error) {
 	//
 	//})
 
+	err = SetupServerCurrentMachine()
+	if err != nil {
+		return nil, err
+	}
+
 	// Run gin server on the specified port
 	go r.Run(":" + config.ServerPort)
 
+	// Start the CRON jobs on the server side
+	go CRON()
+
+	return r, nil
+}
+
+func SetupServerCurrentMachine() error {
+	// update IPTable with new port and ip address and update ip table
+	var ProxyIpAddr p2p.IpAddress
+
+	config, err := config.ConfigInit(nil, nil)
+	if err != nil {
+		return err
+	}
 	// If there is a proxy port specified
 	// then starts the FRP server
 	//if config.FRPServerPort != "0" {
 	//	go frp.StartFRPProxyFromRandom()
 	//}
 	// Remove current name from the IP table
-	p2p.RemoveIPTableEntry(config.MachineName)
+	err = p2p.RemoveIPTableEntry(config.MachineName)
+	if err != nil {
+		return err
+	}
 
 	// Remove all public keys from auth list
 	err = p2p.RemoveAllKeysFromAuthorizedList()
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
 	// Remove nodes currently not pingable
@@ -276,14 +298,14 @@ func Server() (*gin.Engine, error) {
 
 	table, err := p2p.ReadIpTable()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if config.BehindNAT {
 
 		_, port, externalAddress, err := MapPort(config.ServerPort, "", false)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// updating with the current proxy address
@@ -297,7 +319,7 @@ func Server() (*gin.Engine, error) {
 		if config.BareMetal {
 			_, SSHPort, _, err := MapPort("22", "", false)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			ProxyIpAddr.BareMetalSSHPort = SSHPort
 		}
@@ -324,7 +346,7 @@ func Server() (*gin.Engine, error) {
 	// Get machine username
 	currentUser, err := user.Current()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// Add username p2prc binary is being run under
 	ProxyIpAddr.MachineUsername = currentUser.Username
@@ -337,7 +359,7 @@ func Server() (*gin.Engine, error) {
 	ProxyIpAddr.PublicKey, err = config.GetPublicKey()
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// append the following to the ip table
@@ -346,7 +368,7 @@ func Server() (*gin.Engine, error) {
 	// Writing results to the IPTable
 	err = table.WriteIpTable()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// update ip table
@@ -363,11 +385,11 @@ func Server() (*gin.Engine, error) {
 		go ProxyRun(config.ProxyPort)
 	}
 
-	// Start the CRON jobs on the server side
-	go CRON()
-
-	return r, nil
+	return nil
 }
+
+// NATEscapeTime Mutable variable to increase the time to wait for escaping NAT.
+var NATEscapeTime = 1
 
 func MapPort(port string, domainName string, udp bool) (string, string, string, error) {
 
@@ -414,7 +436,7 @@ func MapPort(port string, domainName string, udp bool) (string, string, string, 
 			return "", "", "", err
 		}
 		// Create 3 second delay to allow FRP server to start
-		time.Sleep(1 * time.Second)
+		time.Sleep(time.Duration(NATEscapeTime) * time.Second)
 		// Starts FRP as a client with
 		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "", udp)
 		if err != nil {
