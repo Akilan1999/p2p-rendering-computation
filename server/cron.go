@@ -18,8 +18,8 @@ func CRON() {
 		),
 		gocron.NewTask(
 			func() {
-				clientIPTable.RemoveOfflineNodes()
-				RestartNATIfServerNotFound()
+				go clientIPTable.RemoveOfflineNodes()
+				go RestartNATIfServerNotFound()
 			},
 		),
 	)

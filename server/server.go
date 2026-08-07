@@ -389,7 +389,7 @@ func SetupServerCurrentMachine() error {
 }
 
 // NATEscapeTime Mutable variable to increase the time to wait for escaping NAT.
-var NATEscapeTime = 1
+var NATEscapeTime = 5
 
 func MapPort(port string, domainName string, udp bool) (string, string, string, error) {
 
