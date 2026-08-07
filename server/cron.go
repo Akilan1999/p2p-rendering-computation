@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"github.com/Akilan1999/p2p-rendering-computation/client/clientIPTable"
 	"github.com/Akilan1999/p2p-rendering-computation/config"
 	"github.com/Akilan1999/p2p-rendering-computation/p2p"
 	"github.com/go-co-op/gocron/v2"
@@ -18,7 +17,7 @@ func CRON() {
 		),
 		gocron.NewTask(
 			func() {
-				go clientIPTable.RemoveOfflineNodes()
+				//go clientIPTable.RemoveOfflineNodes()
 				go RestartNATIfServerNotFound()
 			},
 		),

@@ -254,6 +254,9 @@ func Server() (*gin.Engine, error) {
 	//
 	//})
 
+	// Remove nodes currently not pingable
+	clientIPTable.RemoveOfflineNodes()
+
 	err = SetupServerCurrentMachine()
 	if err != nil {
 		return nil, err
@@ -292,9 +295,6 @@ func SetupServerCurrentMachine() error {
 	if err != nil {
 		return err
 	}
-
-	// Remove nodes currently not pingable
-	clientIPTable.RemoveOfflineNodes()
 
 	table, err := p2p.ReadIpTable()
 	if err != nil {
