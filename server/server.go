@@ -436,7 +436,7 @@ func MapPort(port string, domainName string, udp bool) (string, string, string, 
 			return "", "", "", err
 		}
 		// Create 3 second delay to allow FRP server to start
-		time.Sleep(time.Duration(NATEscapeTime) * time.Second)
+		time.Sleep(5 * time.Second)
 		// Starts FRP as a client with
 		proxyPort, err := frp.StartFRPClientForServer(lowestLatencyIpAddress.Ipv4, serverPort, port, "", udp)
 		if err != nil {
