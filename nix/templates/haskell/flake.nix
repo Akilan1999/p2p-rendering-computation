@@ -1,17 +1,23 @@
 {
   description = "Start of Haskell P2PRC flake";
 
-  inputs =
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    flake-util.url = "github:numtide/flake-utils";
+
+    p2prc-flake.url = "github:akilan1999/p2p-rendering-computation";
+  };
+
+  outputs =
     {
-      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-      flake-util.url = "github:numtide/flake-utils";
-
-      p2prc-flake.url = "github:akilan1999/p2p-rendering-computation";
-    };
-
-  outputs = { nixpkgs, p2prc-flake, flake-utils, ... }:
-    (flake-utils.lib.eachDefaultSystem (system:
+      nixpkgs,
+      p2prc-flake,
+      flake-utils,
+      ...
+    }:
+    (flake-utils.lib.eachDefaultSystem (
+      system:
       let
 
         pkgs = import nixpkgs {
@@ -22,7 +28,8 @@
           ];
         };
 
-      in {
+      in
+      {
 
         packages.default = pkgs.haskellPackages.callPackage ./cabal.nix { };
 

@@ -96,11 +96,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1748370509,
-        "narHash": "sha256-QlL8slIgc16W5UaI3w7xHQEP+Qmv/6vSNTpoZrrSlbk=",
+        "lastModified": 1748460289,
+        "narHash": "sha256-7doLyJBzCllvqX4gszYtmZUToxKvMUrg45EUWaUYmBg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4faa5f5321320e49a78ae7848582f684d64783e9",
+        "rev": "96ec055edbe5ee227f28cdbc3f1ddf1df5965102",
         "type": "github"
       },
       "original": {
@@ -117,16 +117,15 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1748646470,
-        "narHash": "sha256-7aZQQ+jHdlxUzFPXzEEYfH1oU3isSZlZnMC7HWUDHCk=",
-        "owner": "xecarlox94",
+        "lastModified": 1786093754,
+        "narHash": "sha256-aRnlnDW6schSumreFwI76sDYLx7rAplWeQqkTZkZwFo=",
+        "owner": "akilan1999",
         "repo": "p2p-rendering-computation",
-        "rev": "73a283a545d61754a0fe821287541c2cd412bc0e",
+        "rev": "f9494753f60f5cd8b62570d9501d669f7e652c59",
         "type": "github"
       },
       "original": {
-        "owner": "xecarlox94",
-        "ref": "nix",
+        "owner": "akilan1999",
         "repo": "p2p-rendering-computation",
         "type": "github"
       }
