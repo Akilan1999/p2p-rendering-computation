@@ -37,7 +37,7 @@ func RestartNATIfServerNotFound() {
 	_, err = p2p.SearchMachine(config.MachineName)
 	if err != nil {
 		fmt.Println("Server attempting to restart again since it's not pingable")
-		// Increasing the wait time for the NAT traversal
+		// Increasing the wait time for the NAT traversal by 1 second
 		NATEscapeTime += 1
 		SetupServerCurrentMachine()
 		return
