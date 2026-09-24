@@ -4,7 +4,6 @@ import (
 	"github.com/Akilan1999/p2p-rendering-computation/server/docker"
 	"github.com/fatedier/frp/client"
 	"github.com/fatedier/frp/pkg/config"
-	"github.com/fatedier/frp/pkg/util/log"
 	"github.com/phayes/freeport"
 	"math/rand"
 	"strconv"
@@ -180,17 +179,17 @@ func (c *Client) StartFRPClient() error {
 
 	cfg.ServerAddr = c.Server.IPAddress
 	cfg.ServerPort = c.Server.Port
-	cfg.LogWay = "file"
-	cfg.LogLevel = "warn"
-	cfg.LogFile = "log.txt"
-
-	log.InitLog(
-		cfg.LogWay,
-		cfg.LogFile,
-		cfg.LogLevel,
-		cfg.LogMaxDays,
-		cfg.DisableLogColor,
-	)
+	//cfg.LogWay = "file"
+	//cfg.LogLevel = "warn"
+	//cfg.LogFile = "log.txt"
+	//
+	//log.InitLog(
+	//	cfg.LogWay,
+	//	cfg.LogFile,
+	//	cfg.LogLevel,
+	//	cfg.LogMaxDays,
+	//	cfg.DisableLogColor,
+	//)
 	//cfg.TLSEnable = true
 	//cfg.TLSKeyFile = Config.KeyFile
 	//cfg.TLSCertFile = Config.PemFile
