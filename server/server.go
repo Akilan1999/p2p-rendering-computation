@@ -29,7 +29,8 @@ var ReverseProxies map[string]ReverseProxy
 
 func Server() (*gin.Engine, error) {
 
-	gin.SetMode(gin.ReleaseMode)
+	// disable terminal output
+	//gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
 	r.Use(gin.Recovery())
@@ -266,7 +267,7 @@ func Server() (*gin.Engine, error) {
 	go r.Run(":" + config.ServerPort)
 
 	// Start the CRON jobs on the server side
-	go CRON()
+	// go CRON()
 
 	return r, nil
 }
@@ -279,6 +280,13 @@ func SetupServerCurrentMachine() error {
 	if err != nil {
 		return err
 	}
+
+	// Remove all public keys from auth list
+	err = p2p.RemoveAllKeysFromAuthorizedList()
+	if err != nil {
+		return err
+	}
+
 	// If there is a proxy port specified
 	// then starts the FRP server
 	//if config.FRPServerPort != "0" {
@@ -286,12 +294,6 @@ func SetupServerCurrentMachine() error {
 	//}
 	// Remove current name from the IP table
 	err = p2p.RemoveIPTableEntry(config.MachineName)
-	if err != nil {
-		return err
-	}
-
-	// Remove all public keys from auth list
-	err = p2p.RemoveAllKeysFromAuthorizedList()
 	if err != nil {
 		return err
 	}
@@ -389,7 +391,7 @@ func SetupServerCurrentMachine() error {
 }
 
 // NATEscapeTime Mutable variable to increase the time to wait for escaping NAT.
-var NATEscapeTime = 5
+// var NATEscapeTime = 5
 
 func MapPort(port string, domainName string, udp bool) (string, string, string, error) {
 
